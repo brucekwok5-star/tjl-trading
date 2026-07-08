@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- Unique job identifier -->
+    <key>Label</key>
+    <string>com.bruce.premarket-gappers</string>
+
+    <!-- Script + interpreter -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/jaydensmac/Documents/premarket_gappers_scanner.py</string>
+    </array>
+
+    <!-- JSON output saves into this directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/jaydensmac/Documents</string>
+
+    <!-- Run every day at 21:00 HKT (local time) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>21</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Logs — tail -f ~/Documents/premarket_gappers.log to watch a live run -->
+    <key>StandardOutPath</key>
+    <string>/Users/jaydensmac/Documents/premarket_gappers.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/jaydensmac/Documents/premarket_gappers.err</string>
+
+    <!-- Do NOT run immediately on load — first fire is at 06:00 -->
+    <key>RunAtLoad</key>
+    <false/>
+
+</dict>
+</plist>

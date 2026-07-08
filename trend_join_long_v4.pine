@@ -1,0 +1,147 @@
+//@version=6
+strategy(
+     title             = "Trend Join Long (TJL) v4 - Regime",
+     shorttitle        = "TJL v4 R",
+     overlay           = true,
+     pyramiding        = 0,
+     initial_capital   = 25000,
+     default_qty_type  = strategy.percent_of_equity,
+     default_qty_value = 5,
+     commission_type   = strategy.commission.percent,
+     commission_value  = 0.05,
+     slippage          = 2,
+     max_bars_back     = 500,
+     calc_on_order_fills     = false,
+     process_orders_on_close = false
+)
+
+grp_trend  = "-- Trend Filter --"
+grp_pmh    = "-- Premarket High --"
+grp_risk   = "-- Risk Management --"
+grp_sess   = "-- Session --"
+grp_regime = "-- Regime Filter --"
+
+i_ema_fast   = input.int  (9,    "Fast EMA (join reference)",  group=grp_trend, minval=1)
+i_ema_slow   = input.int  (20,   "Slow EMA (trend filter)",    group=grp_trend, minval=1)
+i_ema_bias   = input.int  (50,   "Bias EMA (broad direction)", group=grp_trend, minval=1)
+i_use_pmh    = input.bool (true, "Require close > PMH + buffer", group=grp_pmh)
+i_pmh_buf    = input.float(0.10, "PMH buffer ($)",               group=grp_pmh, step=0.01)
+i_atr_len    = input.int  (14,   "ATR length",           group=grp_risk, minval=1)
+i_sl_mult    = input.float(1.5,  "Stop loss  (x ATR)",   group=grp_risk, step=0.1)
+i_tp_mult    = input.float(3.0,  "Take profit (x ATR)",  group=grp_risk, step=0.1)
+i_trail      = input.bool (false,"Use trailing stop",    group=grp_risk)
+i_max_day    = input.int  (3,    "Max entries / day",            group=grp_sess, minval=1)
+i_cutoff     = input.int  (1400, "No new entry after (HHMM ET)", group=grp_sess)
+i_use_regime = input.bool (true, "Enable SPY/QQQ regime filter", group=grp_regime)
+
+// ── Time helpers ──────────────────────────────────────────────────────────────
+et_h     = hour(time,   "America/New_York")
+et_m     = minute(time, "America/New_York")
+et_hhmm  = et_h * 100 + et_m
+is_pre   = et_hhmm >= 400  and et_hhmm < 930
+is_reg   = et_hhmm >= 930  and et_hhmm < 1600
+in_sess  = not na(time("5", "0930-1600", "America/New_York"))
+past_cut = et_hhmm >= i_cutoff
+new_day  = ta.change(time("D", "0000-0000", "America/New_York")) != 0
+
+// ── Premarket High ────────────────────────────────────────────────────────────
+var float PMH         = na
+var float _pmh_acc    = na
+var bool  _pmh_locked = false
+if new_day
+    PMH         := na
+    _pmh_acc    := na
+    _pmh_locked := false
+if is_pre
+    _pmh_acc := na(_pmh_acc) ? high : math.max(_pmh_acc, high)
+if is_reg and not _pmh_locked and not na(_pmh_acc)
+    PMH         := _pmh_acc
+    _pmh_locked := true
+pmh_level = PMH + i_pmh_buf
+
+plot(in_sess and not na(PMH) ? PMH : na, "PMH", color.new(color.purple, 20), 2, plot.style_linebr)
+plot(in_sess and i_use_pmh and not na(pmh_level) ? pmh_level : na, "PMH + Buffer", color.new(color.fuchsia, 50), 1, plot.style_linebr)
+
+// ── Regime Filter (SPY/QQQ vs prior close, latched at 10:00 ET) ───────────────
+spy_prev = request.security("SPY", "D", close, lookahead=barmerge.lookahead_off)
+qqq_prev = request.security("QQQ", "D", close, lookahead=barmerge.lookahead_off)
+spy_now  = request.security("SPY", timeframe.period, close, lookahead=barmerge.lookahead_off)
+qqq_now  = request.security("QQQ", timeframe.period, close, lookahead=barmerge.lookahead_off)
+
+var bool regime_ok    = false
+var bool _reg_latched = false
+if new_day
+    regime_ok    := false
+    _reg_latched := false
+if not _reg_latched and et_hhmm >= 1000 and is_reg
+    regime_ok    := (spy_now > spy_prev) and (qqq_now > qqq_prev)
+    _reg_latched := true
+
+bgcolor(i_use_regime and in_sess and _reg_latched and not regime_ok ? color.new(color.red, 88) : na, title="Regime Fail Day")
+
+// ── EMAs + ATR ────────────────────────────────────────────────────────────────
+ema_f = ta.ema(close, i_ema_fast)
+ema_s = ta.ema(close, i_ema_slow)
+ema_b = ta.ema(close, i_ema_bias)
+atr   = ta.atr(i_atr_len)
+
+plot(ema_f, "EMA 9",  color.new(color.blue,   0), 1)
+plot(ema_s, "EMA 20", color.new(color.orange, 0), 1)
+plot(ema_b, "EMA 50", color.new(color.gray,  50), 1)
+
+// ── TJL Signal ────────────────────────────────────────────────────────────────
+trend_up   = close > ema_s and ema_f > ema_s and ema_s > ema_b
+pb_low     = ta.lowest(low, 4)
+pb_touched = pb_low <= ema_f * 1.002
+join       = ta.crossover(close, ema_f) and pb_touched
+pmh_ok     = not i_use_pmh or na(PMH) or close > pmh_level
+regime_pass = not i_use_regime or not _reg_latched or regime_ok
+
+var int day_trades = 0
+if new_day
+    day_trades := 0
+
+long_entry = trend_up and join and pmh_ok and regime_pass and in_sess and not past_cut and day_trades < i_max_day and strategy.position_size == 0
+
+if long_entry
+    sl = close - i_sl_mult * atr
+    tp = close + i_tp_mult * atr
+    strategy.entry("TJL", strategy.long, comment="^ Join")
+    if i_trail
+        strategy.exit("TJL-X", "TJL", stop=sl, trail_price=close + i_tp_mult * atr, trail_offset=math.round(i_tp_mult * atr / syminfo.mintick), comment="Trail")
+    else
+        strategy.exit("TJL-X", "TJL", stop=sl, limit=tp, comment="TP/SL")
+    day_trades += 1
+
+// ── EOD Close ─────────────────────────────────────────────────────────────────
+if et_hhmm >= 1555 and strategy.position_size > 0
+    strategy.close("TJL", comment="EOD")
+
+// ── Entry marker ──────────────────────────────────────────────────────────────
+plotshape(long_entry, "Entry ^", shape.triangleup, location.belowbar, color.new(color.lime, 0), size=size.small)
+
+// ── PMH label (once per day) ──────────────────────────────────────────────────
+var bool pmh_labeled = false
+if new_day
+    pmh_labeled := false
+if is_reg and not pmh_labeled and not na(PMH) and in_sess
+    label.new(bar_index, PMH, "PMH " + str.tostring(PMH, "#.00"), xloc=xloc.bar_index, yloc=yloc.price, color=color.new(color.purple, 30), textcolor=color.white, style=label.style_label_right, size=size.small)
+    pmh_labeled := true
+
+// ── Info table (top-right) ────────────────────────────────────────────────────
+var table t = table.new(position.top_right, 2, 7, bgcolor=color.new(color.black, 65), border_width=1, border_color=color.gray)
+if barstate.islast
+    table.cell(t, 0, 0, "TJL v4",     text_color=color.white, text_size=size.small)
+    table.cell(t, 1, 0, "Regime ON",   text_color=color.aqua,  text_size=size.small)
+    table.cell(t, 0, 1, "PMH",         text_color=color.purple, text_size=size.small)
+    table.cell(t, 1, 1, na(PMH) ? "-" : str.tostring(PMH, "#.00"), text_color=color.white, text_size=size.small)
+    table.cell(t, 0, 2, "Day entries", text_color=color.gray,  text_size=size.small)
+    table.cell(t, 1, 2, str.tostring(day_trades) + " / " + str.tostring(i_max_day), text_color=color.white, text_size=size.small)
+    table.cell(t, 0, 3, "ATR",         text_color=color.gray,  text_size=size.small)
+    table.cell(t, 1, 3, str.tostring(atr, "#.00"), text_color=color.white, text_size=size.small)
+    table.cell(t, 0, 4, "Trend",       text_color=color.gray,  text_size=size.small)
+    table.cell(t, 1, 4, trend_up ? "UP" : "Flat", text_color=trend_up ? color.lime : color.silver, text_size=size.small)
+    table.cell(t, 0, 5, "Regime",      text_color=color.gray,  text_size=size.small)
+    table.cell(t, 1, 5, not _reg_latched ? "-" : regime_ok ? "OK" : "BLOCKED", text_color=not _reg_latched ? color.gray : regime_ok ? color.lime : color.red, text_size=size.small)
+    table.cell(t, 0, 6, "SPY/QQQ",    text_color=color.gray,  text_size=size.small)
+    table.cell(t, 1, 6, na(spy_now) ? "-" : str.tostring(spy_now, "#.00") + "/" + str.tostring(qqq_now, "#.00"), text_color=color.white, text_size=size.small)
