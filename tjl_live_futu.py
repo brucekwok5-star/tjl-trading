@@ -210,7 +210,32 @@ def post_discord(signals, now_str):
     log(f"Discord: HTTP {status}")
 
 
-def run_scan():
+
+def notify_telegram(payload):
+    """Send HK scan summary to Telegram via `hermes send`."""
+    import subprocess
+    lines = [
+        f"📊 *TJL HK Scan (Futu)* — {payload['scanned_at']}",
+        f"Source: Futu OpenD (real-time)",
+        f"Signals: *{len(payload.get('signals', []))}*",
+    ]
+    if payload.get("signals"):
+        lines += ["", "```", f"{'Ticker':<18} {'Price':>8} {'R:R':>5}", "-" * 40]
+        for s in sorted(payload["signals"], key=lambda x: -x["rr_ratio"]):
+            lines.append(f"{s['name']:<18} {s['price']:>8.2f} {s['rr_ratio']:>5.1f}")
+        lines.append("```")
+    else:
+        lines.append("⏳ No signals.")
+    text = "\n".join(lines)
+    try:
+        r = subprocess.run(["hermes", "send", "--to", "telegram"],
+                           input=text, text=True, capture_output=True, timeout=30)
+        log(f"📨 Telegram: {r.stdout.strip() or r.stderr.strip()}")
+    except Exception as e:
+        log(f"⚠ Telegram delivery failed: {e}")
+
+
+def run_scan(notify=False):
     now_str = datetime.now(HKT).strftime("%Y-%m-%d %H:%M:%S HKT")
     today_str = date.today().strftime("%Y-%m-%d")
 
@@ -295,6 +320,10 @@ def run_scan():
     # Step 4: Post to Discord
     post_discord(signals, now_str)
 
+    # Step 5: Optional Telegram notification
+    if notify:
+        notify_telegram({"scanned_at": now_str, "signals": signals})
+
     return signals
 
 
@@ -302,19 +331,20 @@ def main():
     parser = argparse.ArgumentParser(description="TJL Live Scanner — Futu OpenD")
     parser.add_argument("--continuous", action="store_true", help="Run continuously")
     parser.add_argument("--interval", type=int, default=SCAN_INTERVAL, help="Seconds between scans")
+    parser.add_argument("--notify", action="store_true", help="Send results to Telegram")
     args = parser.parse_args()
 
     if args.continuous:
         log(f"CONTINUOUS mode — interval {args.interval}s | Ctrl+C to stop")
         try:
             while True:
-                run_scan()
+                run_scan(notify=args.notify)
                 log(f"Sleeping {args.interval}s...")
                 time.sleep(args.interval)
         except KeyboardInterrupt:
             log("Stopped.")
     else:
-        run_scan()
+        run_scan(notify=args.notify)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,8 @@ import subprocess
 import sys
 
 tests = [
-    ("verify_tjl_all.py", "Scanner math + retry + regime"),
+    ("verify_tjl_all.py", "US scanners: math + retry + regime"),
+    ("verify_tjl_futu.py", "HK Futu scanner: math + watchlist + schema"),
     ("verify_compare_results.py", "Compare-results parsing + sandbox"),
 ]
 
