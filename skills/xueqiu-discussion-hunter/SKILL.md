@@ -1,14 +1,14 @@
 ---
 name: xueqiu-discussion-hunter
-description: Use when hunting predictive posts on xueqiu.com — fetches user timelines, verifies accuracy, ranks predictors, surfaces HK and US stock opportunities, and posts results to Discord.
-version: 1.1.0
+description: Use when hunting predictive posts on xueqiu.com — fetches user timelines, verifies accuracy, ranks predictors, surfaces HK stock opportunities, and posts results to Discord.
+version: 1.2.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [xueqiu, web-scraping, HK-stocks, US-stocks, social-sentiment, research, discord]
-    related_skills: [arxiv, blogwatcher, grounded-citations, xurl]
+    tags: [xueqiu, web-scraping, HK-stocks, social-sentiment, research, discord]
+    related_skills: [arxiv, blogwatcher, grounded-citations]
 ---
 
 # Xueqiu Discussion Hunter
@@ -220,21 +220,36 @@ def detect_direction(text: str) -> str:
 
 ## Stock Code Extraction
 
-Xueqiu posts use `$名称(代码)$` format — extract correctly:
+Xueqiu posts use two formats — handle both in one function:
 
 ```python
 import re
 
 def extract_stocks(text: str) -> list[str]:
-    """Extract HK stock 5-digit codes from $名称(代码)$ format."""
-    return re.findall(r"\((\d{5})\)", text)
+    """
+    Extract HK stock 5-digit codes AND US tickers from xueqiu posts.
 
-# Example
-extract_stocks("$小米集团-W(01810)$ $腾讯(00700)$")  # → ['01810', '00700']
+    HK:  $小米集团-W(01810)$ → ['01810']
+    US:  $AAPL$ $TSLA$ $AMZN$ → ['AAPL', 'TSLA', 'AMZN']
+    """
+    # HK: 5-digit code inside parentheses
+    hk_codes = re.findall(r"\$[^$]*?\((\d{5})\)\$", text)
+    # US: bare ticker between $ signs (all caps, 1-5 letters)
+    us_tickers = re.findall(r"\$([A-Z]{1,5})\$", text)
+    return hk_codes + us_tickers
 
-# ❌ WRONG: only matches URLs, not post content
-# re.findall(r"HK(\d{5})", text)
+# Examples
+extract_stocks("$小米集团-W(01810)$ $腾讯(00700)$")
+# → ['01810', '00700']
+
+extract_stocks("$AAPL$ Apple $TSLA$ Tesla $AMZN$")
+# → ['AAPL', 'TSLA', 'AMZN']
+
+extract_stocks("$03690$ $00700$ 看好 $AMZN$")
+# → ['03690', '00700', 'AMZN']
 ```
+
+**Note:** HK codes are zero-padded 5 digits; US tickers are 1–5 uppercase letters. Both can appear in the same post.
 
 ---
 
@@ -607,7 +622,7 @@ def run_hunt(cookies: list[dict]) -> list[dict]:
     # ── Post to Discord ─────────────────────────────────────────────────────────
     tracker = LeaderboardTracker()
     top5 = tracker.get_top20()[:5]
-    post_to_discord(results, market="HK", leaderboard_top5=top5)
+    post_to_discord(results, leaderboard_top5=top5)
     # ───────────────────────────────────────────────────────────────────────────
 
     return results
@@ -625,28 +640,16 @@ from datetime import datetime
 
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1531888048797782026/JEmDHBY2PkJjDqoQQFVyJBnXX2hK-lrYbjDPYlMGJls0p6J26oRVMhBCjdU4bafguHtj"
 
-def post_to_discord(results: list[dict], market: str = "HK",
+def post_to_discord(results: list[dict],
                      leaderboard_top5: list[dict] = None) -> None:
     """
     Post hunt results + leaderboard snapshot to Discord.
-    market: 'HK' or 'US'
+    Always posts HK stock calls (🇭🇰).
     """
     today = datetime.now().strftime("%Y-%m-%d")
     emoji_map = {"bullish": "🟢", "bearish": "🔴", "neutral": "⚪"}
-    color_map = {"HK": 16711680, "US": 3447003}   # red for HK, blue for US
-
-    # Group by direction
-    bullish = [r for r in results if r.get("direction") == "bullish"]
-    bearish = [r for r in results if r.get("direction") == "bearish"]
 
     fields = []
-
-    # HK stock calls
-    if market == "HK":
-        stock_label = "🇭🇰 HK Stock Calls"
-    else:
-        stock_label = "🇺🇸 US Stock Calls"
-
     for r in results[:8]:
         emoji = emoji_map.get(r.get("direction"), "⚪")
         stock_list = ", ".join(r.get("stocks", []))
@@ -679,10 +682,9 @@ def post_to_discord(results: list[dict], market: str = "HK",
                 "inline": False
             })
 
-    # Build embed
     embed = {
-        "title": f"{'🇭🇰' if market=='HK' else '🇺🇸'} xueqiu {market} Stock Calls — {today}",
-        "color": color_map.get(market, 5817228),
+        "title": f"🇭🇰 xueqiu HK Stock Calls — {today}",
+        "color": 16711680,
         "footer": {"text": "Source: xueqiu.com | Bot: Hermes Agent"},
         "fields": fields
     }
@@ -694,14 +696,14 @@ def post_to_discord(results: list[dict], market: str = "HK",
             "fields": lb_fields
         }
         payload = {
-            "thread_name": f"xueqiu {market} Stock {today}",
-            "content": f"{'🇭🇰' if market=='HK' else '🇺🇸'} **xueqiu {market} Stock Predictions — {today}**",
+            "thread_name": f"xueqiu HK Stock {today}",
+            "content": f"🇭🇰 **xueqiu HK Stock Predictions — {today}**",
             "embeds": [embed, embed2]
         }
     else:
         payload = {
-            "thread_name": f"xueqiu {market} Stock {today}",
-            "content": f"{'🇭🇰' if market=='HK' else '🇺🇸'} **xueqiu {market} Stock Predictions — {today}**",
+            "thread_name": f"xueqiu HK Stock {today}",
+            "content": f"🇭🇰 **xueqiu HK Stock Predictions — {today}**",
             "embeds": [embed]
         }
 
@@ -711,43 +713,6 @@ def post_to_discord(results: list[dict], market: str = "HK",
     else:
         print(f"⚠️ Discord POST failed: {r.status_code} {r.text[:100]}")
 
-def post_us_results_to_discord(results: list[dict], today_str: str = None) -> None:
-    """Specialized Discord formatter for US stock results."""
-    today = today_str or datetime.now().strftime("%Y-%m-%d")
-    emoji_map = {"bullish": "🟢", "bearish": "🔴"}
-
-    fields = []
-    for r in results[:10]:
-        emoji = emoji_map.get(r.get("direction"), "⚪")
-        stocks = ", ".join(r.get("stocks", []))
-        user = r.get("user", "?")
-        text = r.get("text", "")[:80].replace("\n", " ")
-        fields.append({
-            "name": f"{emoji} {stocks} ({r.get('direction', '')})",
-            "value": f"**{user}**: {text}...",
-            "inline": False
-        })
-
-    if not fields:
-        fields = [{"name": "❌ No directional calls", "value": "No tracked xueqiu users posted today.", "inline": False}]
-
-    embed = {
-        "title": f"🇺🇸 US Stock Predictions — xueqiu | {today}",
-        "color": 3447003,
-        "fields": fields,
-        "footer": {"text": "Source: xueqiu.com | Bot: Hermes Agent"}
-    }
-
-    payload = {
-        "thread_name": f"xueqiu US Stock {today}",
-        "content": f"🇺🇸 **xueqiu US Stock Predictions — {today}**",
-        "embeds": [embed]
-    }
-
-    r = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=15)
-    print(f"Discord: {r.status_code}", "✅" if r.status_code == 204 else r.text[:100])
-```
-
 **Forum channel rule:** Discord webhooks to forum channels require `thread_name` in every payload — plain content/embed-only posts fail with `code 220001`.
 
 ---
@@ -756,11 +721,10 @@ def post_us_results_to_discord(results: list[dict], today_str: str = None) -> No
 
 | File | Description |
 |------|-------------|
-| `~/xueqiu_hunter/final_clean_YYYYMMDD.json` | Latest full analysis (HK + US) |
+| `~/xueqiu_hunter/final_clean_YYYYMMDD.json` | Latest full analysis |
 | `~/xueqiu_hunter/p1_timelines.json` | Phase 1 — user timelines |
 | `~/xueqiu_hunter/p2_verified.json` | Phase 2 — accuracy-ranked |
 | `~/xueqiu_hunter/p3_opportunities.json` | Phase 3 — today's opportunities |
-| `~/xueqiu_hunter/us_results_YYYYMMDD.json` | US stock hunt results |
 | `~/xueqiu_hunter/leaderboard.json` | Top-20 predictor leaderboard |
 
 ---
