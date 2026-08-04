@@ -5,12 +5,18 @@ TJL Live Scanner — US Market via Yahoo Finance
 Scans US stocks every N seconds using yfinance real-time data,
 calculates EMA stack on daily bars, and checks live TJL entry conditions.
 
-TJL Entry Conditions:
+TJL LONG Entry Conditions:
   1. EMA9  > EMA20 > EMA50   (bullish stack)
   2. Price within 0.2% of EMA9 (pullback zone)
   3. Price > PMH + buffer    (prior day high or premarket high)
 
-Exit: SL = price - 1.5*ATR | TP = price + 3.0*ATR
+TJS SHORT Entry Conditions:
+  1. EMA9  < EMA20 < EMA50   (bearish stack)
+  2. Price within 0.2% of EMA9 (bearish rebound zone)
+  3. Price < PML - buffer    (below prior day low or premarket low)
+
+Exit LONG:  SL = price - 1.5*ATR | TP = price + 3.0*ATR
+Exit SHORT: SL = price + 1.5*ATR | TP = price - 3.0*ATR
 
 Usage:
   python3 tjl_live_us.py                   # scan once
@@ -19,7 +25,7 @@ Usage:
 
 Environment:
   DISCORD_WEBHOOK_HK_TJL — Discord webhook URL. If set, posts results.
-  US_TICKERS          — Optional comma-separated tickers (overrides default watchlist)
+  US_TICKERS             — Optional comma-separated tickers (overrides default watchlist)
 """
 import yfinance as yf
 import pandas as pd
@@ -35,7 +41,7 @@ from zoneinfo import ZoneInfo
 ET = ZoneInfo("America/New_York")
 HKT = ZoneInfo("Asia/Hong_Kong")
 
-PMH_BUF      = 0.70    # $ buffer above PMH
+PMH_BUF      = 0.70    # $ buffer for PMH/PML entry
 ATR_SL       = 1.5
 ATR_TP       = 3.0
 ATR_PERIOD   = 14
@@ -144,13 +150,17 @@ def calc_atr(highs, lows, closes, period=ATR_PERIOD):
 
 
 def get_daily_bars(ticker, count=80):
-    """Get daily OHLC bars from yfinance."""
+    """Get daily OHLC bars from yfinance. Drops rows with NaN close."""
     try:
         tk = yf.Ticker(ticker)
         hist = tk.history(period=f"{count}d", interval="1d")
         if hist.empty or len(hist) < 30:
             return None, None, None
         hist = hist.sort_index()
+        # Drop rows where Close is NaN (data gaps corrupt EMA and ATR)
+        hist = hist[hist['Close'].notna()]
+        if hist.empty or len(hist) < 30:
+            return None, None, None
         return hist['High'].values, hist['Low'].values, hist['Close'].values
     except:
         return None, None, None
@@ -186,30 +196,47 @@ def get_live_price(ticker):
 
 
 def get_premarket_high(ticker):
-    """Get premarket high (4AM–9:30AM ET today) via yfinance."""
+    """Get premarket high (4AM–9:30AM ET today) via yfinance 1-min bars."""
     try:
-        tk = yf.Ticker(ticker)
-        # premarket data available in "Pre-Market" history
-        # Use today's 1min data to calc premarket high
-        today = date.today().strftime("%Y-%m-%d")
-        # 1min bars for today - try last 100 1-min bars
-        premarket = tk.history(start=today, interval="1m", auto_adjust=True, keepna=True)
-        if premarket.empty:
+        today_str = date.today().strftime("%Y-%m-%d")
+        bars = yf.Ticker(ticker).history(start=today_str, interval="1m", auto_adjust=True, keepna=True)
+        if bars.empty:
             return None
-        # premarket hours: 4:00 AM - 9:30 AM ET
-        # Filter bars in that window
-        et_idx = premarket.index.tz_convert(ET) if premarket.index.tz else premarket.index.tz_localize(ET)
+        et_idx = bars.index.tz_convert(ET) if bars.index.tz else bars.index.tz_localize(ET)
         mask = (et_idx.hour >= 4) & ((et_idx.hour < 9) | ((et_idx.hour == 9) & (et_idx.minute <= 30)))
         if mask.sum() == 0:
             return None
-        return float(premarket[mask]['High'].max())
+        return float(bars[mask]['High'].max())
+    except:
+        return None
+
+
+def get_premarket_low(ticker):
+    """Get premarket low (4AM–9:30AM ET today) via yfinance 1-min bars."""
+    try:
+        today_str = date.today().strftime("%Y-%m-%d")
+        bars = yf.Ticker(ticker).history(start=today_str, interval="1m", auto_adjust=True, keepna=True)
+        if bars.empty:
+            return None
+        et_idx = bars.index.tz_convert(ET) if bars.index.tz else bars.index.tz_localize(ET)
+        mask = (et_idx.hour >= 4) & ((et_idx.hour < 9) | ((et_idx.hour == 9) & (et_idx.minute <= 30)))
+        if mask.sum() == 0:
+            return None
+        return float(bars[mask]['Low'].min())
     except:
         return None
 
 
 def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
                  premarket_high=0):
-    """Check all 3 TJL conditions. Returns signal dict or None."""
+    """
+    Check all 3 TJL LONG conditions. Returns signal dict or None.
+
+    Conditions:
+      1. EMA9 > EMA20 > EMA50  (bullish stack)
+      2. |price - EMA9| / EMA9 <= 0.2%  (near EMA9 pullback)
+      3. price > PMH + $0.70  (above prior-day or premarket high)
+    """
     if len(closes) < 60:
         return None, f"{ticker}: insufficient bars ({len(closes)})"
 
@@ -221,11 +248,11 @@ def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
     if atr is None or np.isnan(atr):
         return None, f"{ticker}: ATR error"
 
-    # PMH: max of prior day high and today's PREMARKET high (4am-9:30am ET).
-    # We deliberately exclude the regular-session intraday high here so the
-    # "price must be above yesterday's high" check can actually fire during
-    # the session. See SKILL.md "Known Issues / Strategy Logic" for the
-    # rationale.
+    # PMH = max of yesterday's actual high and today's premarket high.
+    # The regular-session intraday high is NOT included — price can never
+    # exceed today's intraday high, so using it would make above_pmh_ok
+    # permanently False. We intentionally use only the OVERNIGHT high
+    # (prior day close→high and premarket) as the breakout reference.
     pmh = prev_day_high or 0
     if premarket_high and premarket_high > pmh:
         pmh = premarket_high
@@ -239,20 +266,21 @@ def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
     rr = (ATR_TP * atr) / (ATR_SL * atr)
 
     result = {
-        'ticker':    ticker,
-        'name':      name,
-        'price':     round(price, 2),
+        'ticker':     ticker,
+        'name':       name,
+        'price':      round(price, 2),
+        'direction':  'LONG',
         'prev_close': round(float(closes[-1]), 2),
-        'e9':        round(e9, 2),
-        'e20':       round(e20, 2),
-        'e50':       round(e50, 2),
-        'atr':       round(atr, 3),
-        'pmh':       round(pmh, 2),
-        'sl':        round(sl, 2),
-        'tp':        round(tp, 2),
-        'rr_ratio':  round(rr, 2),
-        'stack_ok':    stack_ok,
-        'near_ema_ok': near_ema_ok,
+        'e9':         round(e9, 2),
+        'e20':        round(e20, 2),
+        'e50':        round(e50, 2),
+        'atr':        round(atr, 3),
+        'pmh':        round(pmh, 2),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(rr, 2),
+        'stack_ok':     stack_ok,
+        'near_ema_ok':  near_ema_ok,
         'above_pmh_ok': above_pmh_ok,
     }
 
@@ -266,45 +294,152 @@ def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
     return result, None
 
 
-def post_discord(signals, now_str, regime):
-    """Post TJL results to Discord webhook."""
+def check_tjs(ticker, name, price, day_low, prev_day_low, highs, lows, closes,
+                 premarket_low=0):
+    """
+    Check SHORT entry conditions (TJS = Trend-Join-Short).
+    Mirror of check_tjl() with inverted conditions:
+
+      1. EMA9 < EMA20 < EMA50  (bearish stack)
+      2. |price - EMA9| / EMA9 <= 0.2%  (near EMA9 rebound)
+      3. price < PML - $0.70  (below prior-day or premarket low)
+
+    Exit:  SL = price + 1.5×ATR  (stop ABOVE entry for short)
+           TP = price - 3.0×ATR  (profit BELOW entry)
+    """
+    if len(closes) < 60:
+        return None, f"{ticker}: insufficient bars ({len(closes)})"
+
+    e9, e20, e50 = calc_emas(closes)
+    if any(np.isnan(x) for x in [e9, e20, e50]):
+        return None, f"{ticker}: NaN in EMA"
+
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None, f"{ticker}: ATR error"
+
+    # PML: min of prior day low and today's premarket low
+    pml = prev_day_low or 0
+    if premarket_low and premarket_low < pml:
+        pml = premarket_low
+
+    stack_ok     = (e9 < e20 < e50)
+    near_ema_ok  = (abs(price - e9) / e9 <= NEAR_EMA_PCT)
+    below_pml_ok = (pml > 0) and (price < pml - PMH_BUF)
+
+    # SHORT: SL above entry, TP below entry
+    sl = price + ATR_SL * atr
+    tp = price - ATR_TP * atr
+    rr = (ATR_TP * atr) / (ATR_SL * atr)
+
+    result = {
+        'ticker':     ticker,
+        'name':       name,
+        'price':      round(price, 2),
+        'direction':  'SHORT',
+        'prev_close': round(float(closes[-1]), 2),
+        'e9':         round(e9, 2),
+        'e20':        round(e20, 2),
+        'e50':        round(e50, 2),
+        'atr':        round(atr, 3),
+        'pml':        round(pml, 2),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(rr, 2),
+        'stack_ok':      stack_ok,
+        'near_ema_ok':   near_ema_ok,
+        'below_pml_ok':  below_pml_ok,
+    }
+
+    if not all([stack_ok, near_ema_ok, below_pml_ok]):
+        reasons = []
+        if not stack_ok:      reasons.append("!stack")
+        if not near_ema_ok:   reasons.append("!nearEMA")
+        if not below_pml_ok:  reasons.append("!belowPML")
+        return None, f"{ticker}: {' '.join(reasons)}"
+
+    return result, None
+
+
+def _build_discord_payload(signals, now_str, regime, longs, shorts):
+    """Build rich Discord embed payload for TJL results."""
     webhook_url = os.environ.get("DISCORD_WEBHOOK_HK_TJL", "").strip()
+    if not webhook_url:
+        return None, None
+
+    regime_color = 0x228B22 if regime == "BULLISH" else (0xDC143C if regime == "BEARISH" else 0x888888)
+    regime_emoji = "🟢" if regime == "BULLISH" else ("🔴" if regime == "BEARISH" else "⚪")
+
+    # Build embed fields
+    fields = []
+    if longs:
+        field_value = (
+            "```\n"
+            + "\n".join(
+                f"{s['ticker']:<8}  price={s['price']:>7.2f}  EMA9={s['e9']:>7.2f}  "
+                f"SL={s['sl']:>7.2f}  TP={s['tp']:>7.2f}  R:R={s['rr_ratio']:.1f}"
+                for s in sorted(longs, key=lambda x: -x['rr_ratio'])
+            )
+            + "```"
+        )
+        fields.append({"name": f"🟢 LONG ({len(longs)})", "value": field_value, "inline": False})
+
+    if shorts:
+        field_value = (
+            "```\n"
+            + "\n".join(
+                f"{s['ticker']:<8}  price={s['price']:>7.2f}  EMA9={s['e9']:>7.2f}  "
+                f"SL={s['sl']:>7.2f}  TP={s['tp']:>7.2f}  R:R={s['rr_ratio']:.1f}"
+                for s in sorted(shorts, key=lambda x: -x['rr_ratio'])
+            )
+            + "```"
+        )
+        fields.append({"name": f"🔴 SHORT ({len(shorts)})", "value": field_value, "inline": False})
+
+    description = (
+        f"**Regime:** {regime_emoji} **{regime}**\n"
+        f"**Signals:** {len(signals)} ({len(longs)} LONG, {len(shorts)} SHORT)\n"
+        + ("*No signals — all conditions fail.*" if not signals else "")
+    )
+
+    embed = {
+        "title": f"US TJL Live Scan — {now_str}",
+        "color": regime_color,
+        "description": description,
+        "fields": fields,
+        "footer": {
+            "text": (
+                "LONG: SL=price−1.5×ATR  TP=price+3×ATR | SHORT: SL=price+1.5×ATR  TP=price−3×ATR\n"
+                "PMH=prior/premarket high | PML=prior/premarket low | 15min delay (yfinance free)"
+            )
+        },
+    }
+
+    content = f"**US TJL Live Scan** — {regime_emoji} **{regime}**"
+    payload = {
+        "content": content,
+        "embeds": [embed],
+        "thread_name": f"US TJL Live {datetime.now(ET).strftime('%Y-%m-%d')}",
+    }
+    return webhook_url, payload
+
+
+def post_discord(signals, now_str, regime):
+    """Post TJL results to Discord webhook (handles both LONG and SHORT)."""
+    longs  = [s for s in signals if s.get('direction') == 'LONG']
+    shorts = [s for s in signals if s.get('direction') == 'SHORT']
+
+    webhook_url, payload = _build_discord_payload(signals, now_str, regime, longs, shorts)
     if not webhook_url:
         log("[WARN] DISCORD_WEBHOOK_HK_TJL not set — skipping Discord")
         return
 
-    lines = [
-        f"**US TJL Live Scan** — {now_str}",
-        f"Regime: **{regime}**",
-        "",
-    ]
-    if signals:
-        lines.append(f"🚨 **{len(signals)} US TJL SIGNAL(S)**")
-        lines.append("")
-        lines.append(f"{'Ticker':<12} {'Name':<16} {'Price':>8} {'EMA9':>8} {'EMA20':>8} {'EMA50':>8} "
-                     f"{'SL':>8} {'TP':>8} {'R:R':>5}")
-        lines.append("-" * 95)
-        for s in sorted(signals, key=lambda x: -x['rr_ratio']):
-            lines.append(
-                f"{s['ticker']:<12} {s['name']:<16} {s['price']:>8.2f} {s['e9']:>8.2f} "
-                f"{s['e20']:>8.2f} {s['e50']:>8.2f} {s['sl']:>8.2f} {s['tp']:>8.2f} {s['rr_ratio']:>5.1f}"
-            )
-        lines.append("")
-        lines.append(f"*PMH = prior day high | SL = price - 1.5×ATR | TP = price + 3.0×ATR*")
-    else:
-        lines.append("⏳ No TJL signals (all 3 conditions fail for all tickers)")
-
-    content = "\n".join(lines)
-    if len(content) > 1900:
-        content = content[:1900] + "\n(truncated)"
-
-    thread_name = f"US TJL Live {datetime.now(ET).strftime('%Y-%m-%d')}"
-    payload = json.dumps({"content": content, "thread_name": thread_name})
+    body = json.dumps(payload, ensure_ascii=False)
     result = subprocess.run(
         ["curl", "-s", "-w", "\n%{http_code}",
          "-X", "POST", f"{webhook_url}?wait=true",
          "-H", "Content-Type: application/json",
-         "-d", payload],
+         "-d", body],
         capture_output=True, text=True, timeout=15
     )
     out = result.stdout.strip().split("\n")
@@ -312,22 +447,32 @@ def post_discord(signals, now_str, regime):
     log(f"Discord: HTTP {status}")
 
 
-
 def notify_telegram(payload):
     """Send scan summary to Telegram via `hermes send`."""
     import subprocess
-    regime_emoji = {"BULLISH": "🟢", "BEARISH": "🔴"}.get(payload.get("regime", ""), "⚪")
+    longs  = [s for s in payload.get('signals', []) if s.get('direction') == 'LONG']
+    shorts = [s for s in payload.get('signals', []) if s.get('direction') == 'SHORT']
+    regime_emoji = {"BULLISH": "🟢", "BEARISH": "🔴"}.get(payload.get('regime', ''), "⚪")
     lines = [
         f"📊 *TJL Scan (yfinance)* — {payload['scanned_at']}",
         f"Regime: {regime_emoji} *{payload.get('regime', 'UNKNOWN')}*",
-        f"Signals: *{len(payload.get('signals', []))}*  Debug: {len(payload.get('debug', []))}",
+        f"Signals: *{len(payload.get('signals', []))}* ({len(longs)} LONG, {len(shorts)} SHORT)",
     ]
-    if payload.get("signals"):
-        lines += ["", "```", f"{'Ticker':<8} {'Price':>8} {'EMA9':>8} {'R:R':>5}", "-" * 40]
-        for s in sorted(payload["signals"], key=lambda x: -x["rr_ratio"]):
+    if longs:
+        lines += ["", "🟢 *LONG*", "```",
+                  f"{'Ticker':<8} {'Price':>8} {'EMA9':>8} {'R:R':>5}",
+                  "-" * 35]
+        for s in sorted(longs, key=lambda x: -x['rr_ratio']):
             lines.append(f"{s['ticker']:<8} {s['price']:>8.2f} {s['e9']:>8.2f} {s['rr_ratio']:>5.1f}")
         lines.append("```")
-    else:
+    if shorts:
+        lines += ["", "🔴 *SHORT*", "```",
+                  f"{'Ticker':<8} {'Price':>8} {'EMA9':>8} {'R:R':>5}",
+                  "-" * 35]
+        for s in sorted(shorts, key=lambda x: -x['rr_ratio']):
+            lines.append(f"{s['ticker']:<8} {s['price']:>8.2f} {s['e9']:>8.2f} {s['rr_ratio']:>5.1f}")
+        lines.append("```")
+    if not longs and not shorts:
         lines.append("⏳ No signals.")
     text = "\n".join(lines)
     try:
@@ -336,8 +481,6 @@ def notify_telegram(payload):
         log(f"📨 Telegram: {r.stdout.strip() or r.stderr.strip()}")
     except Exception as e:
         log(f"⚠ Telegram delivery failed: {e}")
-
-
 
 
 def run_scan(notify=False):
@@ -354,7 +497,7 @@ def run_scan(notify=False):
     regime = get_regime()
     log(f"Regime (SPY/QQQ): {regime}")
     if regime == "BEARISH":
-        log("⚠️  BEARISH regime — TJL long signals suppressed")
+        log("⚠️  BEARISH regime — TJL LONG suppressed; TJS SHORT allowed")
     log("")
 
     # Step 2: Build watchlist
@@ -367,8 +510,9 @@ def run_scan(notify=False):
         log(f"Using default watchlist: {len(watchlist)} tickers")
 
     # Step 3: Scan each ticker
-    signals = []
-    debug_info = []
+    long_signals  = []
+    short_signals = []
+    debug_info    = []
 
     for ticker, name in watchlist:
         # Get daily bars first (needed for EMA + ATR)
@@ -383,43 +527,80 @@ def run_scan(notify=False):
             debug_info.append(f"{ticker}: no live price")
             continue
 
-        price = quote['price']
-        day_high = quote.get('day_high') or (float(closes[-1]) if len(closes) > 0 else None)
-        prev_day_high = quote.get('prev_close')  # rough proxy for prior day high
+        price      = quote['price']
+        day_high   = float(quote.get('day_high')) if quote.get('day_high') else None
+        day_low    = float(quote.get('day_low'))  if quote.get('day_low')  else None
 
-        # Use yesterday's daily high as prior day high
-        if len(highs) >= 2:
-            prev_day_high = float(highs[-2])
+        # Prior day high/low = yesterday's OHLC bar (index -2, since -1 is today so far)
+        prev_day_high = float(highs[-2]) if len(highs) >= 2 and not np.isnan(highs[-2]) else None
+        prev_day_low  = float(lows[-2])  if len(lows)  >= 2 and not np.isnan(lows[-2])  else None
 
-        # Premarket high (04:00–09:30 ET) — used for the PMH breakout check
-        # instead of today's full-session intraday high (which makes above_pmh_ok
-        # impossible to satisfy on live scans; see SKILL.md "Known Issues").
+        # Premarket high and low (04:00–09:30 ET)
         premarket_high = get_premarket_high(ticker) or 0
-        result, err = check_tjl(ticker, name, price, day_high, prev_day_high,
-                                 highs, lows, closes, premarket_high=premarket_high)
-        if err:
-            debug_info.append(err)
+        premarket_low  = get_premarket_low(ticker)  or 0
+
+        # ── LONG check (suppressed in BEARISH regime) ────────────────────────
+        if regime != "BEARISH":
+            result, err = check_tjl(
+                ticker, name, price, day_high, prev_day_high,
+                highs, lows, closes, premarket_high=premarket_high
+            )
+            if err:
+                debug_info.append(err)
+            else:
+                long_signals.append(result)
         else:
-            signals.append(result)
+            debug_info.append(f"{ticker}: LONG suppressed (BEARISH regime)")
+
+        # ── SHORT check (suppressed in BULLISH regime) ───────────────────────
+        if regime != "BULLISH":
+            result, err = check_tjs(
+                ticker, name, price, day_low, prev_day_low,
+                highs, lows, closes, premarket_low=premarket_low
+            )
+            if err:
+                debug_info.append(err)
+            else:
+                short_signals.append(result)
+        else:
+            debug_info.append(f"{ticker}: SHORT suppressed (BULLISH regime)")
+
+    all_signals = long_signals + short_signals
 
     # Step 4: Print results
     log("")
-    if signals:
+    if all_signals:
         log("=" * 70)
         log("  🚨 US TJL SIGNALS")
         log("=" * 70)
-        log(f"{'Ticker':<12} {'Name':<16} {'Price':>8} {'EMA9':>8} {'EMA20':>8} "
-            f"{'EMA50':>8} {'ATR':>7} {'PMH':>8} {'SL':>8} {'TP':>8} {'R:R':>5}")
-        log("-" * 105)
-        for s in sorted(signals, key=lambda x: -x['rr_ratio']):
-            log(f"{s['ticker']:<12} {s['name']:<16} {s['price']:>8.2f} {s['e9']:>8.2f} "
-                f"{s['e20']:>8.2f} {s['e50']:>8.2f} {s['atr']:>7.3f} {s['pmh']:>8.2f} "
-                f"{s['sl']:>8.2f} {s['tp']:>8.2f} {s['rr_ratio']:>5.1f}")
+
+        if long_signals:
+            log("")
+            log("  🟢 LONG")
+            log(f"  {'Ticker':<10} {'Name':<14} {'Price':>8} {'EMA9':>8} {'EMA20':>8} {'EMA50':>8} "
+                f"{'PMH':>8} {'SL':>8} {'TP':>8} {'R:R':>5}")
+            log("  " + "-" * 97)
+            for s in sorted(long_signals, key=lambda x: -x['rr_ratio']):
+                log(f"  {s['ticker']:<10} {s['name']:<14} {s['price']:>8.2f} {s['e9']:>8.2f} "
+                    f"{s['e20']:>8.2f} {s['e50']:>8.2f} {s['pmh']:>8.2f} "
+                    f"{s['sl']:>8.2f} {s['tp']:>8.2f} {s['rr_ratio']:>5.1f}")
+
+        if short_signals:
+            log("")
+            log("  🔴 SHORT")
+            log(f"  {'Ticker':<10} {'Name':<14} {'Price':>8} {'EMA9':>8} {'EMA20':>8} {'EMA50':>8} "
+                f"{'PML':>8} {'SL':>8} {'TP':>8} {'R:R':>5}")
+            log("  " + "-" * 97)
+            for s in sorted(short_signals, key=lambda x: -x['rr_ratio']):
+                log(f"  {s['ticker']:<10} {s['name']:<14} {s['price']:>8.2f} {s['e9']:>8.2f} "
+                    f"{s['e20']:>8.2f} {s['e50']:>8.2f} {s['pml']:>8.2f} "
+                    f"{s['sl']:>8.2f} {s['tp']:>8.2f} {s['rr_ratio']:>5.1f}")
+
         log("")
-        log(f"  ✅ {len(signals)} signal(s)")
+        log(f"  ✅ {len(all_signals)} signal(s) ({len(long_signals)} LONG, {len(short_signals)} SHORT)")
     else:
         log("=" * 70)
-        log("  ⏳ NO TJL SIGNALS — all conditions fail")
+        log("  ⏳ NO TJL SIGNALS — all conditions fail for all tickers")
         log("=" * 70)
 
     # Debug info
@@ -436,17 +617,18 @@ def run_scan(notify=False):
             "scanned_at": now_str,
             "source": "Yahoo Finance",
             "regime": regime,
-            "signals": signals,
+            "signals": all_signals,
+            "longs": long_signals,
+            "shorts": short_signals,
             "debug": debug_info[:20],
         }, f, indent=2)
     log(f"📁 Saved to {out_file}")
 
     # Step 6: Discord
-    post_discord(signals, now_str, regime)
+    post_discord(all_signals, now_str, regime)
 
     # Step 7: Optional Telegram notification
     if notify:
-        # Re-read the JSON we just wrote to get the structured payload
         try:
             with open(out_file) as f:
                 payload = json.load(f)
@@ -454,7 +636,7 @@ def run_scan(notify=False):
         except Exception as e:
             log(f"⚠ notify failed: {e}")
 
-    return signals
+    return all_signals
 
 
 def main():
