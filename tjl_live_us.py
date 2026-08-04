@@ -207,7 +207,8 @@ def get_premarket_high(ticker):
         return None
 
 
-def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes):
+def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
+                 premarket_high=0):
     """Check all 3 TJL conditions. Returns signal dict or None."""
     if len(closes) < 60:
         return None, f"{ticker}: insufficient bars ({len(closes)})"
@@ -220,9 +221,14 @@ def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes)
     if atr is None or np.isnan(atr):
         return None, f"{ticker}: ATR error"
 
-    # PMH: use max of prior day high and today's premarket high
+    # PMH: max of prior day high and today's PREMARKET high (4am-9:30am ET).
+    # We deliberately exclude the regular-session intraday high here so the
+    # "price must be above yesterday's high" check can actually fire during
+    # the session. See SKILL.md "Known Issues / Strategy Logic" for the
+    # rationale.
     pmh = prev_day_high or 0
-    pmh = max(pmh, day_high) if day_high else pmh
+    if premarket_high and premarket_high > pmh:
+        pmh = premarket_high
 
     stack_ok     = (e9 > e20 > e50)
     near_ema_ok  = (abs(price - e9) / e9 <= NEAR_EMA_PCT)
@@ -306,7 +312,35 @@ def post_discord(signals, now_str, regime):
     log(f"Discord: HTTP {status}")
 
 
-def run_scan():
+
+def notify_telegram(payload):
+    """Send scan summary to Telegram via `hermes send`."""
+    import subprocess
+    regime_emoji = {"BULLISH": "🟢", "BEARISH": "🔴"}.get(payload.get("regime", ""), "⚪")
+    lines = [
+        f"📊 *TJL Scan (yfinance)* — {payload['scanned_at']}",
+        f"Regime: {regime_emoji} *{payload.get('regime', 'UNKNOWN')}*",
+        f"Signals: *{len(payload.get('signals', []))}*  Debug: {len(payload.get('debug', []))}",
+    ]
+    if payload.get("signals"):
+        lines += ["", "```", f"{'Ticker':<8} {'Price':>8} {'EMA9':>8} {'R:R':>5}", "-" * 40]
+        for s in sorted(payload["signals"], key=lambda x: -x["rr_ratio"]):
+            lines.append(f"{s['ticker']:<8} {s['price']:>8.2f} {s['e9']:>8.2f} {s['rr_ratio']:>5.1f}")
+        lines.append("```")
+    else:
+        lines.append("⏳ No signals.")
+    text = "\n".join(lines)
+    try:
+        r = subprocess.run(["hermes", "send", "--to", "telegram"],
+                           input=text, text=True, capture_output=True, timeout=30)
+        log(f"📨 Telegram: {r.stdout.strip() or r.stderr.strip()}")
+    except Exception as e:
+        log(f"⚠ Telegram delivery failed: {e}")
+
+
+
+
+def run_scan(notify=False):
     now_et = datetime.now(ET)
     now_str = now_et.strftime("%Y-%m-%d %H:%M:%S ET")
     today_str = now_et.strftime("%Y-%m-%d")
@@ -357,7 +391,12 @@ def run_scan():
         if len(highs) >= 2:
             prev_day_high = float(highs[-2])
 
-        result, err = check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes)
+        # Premarket high (04:00–09:30 ET) — used for the PMH breakout check
+        # instead of today's full-session intraday high (which makes above_pmh_ok
+        # impossible to satisfy on live scans; see SKILL.md "Known Issues").
+        premarket_high = get_premarket_high(ticker) or 0
+        result, err = check_tjl(ticker, name, price, day_high, prev_day_high,
+                                 highs, lows, closes, premarket_high=premarket_high)
         if err:
             debug_info.append(err)
         else:
@@ -405,6 +444,16 @@ def run_scan():
     # Step 6: Discord
     post_discord(signals, now_str, regime)
 
+    # Step 7: Optional Telegram notification
+    if notify:
+        # Re-read the JSON we just wrote to get the structured payload
+        try:
+            with open(out_file) as f:
+                payload = json.load(f)
+            notify_telegram(payload)
+        except Exception as e:
+            log(f"⚠ notify failed: {e}")
+
     return signals
 
 
@@ -413,6 +462,8 @@ def main():
     parser.add_argument("--continuous", action="store_true", help="Run continuously")
     parser.add_argument("--interval", type=int, default=SCAN_INTERVAL,
                         help=f"Seconds between scans (default {SCAN_INTERVAL})")
+    parser.add_argument("--notify", action="store_true",
+                        help="Send results to Telegram after each scan")
     args = parser.parse_args()
 
     log(f"TJL Live US Scanner | yfinance | Press Ctrl+C to stop")
@@ -423,13 +474,13 @@ def main():
         log(f"CONTINUOUS mode — interval {args.interval}s")
         try:
             while True:
-                run_scan()
+                run_scan(notify=args.notify)
                 log(f"Sleeping {args.interval}s...")
                 time.sleep(args.interval)
         except KeyboardInterrupt:
             log("Stopped.")
     else:
-        run_scan()
+        run_scan(notify=args.notify)
 
 
 if __name__ == "__main__":
