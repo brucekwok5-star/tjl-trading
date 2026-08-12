@@ -747,8 +747,9 @@ def model_r_signal(highs, lows, closes, volumes, opens, bar_idx):
     LONG: price > upper_band (EMA+ATR) AND RSI > 30 (not oversold).
     SHORT: price < lower_band (EMA-ATR) AND RSI < 70 (not overbought).
     Exit: trailing ATR stop.
+    Warmup: 60 bars (EMA30=30 + ATR=14 + buffer).
     """
-    if bar_idx < 35:
+    if bar_idx < 60:
         return None
     h = np.array(highs[:bar_idx+1])
     l = np.array(lows[:bar_idx+1])
@@ -983,16 +984,15 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
         'L': model_l_signal, 'M': model_m_signal,
         'N': model_n_signal, 'O': model_o_signal,
         'P': model_p_signal, 'Q': model_q_signal,
+        'R': model_r_signal, 'S': model_s_signal, 'T': model_t_signal,
     }
-    # Restrict to ACTIVE_MODELS (set in module init from --model flag).
-    # This is what enforces "one stock, one model" — no cherry-picking.
+    # Models L–T pass (highs, lows, closes, volumes, opens, bar_idx)
+    # Models D–K pass (highs, lows, closes, volumes, bar_idx)
     MODEL_FNS = [(letter, ALL_MODEL_FNS[letter]) for letter in ACTIVE_MODELS
                  if letter in ALL_MODEL_FNS]
-
     for bar_idx in range(start_bar, n - 1):
         for model_name, signal_fn in MODEL_FNS:
-            # New models L/M/N/O/P/Q need opens too
-            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q'):
+            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'):
                 sig = signal_fn(highs, lows, closes, volumes, opens, bar_idx)
             else:
                 sig = signal_fn(highs, lows, closes, volumes, bar_idx)
@@ -1115,8 +1115,11 @@ def run_backtest():
         'O': 'Gap Fill (Daytrade)',
         'P': 'Donchian Breakout + Trend (Swing)',
         'Q': 'ADX Trend Strength (Swing)',
+        'R': 'Keltner Channel + RSI Breakout',
+        'S': 'Ichimoku Cloud Breakout',
+        'T': 'Mean Reversion z-score',
     }
-    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']:
+    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']:
         model_trades = [t for t in all_trades if t['model'] == model]
         if not model_trades:
             continue
@@ -1138,7 +1141,7 @@ def run_backtest():
     print("\n" + "=" * 70)
     print("PER-STOCK BREAKDOWN (all models)")
     print("=" * 70)
-    for name, code in BACKTEST_STOCKS:
+    for name, code in ACTIVE_STOCKS:
         stock_trades = [t for t in all_trades if t['stock'] == name]
         if not stock_trades:
             print(f"\n  {name}: no signals")
