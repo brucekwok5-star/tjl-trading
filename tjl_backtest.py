@@ -114,18 +114,17 @@ if hasattr(args, 'model') and args.model:
 else:
     ACTIVE_MODELS = VALID_MODELS[:]
 
-# Build the runtime list of stocks. If --ticker is given, restrict to that one.
+# Build the runtime list of stocks. If --ticker is given, allow ANY HK ticker
+# (not just BACKTEST_STOCKS members) so we can backtest any live-signal stock.
 ACTIVE_STOCKS = BACKTEST_STOCKS[:]
 if hasattr(args, 'ticker') and args.ticker:
     ticker_code = args.ticker.zfill(5)
     matching = [(n, c) for n, c in BACKTEST_STOCKS if n == ticker_code]
-    if not matching:
-        sys.stderr.write(
-            f"ERROR: --ticker {ticker_code} not in BACKTEST_STOCKS. "
-            f"Known: {[n for n, _ in BACKTEST_STOCKS]}\n"
-        )
-        sys.exit(1)
-    ACTIVE_STOCKS = matching
+    if matching:
+        ACTIVE_STOCKS = matching
+    else:
+        # Ticker not in default universe — backtest it on demand.
+        ACTIVE_STOCKS = [(ticker_code, f"HK.{ticker_code}")]
 
 # ── Indicator helpers ─────────────────────────────────────────────────────────
 
