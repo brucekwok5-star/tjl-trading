@@ -20,6 +20,7 @@ Usage:
 Environment:
   DISCORD_WEBHOOK_HK_TJL — Discord webhook URL. If set, posts results.
 """
+from tjl_model_tracker import ModelTracker
 import sys
 import futu as ft
 from futu.quote.open_quote_context import OpenQuoteContext, KLType, SubType
@@ -1281,6 +1282,12 @@ def run_scan(notify=False):
     ctx = ft.OpenQuoteContext(host='127.0.0.1', port=11111)
     time.sleep(0.5)
 
+    # ── Model Effectiveness Tracker ────────────────────────────────────────
+    # Resolve any open positions that hit TP/SL since last scan
+    tracker = ModelTracker()
+    tracker.check_resolved(ctx)
+    # ───────────────────────────────────────────────────────────────────────
+
     # Step 1: Live quotes
     log(f"Fetching live quotes ({len(ALL_CODES)} tickers)...")
     quotes = get_live_quotes(ctx, ALL_CODES)
@@ -1590,23 +1597,55 @@ def run_scan(notify=False):
     log_table(short_signals, "SHORT", "PML",  "pml",  None)
 
     all_signals = long_signals + short_signals
-    if not all_signals:
+
+    # ── Record ALL signals (including DROP) in tracker ─────────────────────
+    # This builds the rolling history; filtering to active models happens below
+    tracker.record_signals(all_signals)
+    active_models = tracker.get_active_models()
+
+    # Filter: only dispatch signals from models that cleared WR/PF thresholds
+    effective_signals = [s for s in all_signals if s.get('signal_model') in active_models]
+    effective_long  = [s for s in long_signals  if s.get('signal_model') in active_models]
+    effective_short = [s for s in short_signals if s.get('signal_model') in active_models]
+
+    # Log which models are DROP this scan
+    drop_models = tracker.get_drop_models()
+    if drop_models:
+        log(f"[Tracker] DROP this scan: {sorted(drop_models)} — {len(effective_signals)} effective signal(s)")
+
+    # ── Print results ──────────────────────────────────────────────────────
+    log_table(effective_long,  "LONG",  "PMH",  "pmh",  None)
+    log_table(effective_short, "SHORT", "PML",  "pml",  None)
+
+    if not effective_signals:
         log("")
         log("=" * 65)
         log("  ⏳ NO SIGNALS — ALL CONDITIONS FAIL")
         log("=" * 65)
 
-    # Save combined signals to JSON
-    if all_signals:
+    # Save effective signals to JSON (includes DROP flag for post-scan review)
+    if effective_signals:
         out_file = os.path.expanduser(f"~/tjl_live_signals_{today_str}.json")
         with open(out_file, "w") as f:
+            # Annotate each signal with whether it was filtered
+            all_filtered_models = set(s.get('signal_model') for s in all_signals)
+            annotated = []
+            for s in effective_signals:
+                s2 = dict(s)
+                s2['_status'] = 'EFFECTIVE'
+                annotated.append(s2)
+            # Also record what was dropped this scan
+            dropped_this_scan = [dict(s, _status='DROPPED', _drop_reason='WR<30% or PF<=1.0')
+                                 for s in all_signals
+                                 if s.get('signal_model') not in active_models]
             json.dump({
                 "scanned_at": now_str,
                 "source": "Futu OpenD",
                 "regime": regime,
                 "bear_pct": round(bear_pct, 3),
                 "bull_pct": round(bull_pct, 3),
-                "signals": all_signals,
+                "drop_models": sorted(drop_models),
+                "signals": annotated + dropped_this_scan,
             }, f, indent=2, default=str)
         log(f"📁 Saved to {out_file}")
 
@@ -1615,14 +1654,19 @@ def run_scan(notify=False):
     for d in debug_info[:15]:
         log(f"  {d}")
 
-    # Step 6: Post to Discord
-    post_discord(all_signals, now_str)
+    # ── Post results ────────────────────────────────────────────────────────
+    post_discord(effective_signals, now_str)
 
     # Step 7: Optional Telegram
     if notify:
-        notify_telegram({"scanned_at": now_str, "signals": all_signals, "regime": regime})
+        notify_telegram({"scanned_at": now_str, "signals": effective_signals,
+                         "regime": regime, "drop_models": sorted(drop_models)})
 
-    return all_signals
+    # Log tracker stats + close
+    tracker.log_status()
+    tracker.close()
+
+    return effective_signals
 
 
 def main():
