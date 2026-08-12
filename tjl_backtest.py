@@ -149,12 +149,13 @@ def calc_bb_bands(closes, period=20, num_std=2):
     return upper, mid, lower, bandwidth
 
 def get_bars(ctx, code, ktype=ft.KLType.K_DAY, count=100):
-    """Fetch historical K-lines. Returns (highs, lows, closes, volumes)."""
+    """Fetch historical K-lines. Returns (highs, lows, closes, volumes, opens)."""
     ret, kl, _ = ctx.request_history_kline(code, ktype=ktype, max_count=count)
     if ret != 0 or kl is None or kl.empty:
-        return None, None, None, None
+        return None, None, None, None, None
     kl = kl.sort_values('time_key').reset_index(drop=True)
-    return kl['high'].values, kl['low'].values, kl['close'].values, kl['volume'].values
+    return (kl['high'].values, kl['low'].values, kl['close'].values,
+            kl['volume'].values, kl['open'].values)
 
 # ── Model signals (bar-by-bar, exclude last bar = today) ─────────────────────
 
@@ -447,6 +448,262 @@ def model_k_signal(highs, lows, closes, volumes, bar_idx):
             'vwap': round(vwap, 3)}
 
 
+def model_l_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model L: VWAP Reversion (Daytrade).
+    LONG: price < VWAP*0.985 AND RSI<35 — price dislocated below VWAP, oversold.
+    SHORT: price > VWAP*1.015 AND RSI>65 — price dislocated above VWAP, overbought.
+    Exit: TP=VWAP, SL=1.5 ATR.
+    """
+    if bar_idx < 22:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    price = c[-1]
+    vwap = calc_vwap(h, l, c, v)
+    atr = calc_atr(h, l, c)
+    if vwap is None or atr is None or vwap <= 0:
+        return None
+    rsi = calc_rsi(c)
+    if rsi is None:
+        return None
+    long_fire  = (price < vwap * 0.985) and (rsi < 35)
+    short_fire = (price > vwap * 1.015) and (rsi > 65)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr,
+            'tp': vwap,
+            'atr': atr, 'vwap': round(vwap, 3), 'rsi': round(rsi, 1)}
+
+
+def model_m_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model M: EMA Ribbon Compression (Swing).
+    LONG: EMA9>EMA21>EMA50 AND spread(EMA9,EMA50)<1% AND price breaks above EMA9.
+    SHORT: EMA9<EMA21<EMA50 AND spread<1% AND price breaks below EMA9.
+    Exit: SL=EMA50, TP=3 ATR.
+    """
+    if bar_idx < 55:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    price = c[-1]
+    prev_close = c[-2]
+    atr = calc_atr(h, l, c)
+    if atr is None:
+        return None
+    s = pd.Series(c)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e21 = float(s.ewm(span=21, adjust=False).mean().iloc[-1])
+    e50 = float(s.ewm(span=50, adjust=False).mean().iloc[-1])
+    if any(np.isnan(x) or x <= 0 for x in [e9, e21, e50]):
+        return None
+    spread_pct = abs(e9 - e50) / e50 * 100
+    compressed = spread_pct < 1.0
+    # Bull/bear stack
+    bull_stack = e9 > e21 > e50
+    bear_stack = e9 < e21 < e50
+    # Breakout: prev close below EMA9, current close above EMA9
+    long_breakout  = (prev_close <= e9) and (price > e9)
+    short_breakout = (prev_close >= e9) and (price < e9)
+    long_fire  = compressed and bull_stack and long_breakout
+    short_fire = compressed and bear_stack and short_breakout
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': e50,
+            'tp': price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr,
+            'atr': atr, 'e9': round(e9, 3), 'e21': round(e21, 3),
+            'e50': round(e50, 3), 'spread': round(spread_pct, 2)}
+
+
+def model_n_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model N: RSI Divergence Reversal (Swing).
+    LONG: price[-1]<price[-5] AND RSI[-1]>RSI[-5] AND RSI<45 (bullish divergence).
+    SHORT: price[-1]>price[-5] AND RSI[-1]<RSI[-5] AND RSI>55 (bearish divergence).
+    Exit: SL=recent swing low/high + 0.5 ATR, TP=2.5 ATR.
+    """
+    if bar_idx < 22:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None:
+        return None
+    rsi_now  = calc_rsi(c)
+    rsi_5ago = calc_rsi(c[:-5]) if len(c) > 20 else None
+    if rsi_now is None or rsi_5ago is None:
+        return None
+    price_now   = c[-1]
+    price_5ago  = c[-6]
+    # Bullish divergence: price lower low, RSI higher low
+    long_fire  = (price_now < price_5ago) and (rsi_now > rsi_5ago) and (rsi_now < 45)
+    short_fire = (price_now > price_5ago) and (rsi_now < rsi_5ago) and (rsi_now > 55)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    # SL at recent swing low (for LONG) or high (for SHORT) + 0.5 ATR
+    lookback_swing = min(10, len(l))
+    if direction == 'LONG':
+        swing = float(np.min(l[-lookback_swing:]))
+        sl = swing - 0.5 * atr
+    else:
+        swing = float(np.max(h[-lookback_swing:]))
+        sl = swing + 0.5 * atr
+    return {'direction': direction, 'price': price,
+            'sl': sl,
+            'tp': price + 2.5 * atr if direction == 'LONG' else price - 2.5 * atr,
+            'atr': atr, 'rsi': round(rsi_now, 1), 'rsi_5ago': round(rsi_5ago, 1)}
+
+
+def model_o_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model O: Gap Fill (Daytrade).
+    LONG (gap up fill): open > prev_close*1.02 AND close < prev_close*1.01
+         -> price gapped up then pulled back, buy expecting fill back up.
+    SHORT (gap down fill): open < prev_close*0.98 AND close > prev_close*0.99
+         -> price gapped down then bounced, short expecting fill back down.
+    Exit: TP=prev_close (full gap fill), SL=1 ATR.
+    """
+    if bar_idx < 5:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    o = opens[:bar_idx+1]
+    price = c[-1]
+    open_price = o[-1]
+    prev_close = c[-2]
+    atr = calc_atr(h, l, c)
+    if atr is None or prev_close <= 0:
+        return None
+    gap_up   = open_price > prev_close * 1.02
+    gap_down = open_price < prev_close * 0.98
+    # After gap, price has started pulling back toward prev_close
+    pulled_back_up   = gap_up   and (price < prev_close * 1.01)
+    pulled_back_down = gap_down and (price > prev_close * 0.99)
+    long_fire  = pulled_back_up
+    short_fire = pulled_back_down
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.0 * atr if direction == 'LONG' else price + 1.0 * atr,
+            'tp': prev_close,  # full gap fill target
+            'atr': atr, 'open': round(open_price, 3),
+            'prev_close': round(prev_close, 3)}
+
+
+def model_p_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model P: Donchian Breakout with Trend + Volume Filter.
+    LONG: 20d high breakout + EMA50 sloping up + vol > 2x avg.
+    SHORT: 20d low breakdown + EMA50 sloping down + vol > 2x avg.
+    Exit: TP=3 ATR, SL=1 ATR.
+    """
+    if bar_idx < 55:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None:
+        return None
+    # Need at least 50 bars for EMA50 slope
+    if len(c) < 51:
+        return None
+    s = pd.Series(c)
+    e50_now = float(s.ewm(span=50, adjust=False).mean().iloc[-1])
+    e50_5ago = float(s.ewm(span=50, adjust=False).mean().iloc[-6])
+    if any(np.isnan(x) for x in [e50_now, e50_5ago]) or e50_5ago <= 0:
+        return None
+    slope_pct = (e50_now - e50_5ago) / e50_5ago * 100  # 5-bar slope
+    # 20-day breakout (exclude today)
+    high_20 = float(np.max(h[-21:-1]))
+    low_20  = float(np.min(l[-21:-1]))
+    avg_vol20 = float(np.mean(v[-21:-1]))
+    vol_now = v[-1]
+    if avg_vol20 <= 0:
+        return None
+    vol_ratio = vol_now / avg_vol20
+    long_fire  = (price > high_20) and (slope_pct > 0.5) and (vol_ratio >= 2.0)
+    short_fire = (price < low_20)  and (slope_pct < -0.5) and (vol_ratio >= 2.0)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.0 * atr if direction == 'LONG' else price + 1.0 * atr,
+            'tp': price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr,
+            'atr': atr, 'high_20': round(high_20, 3), 'e50_slope': round(slope_pct, 2),
+            'vol_ratio': round(vol_ratio, 2)}
+
+
+def model_q_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model Q: ADX Trend Strength Entry (strict).
+    LONG: ADX > 30 AND +DI > -DI AND price > EMA200 AND EMA20 > EMA50.
+    SHORT: ADX > 30 AND -DI > +DI AND price < EMA200 AND EMA20 < EMA50.
+    Exit: SL=1.5 ATR, TP=2.5 ATR.
+    """
+    if bar_idx < 205:
+        return None
+    h = highs[:bar_idx+1]; l = lows[:bar_idx+1]
+    c = closes[:bar_idx+1]; v = volumes[:bar_idx+1]
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None:
+        return None
+    s = pd.Series(c)
+    e20 = float(s.ewm(span=20, adjust=False).mean().iloc[-1])
+    e50 = float(s.ewm(span=50, adjust=False).mean().iloc[-1])
+    e200 = float(s.rolling(200).mean().iloc[-1])
+    if any(np.isnan(x) or x <= 0 for x in [e20, e50, e200]):
+        return None
+    # Compute ADX (14) from highs/lows/closes
+    highs_arr = np.array(h, dtype=float)
+    lows_arr  = np.array(l, dtype=float)
+    closes_arr = np.array(c, dtype=float)
+    tr = np.maximum(highs_arr[1:] - lows_arr[1:],
+                    np.abs(highs_arr[1:] - closes_arr[:-1]),
+                    np.abs(lows_arr[1:] - closes_arr[:-1]))
+    up_move = highs_arr[1:] - highs_arr[:-1]
+    down_move = lows_arr[:-1] - lows_arr[1:]
+    plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0.0)
+    minus_dm = np.where((down_move > up_move) & (down_move > 0), down_move, 0.0)
+    period = 14
+    atr_smooth = np.zeros(len(tr))
+    plus_dm_smooth = np.zeros(len(tr))
+    minus_dm_smooth = np.zeros(len(tr))
+    atr_smooth[period-1] = np.mean(tr[:period])
+    plus_dm_smooth[period-1] = np.mean(plus_dm[:period])
+    minus_dm_smooth[period-1] = np.mean(minus_dm[:period])
+    for i in range(period, len(tr)):
+        atr_smooth[i] = atr_smooth[i-1] * (period-1)/period + tr[i]
+        plus_dm_smooth[i] = plus_dm_smooth[i-1] * (period-1)/period + plus_dm[i]
+        minus_dm_smooth[i] = minus_dm_smooth[i-1] * (period-1)/period + minus_dm[i]
+    plus_di = 100 * plus_dm_smooth / np.where(atr_smooth > 0, atr_smooth, 1)
+    minus_di = 100 * minus_dm_smooth / np.where(atr_smooth > 0, atr_smooth, 1)
+    dx = 100 * np.abs(plus_di - minus_di) / np.where(plus_di + minus_di > 0, plus_di + minus_di, 1)
+    adx = np.zeros(len(dx))
+    adx[period*2-2] = np.mean(dx[period-1:period*2-1])
+    for i in range(period*2-1, len(dx)):
+        adx[i] = adx[i-1] * (period-1)/period + dx[i]
+    adx_now = float(adx[-1])
+    plus_di_now = float(plus_di[-1])
+    minus_di_now = float(minus_di[-1])
+    if np.isnan(adx_now):
+        return None
+    # Stricter ADX + EMA200 macro filter
+    long_fire  = (adx_now > 30) and (plus_di_now > minus_di_now) and (price > e200) and (e20 > e50)
+    short_fire = (adx_now > 30) and (minus_di_now > plus_di_now) and (price < e200) and (e20 < e50)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr,
+            'tp': price + 2.5 * atr if direction == 'LONG' else price - 2.5 * atr,
+            'atr': atr, 'adx': round(adx_now, 1),
+            'plus_di': round(plus_di_now, 1), 'minus_di': round(minus_di_now, 1)}
+
+
 # ── Backtest engine ───────────────────────────────────────────────────────────
 
 def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_hold=None):
@@ -461,7 +718,7 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
     max_hold   = max_hold   or MAX_HOLD
     ctx = ft.OpenQuoteContext(host='127.0.0.1', port=11111)
     time.sleep(0.3)
-    highs, lows, closes, volumes = get_bars(ctx, code, ktype=ktype, count=lookback)
+    highs, lows, closes, volumes, opens = get_bars(ctx, code, ktype=ktype, count=lookback)
     ctx.close()
     if highs is None or len(closes) < 60:
         return []
@@ -477,8 +734,15 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
             ('F', model_f_signal), ('G', model_g_signal),
             ('H', model_h_signal), ('I', model_i_signal),
             ('J', model_j_signal), ('K', model_k_signal),
+            ('L', model_l_signal), ('M', model_m_signal),
+            ('N', model_n_signal), ('O', model_o_signal),
+            ('P', model_p_signal), ('Q', model_q_signal),
         ]:
-            sig = signal_fn(highs, lows, closes, volumes, bar_idx)
+            # New models L/M/N/O/P/Q need opens too
+            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q'):
+                sig = signal_fn(highs, lows, closes, volumes, opens, bar_idx)
+            else:
+                sig = signal_fn(highs, lows, closes, volumes, bar_idx)
             if sig is None:
                 continue
 
@@ -587,8 +851,14 @@ def run_backtest():
         'I': 'SHM 63-WMA Pullback',
         'J': 'Follow Money (SMA150/200)',
         'K': 'EMA+VWAP+BB Session Filter',
+        'L': 'VWAP Reversion (Daytrade)',
+        'M': 'EMA Ribbon Compression (Swing)',
+        'N': 'RSI Divergence Reversal (Swing)',
+        'O': 'Gap Fill (Daytrade)',
+        'P': 'Donchian Breakout + Trend (Swing)',
+        'Q': 'ADX Trend Strength (Swing)',
     }
-    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']:
+    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']:
         model_trades = [t for t in all_trades if t['model'] == model]
         if not model_trades:
             continue
