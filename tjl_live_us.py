@@ -137,6 +137,60 @@ def calc_emas(closes):
     return e9, e20, e50
 
 
+
+def calc_bb_bands(closes, period=20, num_std=2):
+    """Return (upper, middle, lower, bandwidth) as numpy arrays."""
+    if len(closes) < period:
+        return None, None, None, None
+    s = pd.Series(closes)
+    mid = s.rolling(period).mean().values
+    std = s.rolling(period).std().values
+    upper = mid + num_std * std
+    lower = mid - num_std * std
+    bandwidth = (upper - lower) / mid * 100  # as % of midpoint
+    return upper, mid, lower, bandwidth
+
+
+def calc_rsi(closes, period=14):
+    """Compute RSI(14) from close prices."""
+    if len(closes) < period + 1:
+        return None
+    deltas = np.diff(closes)
+    gains = np.where(deltas > 0, deltas, 0)
+    losses = np.where(deltas < 0, -deltas, 0)
+    avg_gain = np.mean(gains[-period:])
+    avg_loss = np.mean(losses[-period:])
+    if avg_loss == 0:
+        return 100.0
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return float(rsi)
+
+
+def calc_vwap(highs, lows, closes, volumes):
+    """Compute VWAP from daily bars (high/low/close typical, weighted by volume)."""
+    if len(highs) < 2 or len(volumes) < 2:
+        return None
+    typical = (np.array(highs) + np.array(lows) + np.array(closes)) / 3.0
+    vol = np.array(volumes, dtype=float)
+    cum_pv = np.cumsum(typical * vol)
+    cum_vol = np.cumsum(vol)
+    # VWAP = cumulative price*vol / cumulative vol; align to last bar
+    vwap = cum_pv / cum_vol
+    return float(vwap[-1])
+
+
+def calc_vwap_bars(highs, lows, closes, volumes):
+    """VWAP over a sliding window (typical = full day or N bars)."""
+    typical = (np.array(highs) + np.array(lows) + np.array(closes)) / 3.0
+    cumvol = np.cumsum(np.array(volumes))
+    cumtp = np.cumsum(typical * np.array(volumes))
+    return cumtp / cumvol
+
+
+
+
+
 def calc_atr(highs, lows, closes, period=ATR_PERIOD):
     trs = []
     for i in range(1, len(highs)):
@@ -161,35 +215,61 @@ def get_daily_bars(ticker, count=80):
         hist = hist[hist['Close'].notna()]
         if hist.empty or len(hist) < 30:
             return None, None, None
-        return hist['High'].values, hist['Low'].values, hist['Close'].values
+        return hist['High'].values, hist['Low'].values, hist['Close'].values, hist['Volume'].values
     except:
         return None, None, None
 
 
 def get_live_price(ticker):
-    """Get current price from yfinance (15min delay for non-premium)."""
+    """Get current price from yfinance (15min delay for non-premium).
+
+    Priority: fast_info.lastPrice → 1m bar override (post-market/weekend stale cache)
+    → daily history fallback.
+    """
     try:
         tk = yf.Ticker(ticker)
         info = tk.fast_info
-        price = info.get('regularMarketPrice') or info.get('previousClose')
-        prev_close = info.get('previousClose')
-        day_high = info.get('dayHigh')
-        day_low = info.get('dayLow')
+        price      = info.get('lastPrice')              or info.get('regularMarketPrice')
+        prev_close = info.get('regularMarketPreviousClose') or info.get('previousClose')
+        day_high   = info.get('dayHigh')   or info.get('regularMarketDayHigh')
+        day_low    = info.get('dayLow')    or info.get('regularMarketDayLow')
+
+        # ── 1m bar override ───────────────────────────────────────────────────
+        # If lastPrice ≈ prev_close the market is closed (no new trades).
+        # Use the last 1m bar to get the true last-trade price.
+        try:
+            m1 = tk.history(period="1d", interval="1m")
+            if m1 is not None and not m1.empty and len(m1) >= 2:
+                m1_close = float(m1.iloc[-1]['Close'])
+                m1_high  = float(m1['High'].max())
+                m1_low   = float(m1['Low'].min())
+                p  = float(price)       if price      is not None else None
+                pc = float(prev_close) if prev_close is not None else None
+                if p is not None and pc is not None and abs(p - pc) < 0.01:
+                    price = m1_close
+                elif price is None:
+                    price = m1_close
+                day_high = max(float(day_high or 0), m1_high)
+                day_low  = min(float(day_low  or 999999), m1_low)
+        except Exception:
+            pass  # 1m bars are best-effort
+
+        # ── Final history fallback ───────────────────────────────────────────
         if price is None:
-            # fallback to history
             hist = tk.history(period="2d")
             if len(hist) >= 2:
-                price = float(hist['Close'].iloc[-1])
+                price      = float(hist['Close'].iloc[-1])
                 prev_close = float(hist['Close'].iloc[-2])
-                day_high = float(hist['High'].iloc[-1])
-                day_low = float(hist['Low'].iloc[-1])
+                day_high   = float(hist['High'].iloc[-1])
+                day_low    = float(hist['Low'].iloc[-1])
             else:
                 return None
+
         return {
-            'price': float(price),
+            'price':      float(price),
             'prev_close': float(prev_close) if prev_close else None,
-            'day_high': float(day_high) if day_high else None,
-            'day_low': float(day_low) if day_low else None,
+            'day_high':   float(day_high)   if day_high   else None,
+            'day_low':    float(day_low)    if day_low    else None,
         }
     except Exception as e:
         return None
@@ -225,6 +305,593 @@ def get_premarket_low(ticker):
         return float(bars[mask]['Low'].min())
     except:
         return None
+
+
+
+
+def check_tjl_model_b(price, highs, lows, closes, today_high):
+    """Model B (HT Momentum): above SMA200 + above PMH + above today's HOD."""
+    if len(closes) < 200:
+        return None
+    sma200 = np.mean(closes[-200:])
+    if np.isnan(sma200):
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+    pmh = today_high if today_high else price
+    hod = today_high if today_high else price
+    above_sma200_ok = (price > sma200)
+    above_pmh_ok    = (price > pmh + PMH_BUF)
+    above_hod_ok    = (price > hod)
+    sl = price - ATR_SL * atr
+    tp = price + ATR_TP * atr
+    return {
+        'price':          round(price, 2),
+        'sma200':         round(sma200, 2),
+        'atr':            round(atr, 3),
+        'pmh':            round(pmh, 2),
+        'hod':            round(hod, 2),
+        'sl':             round(sl, 2),
+        'tp':             round(tp, 2),
+        'rr_ratio':       round((ATR_TP * atr) / (ATR_SL * atr), 2),
+        'direction':      'LONG',
+        'above_sma200_ok': above_sma200_ok,
+        'above_pmh_ok':    above_pmh_ok,
+        'above_hod_ok':    above_hod_ok,
+    }
+
+
+
+def check_tjl_model_c(price, highs, lows, closes, volumes, today_high):
+    """
+    Model C — Volume-Confirmed Pullback:
+      1. Any EMA configuration (flexible — not strict 9>20>50)
+      2. Price within ±2% of EMA9 (wider than Model A's ±1.5%)
+      3. Volume ≥ 2× 20-day average volume on the pullback day
+      4. Above today's PMH + buffer
+    """
+    if len(closes) < 21 or len(volumes) < 21:
+        return None
+    e9, e20, e50 = calc_emas(closes)
+    if any(np.isnan(x) for x in [e9, e20, e50]):
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+    # 20-day average volume (skip today as it's partial)
+    avg_vol20 = np.mean(volumes[-21:-1])  # last 20 complete days
+    today_vol = volumes[-1] if len(volumes) >= 1 else 0
+    vol_spike_ok = (today_vol >= VOL_SPIKE_MULT * avg_vol20)
+    pmh = today_high if today_high else price
+    near_ema_ok  = (abs(price - e9) / e9 <= NEAR_EMA_PCT_C)
+    above_pmh_ok = (price > pmh + PMH_BUF)
+    sl = price - ATR_SL * atr
+    tp = price + ATR_TP * atr
+    return {
+        'price':         round(price, 2),
+        'e9':            round(e9, 2),
+        'e20':           round(e20, 2),
+        'e50':           round(e50, 2),
+        'atr':           round(atr, 3),
+        'avg_vol20':     round(avg_vol20, 0),
+        'today_vol':     int(today_vol),
+        'vol_ratio':     round(today_vol / avg_vol20, 1) if avg_vol20 > 0 else 0,
+        'pmh':           round(pmh, 2),
+        'sl':            round(sl, 2),
+        'tp':            round(tp, 2),
+        'rr_ratio':      round((ATR_TP * atr) / (ATR_SL * atr), 2),
+        'direction':     'LONG',
+        'near_ema_ok':   near_ema_ok,
+        'above_pmh_ok':  above_pmh_ok,
+        'vol_spike_ok':  vol_spike_ok,
+    }
+
+
+# ── Model D: VWAP Mean Reversion ─────────────────────────────────────────────
+# Logic:
+#   LONG:  price > VWAP AND RSI(14) < 60  (overbought RSI = reversion to VWAP)
+#   SHORT: price < VWAP AND RSI(14) > 40  (oversold RSI = reversion upward)
+# Entry: ATR-based SL/TP
+# Regime: LONG in bullish/neutral only; SHORT in bearish/neutral only
+
+
+def check_tjl_model_d(price, highs, lows, closes, volumes, today_high, today_low):
+    """
+    Model D — RSI Oversold Bounce (TRUE mean reversion):
+      Entry: RSI(14) crosses UP through 30 from BELOW 30 (oversold bounce)
+             AND price within 1% of VWAP
+             AND price above PMH (confirm momentum shift)
+      Exit: price crosses back below VWAP = take profit
+      SL: 1× ATR, TP: 1.5× ATR (3:2 R:R)
+    """
+    if len(closes) < 22 or len(volumes) < 21:
+        return None
+    vwap = calc_vwap(highs, lows, closes, volumes)
+    atr  = calc_atr(highs, lows, closes)
+    if vwap is None or atr is None or np.isnan(atr):
+        return None
+
+    # RSI — need previous bar's RSI too to detect crossing
+    rsi_now = calc_rsi(closes)
+    rsi_prev = calc_rsi(closes[:-1]) if len(closes) >= 15 else None
+    if rsi_now is None or rsi_prev is None:
+        return None
+
+    # RSI crosses UP through 30 from below (true oversold bounce)
+    rsi_bounce = (rsi_prev < 30) and (rsi_now >= 30)
+    near_vwap  = abs(price - vwap) / vwap < 0.015   # within 1.5% of VWAP
+    above_pmh  = price >= today_high - 0.70          # above premarket high
+
+    long_fire = rsi_bounce and near_vwap and above_pmh
+    if not long_fire:
+        return None
+
+    sl = price - ATR_SL * atr
+    tp = price + ATR_TP * atr
+
+    return {
+        'price':       round(price, 2),
+        'vwap':       round(vwap, 3),
+        'rsi_now':    round(rsi_now, 1),
+        'rsi_prev':   round(rsi_prev, 1),
+        'atr':        round(atr, 3),
+        'pmh':        round(today_high, 2),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(ATR_TP / ATR_SL, 2),
+        'direction':  'LONG',
+        'long_fire':  long_fire,
+        'near_vwap':  near_vwap,
+        'rsi_bounce': rsi_bounce,
+    }
+
+
+# ── Model E: Bollinger Band Squeeze Breakout ──────────────────────────────────
+# Logic:
+#   Squeeze: current BB bandwidth < 20% of 20-bar average bandwidth
+#   Expansion: bandwidth expands > 1.5× on the breakout bar
+#   Volume surge: volume > 1.5× 20-bar avg on expansion day
+#   LONG only: squeeze resolves upward with volume confirmation
+
+
+def check_tjl_model_e(price, highs, lows, closes, volumes, today_high):
+    """
+    Model E -- 20-Day High Breakout (MOMENTUM):
+      LONG:  price breaks above 20-day high AND RSI > 50 AND vol > 1.5x avg20
+      SHORT: price breaks below 20-day low  AND RSI < 50 AND vol > 1.5x avg20
+      Rationale: break of 20-day high in uptrend with volume confirmation.
+      SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 22 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    rsi = calc_rsi(closes)
+    if rsi is None:
+        return None
+
+    # 20-day high/low (excluding today — need yesterday's close as "today" proxy)
+    high_20  = float(np.max(highs[-21:-1]))   # yesterday's 20-day high
+    low_20   = float(np.min(lows[-21:-1]))     # yesterday's 20-day low
+
+    avg_vol20 = np.mean(volumes[-21:-1])
+    vol_ratio = volumes[-1] / avg_vol20 if avg_vol20 > 0 else 0
+    vol_ok    = vol_ratio >= 1.5
+
+    above_high = price > high_20
+    below_low  = price < low_20
+
+    long_fire  = above_high and vol_ok and (rsi > 50)
+    short_fire = below_low  and vol_ok and (rsi < 50)
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':        round(price, 2),
+        'high_20':     round(high_20, 3),
+        'low_20':      round(low_20, 3),
+        'rsi':         round(rsi, 1),
+        'atr':         round(atr, 3),
+        'avg_vol20':  round(avg_vol20, 0),
+        'today_vol':  int(volumes[-1]),
+        'vol_ratio':  round(vol_ratio, 1),
+        'pmh':        round(today_high, 2),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(ATR_TP / ATR_SL, 2),
+        'direction':   direction,
+        'long_fire':  long_fire,
+        'short_fire': short_fire,
+        'above_high': above_high,
+        'below_low':  below_low,
+        'vol_ok':     vol_ok,
+    }
+
+
+
+def check_tjl_model_f(price, highs, lows, closes, volumes, today_high, today_low):
+    """
+    Model F — RSI Trend Crossover:
+      Long:  RSI(14) crosses ABOVE 50 while price is above EMA20
+      Short: RSI(14) crosses BELOW 50 while price is below EMA20
+      Confirmed by: volume > avg20 * 1.2 AND ATR confirming the move.
+      SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 22 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    rsi = calc_rsi(closes)
+    if rsi is None:
+        return None
+
+    ema20 = float(np.mean(closes[-20:])) if len(closes) >= 20 else price
+
+    # Previous RSI (yesterday's close-based)
+    prev_rsi = calc_rsi(closes[:-1]) if len(closes) >= 15 else None
+
+    avg_vol20 = np.mean(volumes[-21:-1])
+    vol_ratio = volumes[-1] / avg_vol20 if avg_vol20 > 0 else 0
+    vol_ok    = vol_ratio >= 1.2
+
+    price_above_ema = price > ema20
+    price_below_ema = price < ema20
+
+    # RSI crossed above 50
+    rsi_cross_up   = (prev_rsi is not None) and (prev_rsi < 50) and (rsi > 50)
+    # RSI crossed below 50
+    rsi_cross_down = (prev_rsi is not None) and (prev_rsi > 50) and (rsi < 50)
+
+    long_fire  = price_above_ema and rsi_cross_up  and vol_ok
+    short_fire = price_below_ema and rsi_cross_down and vol_ok
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':        round(price, 2),
+        'ema20':        round(ema20, 3),
+        'rsi':          round(rsi, 1),
+        'prev_rsi':     round(prev_rsi, 1) if prev_rsi else None,
+        'atr':          round(atr, 3),
+        'avg_vol20':   round(avg_vol20, 0),
+        'today_vol':   int(volumes[-1]),
+        'vol_ratio':   round(vol_ratio, 1),
+        'sl':           round(sl, 2),
+        'tp':           round(tp, 2),
+        'rr_ratio':    round(ATR_TP / ATR_SL, 2),
+        'direction':    direction,
+        'long_fire':   long_fire,
+        'short_fire':  short_fire,
+        'vol_ok':      vol_ok,
+        'price_above_ema': price_above_ema,
+        'price_below_ema': price_below_ema,
+    }
+
+
+# ── Model F: Opening Range Breakout (ORB) ─────────────────────────────────────
+# Logic:
+#   30-min OR: high/low of first 30 minutes of trading
+#   Break of OR high with volume confirmation → LONG
+#   Break of OR low with volume confirmation → SHORT
+#   Volume confirmation: today's volume at time of break > 1.5× avg volume at same time-of-day
+#   Note: With daily bars only, we approximate OR as today's HOD/LOD vs previous day's close
+#         and use the HOD/LOD of the current day as proxy. We also use intraday bar data
+#         from Futu to get 30-min range when available, else fall back to heuristic.
+
+
+def check_tjl_model_g(price, highs, lows, closes, volumes, today_high, today_low, today_open):
+    """
+    Model G — Opening Range Breakout (ORB).
+    Long: price breaks ABOVE today's opening range high (first 15–30 min).
+    Short: price breaks BELOW today's opening range low.
+    Confirmed by: volume > avg20 * 1.2 AND ATR confirming the move.
+    Exit: ATR-based SL/TP (1x / 1.5x). Always flat by EOD.
+    SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 30 or today_open is None:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    # Opening range: high/low of first 3 x 15-min bars (9:30–10:00)
+    # In live: use today's high/low since open
+    orb_high = today_high
+    orb_low  = today_low
+
+    vol_avg20 = np.mean(volumes[-21:-1]) if len(volumes) >= 21 else np.mean(volumes[:-1])
+    vol_now   = volumes[-1] if len(volumes) >= 1 else 0
+    vol_ok    = vol_now >= vol_avg20 * 1.2
+
+    long_fire  = (price > orb_high) and vol_ok
+    short_fire = (price < orb_low)  and vol_ok
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':       round(price, 2),
+        'orb_high':    round(orb_high, 2),
+        'orb_low':     round(orb_low, 2),
+        'today_open':  round(today_open, 2),
+        'atr':         round(atr, 3),
+        'vol_now':     round(vol_now, 0),
+        'vol_avg20':   round(vol_avg20, 0),
+        'vol_ratio':   round(vol_now / vol_avg20, 2) if vol_avg20 > 0 else 0,
+        'sl':          round(sl, 2),
+        'tp':          round(tp, 2),
+        'rr_ratio':    round(ATR_TP / ATR_SL, 2),
+        'direction':   direction,
+        'long_fire':   long_fire,
+        'short_fire':  short_fire,
+    }
+
+
+
+def check_tjl_model_h(price, highs, lows, closes, volumes, today_high, today_low):
+    """
+    Model H — Gold EMA/BB/VWAP (trend-following intraday).
+    Entry: Fast EMA crosses BB midline AND price above slow EMA AND price above VWAP.
+    LONG: EMA9 crosses above BB mid(20) + price > EMA21 + price > VWAP.
+    SHORT: EMA9 crosses below BB mid(20) + price < EMA21 + price < VWAP.
+    SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 25 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    s = pd.Series(closes)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e21 = float(s.ewm(span=21, adjust=False).mean().iloc[-1])
+    e9_prev  = float(s.ewm(span=9,  adjust=False).mean().iloc[-2])
+    if any(np.isnan(x) for x in [e9, e21, e9_prev]):
+        return None
+
+    # Bollinger Bands midline = 20-SMA
+    bb_mid = float(s.rolling(20).mean().iloc[-1])
+    bb_prev = float(s.rolling(20).mean().iloc[-2])
+    if np.isnan(bb_mid) or np.isnan(bb_prev):
+        return None
+
+    # VWAP
+    vwap = calc_vwap(highs, lows, closes, volumes)
+
+    # Crossover: EMA9 crosses BB midline
+    cross_up   = (e9_prev < bb_prev) and (e9 >= bb_mid)
+    cross_down = (e9_prev > bb_prev) and (e9 <= bb_mid)
+
+    # Trend filter: price above both EMA21 and VWAP for longs
+    price_above_all = (price > e21) and (price > vwap)
+    price_below_all = (price < e21) and (price < vwap)
+
+    long_fire  = cross_up  and price_above_all
+    short_fire = cross_down and price_below_all
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':      round(price, 2),
+        'e9':         round(e9, 3),
+        'e21':        round(e21, 3),
+        'bb_mid':     round(bb_mid, 3),
+        'vwap':       round(vwap, 3),
+        'atr':        round(atr, 3),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(ATR_TP / ATR_SL, 2),
+        'direction':  direction,
+        'long_fire':  long_fire,
+        'short_fire': short_fire,
+    }
+
+
+
+def check_tjl_model_i(price, highs, lows, closes, volumes, today_high):
+    """
+    Model I — SHM-lite (Daily swing: 63-WMA trend + RSI momentum gate).
+    Adapted from Sovereign Horizon Matrix for HK daily bars.
+    LONG: price > 63-WMA AND RSI(14) > 50 AND price within 3% of 63-WMA (pullback to trend).
+    SHORT: price < 63-WMA AND RSI(14) < 50 AND price within 3% of 63-WMA (rally to trend).
+    SL: 1.5x ATR, TP: 3x ATR (2:1 R:R) — swings need room.
+    Guards: skip if ATR > 20% of price (penny stocks with unreliable ATR).
+    """
+    if len(closes) < 65 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+    # Reject penny stocks where ATR is unreliable (ATR > 20% of price)
+    if price < 1.0 or atr / price > 0.20:
+        return None
+
+    s = pd.Series(closes)
+    wma63 = float(s.rolling(63).mean().iloc[-1])
+    if np.isnan(wma63) or wma63 <= 0:
+        return None
+
+    rsi = calc_rsi(closes)
+    if rsi is None or np.isnan(rsi):
+        return None
+
+    # Pullback zone: price within 3% of WMA63
+    # LONG fires when price has pulled BACK to WMA63 from above (price < wma63 but near it)
+    # SHORT fires when price has rallied TO WMA63 from below (price > wma63 but near it)
+    pullback_tolerance = 0.03
+    near_wma_from_below = price < wma63 and abs(price - wma63) / wma63 <= pullback_tolerance
+    near_wma_from_above = price > wma63 and abs(price - wma63) / wma63 <= pullback_tolerance
+
+    # LONG: price has pulled BACK to WMA63 from above + RSI > 50 confirms bounce
+    long_fire  = near_wma_from_below and (rsi > 50)
+    # SHORT: price has rallied TO WMA63 from below + RSI < 50 confirms rejection
+    short_fire = near_wma_from_above and (rsi < 50)
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    # Swing models need wider R:R (2:1): SL=1.5ATR, TP=3.0ATR
+    sl = price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr
+    tp = price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr
+
+    return {
+        'price':     round(price, 2),
+        'wma63':     round(wma63, 3),
+        'rsi':       round(rsi, 1),
+        'atr':       round(atr, 3),
+        'sl':        round(sl, 2),
+        'tp':        round(tp, 2),
+        'rr_ratio':  round(3.0 / 1.5, 2),
+        'direction': direction,
+        'long_fire': long_fire,
+        'short_fire': short_fire,
+    }
+
+
+
+def check_tjl_model_j(price, highs, lows, closes, volumes, today_high):
+    """
+    Model J — Follow the Money (institutional mean reversion).
+    150/200 DMA baseline + volume surge confirm.
+    LONG: price pulls back TO or NEAR 150-DMA AND above 200-DMA AND vol > 1.5x avg20.
+    SHORT: price pulls up TO or NEAR 150-DMA AND below 200-DMA AND vol > 1.5x avg20.
+    SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 155 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    s = pd.Series(closes)
+    dma150 = float(s.rolling(150).mean().iloc[-1])
+    dma200 = float(s.rolling(200).mean().iloc[-1])
+    if np.isnan(dma150) or np.isnan(dma200):
+        return None
+
+    vol_avg20 = float(pd.Series(volumes).rolling(20).mean().iloc[-1])
+    vol_now   = volumes[-1]
+    if np.isnan(vol_avg20) or vol_avg20 == 0:
+        return None
+
+    # Pullback: price within 2% of 150-DMA
+    near_dma150 = abs(price - dma150) / dma150 <= 0.02
+    above_200   = price > dma200
+    below_200   = price < dma200
+    vol_ok      = vol_now >= vol_avg20 * 1.5
+
+    long_fire  = near_dma150 and above_200 and vol_ok
+    short_fire = near_dma150 and below_200 and vol_ok
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':      round(price, 2),
+        'dma150':     round(dma150, 3),
+        'dma200':     round(dma200, 3),
+        'atr':        round(atr, 3),
+        'vol_now':    round(vol_now, 0),
+        'vol_avg20':  round(vol_avg20, 0),
+        'vol_ratio':  round(vol_now / vol_avg20, 2),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(ATR_TP / ATR_SL, 2),
+        'direction':  direction,
+        'long_fire':  long_fire,
+        'short_fire': short_fire,
+    }
+
+
+
+def check_tjl_model_k(price, highs, lows, closes, volumes, today_high, today_low):
+    """
+    Model K — EMA/VWAP/Bollinger Session (clean intraday).
+    From: Gold Intraday EMA/BB/VWAP + Reliable Alerts.
+    LONG: Fast EMA (9) crosses above BB mid(20) AND price > EMA21 AND price > VWAP.
+    SHORT: Fast EMA (9) crosses below BB mid(20) AND price < EMA21 AND price < VWAP.
+    Asia session active (9:30–12:00 HKT implied).
+    SL: 1x ATR, TP: 1.5x ATR (3:2 R:R)
+    """
+    if len(closes) < 25 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    s = pd.Series(closes)
+    e9   = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e21  = float(s.ewm(span=21, adjust=False).mean().iloc[-1])
+    e9_p = float(s.ewm(span=9,  adjust=False).mean().iloc[-2])
+    if any(np.isnan(x) for x in [e9, e21, e9_p]):
+        return None
+
+    bb_mid  = float(s.rolling(20).mean().iloc[-1])
+    bb_mid_p = float(s.rolling(20).mean().iloc[-2])
+    if np.isnan(bb_mid):
+        return None
+
+    vwap = calc_vwap(highs, lows, closes, volumes)
+
+    cross_up   = (e9_p < bb_mid_p) and (e9 >= bb_mid)
+    cross_down = (e9_p > bb_mid_p) and (e9 <= bb_mid)
+
+    above_all = (price > e21) and (price > vwap)
+    below_all = (price < e21) and (price < vwap)
+
+    long_fire  = cross_up  and above_all
+    short_fire = cross_down and below_all
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = price - ATR_SL * atr if direction == 'LONG' else price + ATR_SL * atr
+    tp = price + ATR_TP * atr if direction == 'LONG' else price - ATR_TP * atr
+
+    return {
+        'price':      round(price, 2),
+        'e9':         round(e9, 3),
+        'e21':        round(e21, 3),
+        'bb_mid':     round(bb_mid, 3),
+        'vwap':       round(vwap, 3),
+        'atr':        round(atr, 3),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   round(ATR_TP / ATR_SL, 2),
+        'direction':  direction,
+        'long_fire':  long_fire,
+        'short_fire': short_fire,
+    }
 
 
 def check_tjl(ticker, name, price, day_high, prev_day_high, highs, lows, closes,
@@ -514,12 +1181,13 @@ def run_scan(notify=False):
     short_signals = []
     debug_info    = []
 
-    for ticker, name in watchlist:
+        for ticker, name in watchlist:
         # Get daily bars first (needed for EMA + ATR)
-        highs, lows, closes = get_daily_bars(ticker, count=80)
-        if highs is None:
+        bars = get_daily_bars(ticker, count=80)
+        if bars[0] is None:
             debug_info.append(f"{ticker}: no daily bars")
             continue
+        highs, lows, closes, volumes = bars
 
         # Get live price
         quote = get_live_price(ticker)
@@ -531,39 +1199,195 @@ def run_scan(notify=False):
         day_high   = float(quote.get('day_high')) if quote.get('day_high') else None
         day_low    = float(quote.get('day_low'))  if quote.get('day_low')  else None
 
-        # Prior day high/low = yesterday's OHLC bar (index -2, since -1 is today so far)
+        # Today's open
+        tk_yf = yf.Ticker(ticker)
+        today_hist = tk_yf.history(period="5d", interval="1d")
+        today_open = float(today_hist['Open'].iloc[-1]) if not today_hist.empty else price
+
+        # Prior day high/low (index -2 = yesterday)
         prev_day_high = float(highs[-2]) if len(highs) >= 2 and not np.isnan(highs[-2]) else None
         prev_day_low  = float(lows[-2])  if len(lows)  >= 2 and not np.isnan(lows[-2])  else None
 
-        # Premarket high and low (04:00–09:30 ET)
+        # Premarket high and low (04:00-09:30 ET)
         premarket_high = get_premarket_high(ticker) or 0
         premarket_low  = get_premarket_low(ticker)  or 0
 
-        # ── LONG check (suppressed in BEARISH regime) ────────────────────────
-        if regime != "BEARISH":
-            result, err = check_tjl(
-                ticker, name, price, day_high, prev_day_high,
-                highs, lows, closes, premarket_high=premarket_high
-            )
-            if err:
-                debug_info.append(err)
-            else:
-                long_signals.append(result)
-        else:
-            debug_info.append(f"{ticker}: LONG suppressed (BEARISH regime)")
+        # ── Model A: Pullback (EMA stack + near EMA9 + above PMH) ────────────
+        if regime in ("BULLISH", "neutral"):
+            sig, err = check_tjl(ticker, name, price, day_high, prev_day_high,
+                                  highs, lows, closes, premarket_high=premarket_high)
+            if sig:
+                sig["signal_model"] = "A"
+                long_signals.append(sig)
+            elif err:
+                debug_info.append(f"{ticker}A: {err.split(':')[-1].strip()}")
 
-        # ── SHORT check (suppressed in BULLISH regime) ───────────────────────
-        if regime != "BULLISH":
-            result, err = check_tjs(
-                ticker, name, price, day_low, prev_day_low,
-                highs, lows, closes, premarket_low=premarket_low
-            )
+        # ── Model B: HT Momentum (above SMA200 + above PMH + above HOD) ──────
+        if regime in ("BULLISH", "neutral"):
+            r = check_tjl_model_b(price, highs, lows, closes, day_high)
+            if r:
+                r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "B"
+                if r.get("above_sma200_ok") and r.get("above_pmh_ok") and r.get("above_hod_ok"):
+                    if not any(s["ticker"] == ticker for s in long_signals):
+                        long_signals.append(r)
+                else:
+                    reasons = []
+                    if not r.get("above_sma200_ok"): reasons.append("!sma200")
+                    if not r.get("above_pmh_ok"):    reasons.append("!abovePMH")
+                    if not r.get("above_hod_ok"):    reasons.append("!aboveHOD")
+                    debug_info.append(f"{ticker}B: {' '.join(reasons)}")
+
+        # ── Model C: Volume-Confirmed Pullback ────────────────────────────────
+        if regime in ("BULLISH", "neutral"):
+            r = check_tjl_model_c(price, highs, lows, closes, volumes, day_high)
+            if r:
+                r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "C"
+                if r.get("near_ema_ok") and r.get("above_pmh_ok") and r.get("vol_spike_ok"):
+                    if not any(s["ticker"] == ticker for s in long_signals):
+                        long_signals.append(r)
+                else:
+                    reasons = []
+                    if not r.get("near_ema_ok"):  reasons.append("!near2pct")
+                    if not r.get("above_pmh_ok"): reasons.append("!abovePMH")
+                    if not r.get("vol_spike_ok"): reasons.append("!volSpike")
+                    debug_info.append(f"{ticker}C: {' '.join(reasons)}")
+
+        # ── Model D: RSI Oversold Bounce ─────────────────────────────────────
+        r = check_tjl_model_d(price, highs, lows, closes, volumes, day_high, day_low)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "D"
+            d_long  = r.get("long_fire")
+            d_short = r.get("short_fire")
+            if regime in ("BULLISH", "neutral") and d_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "D" for s in long_signals):
+                    long_signals.append(r)
+            elif regime == "BEARISH" and d_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "D" for s in short_signals):
+                    short_signals.append(r)
+            else:
+                debug_info.append(f"{ticker}D: regime={regime} long={d_long} short={d_short}")
+
+        # ── Model E: 20-Day High Breakout ───────────────────────────────────
+        r = check_tjl_model_e(price, highs, lows, closes, volumes, day_high)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "E"
+            e_long  = r.get("long_fire")
+            e_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and e_long
+            regime_ok_short = regime == "BEARISH" and e_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker for s in short_signals):
+                    short_signals.append(r)
+            else:
+                reasons = []
+                if not r.get("at_lower"): reasons.append("!atLower")
+                if not r.get("at_upper"): reasons.append("!atUpper")
+                if not r.get("vol_ok"):   reasons.append("!volOk")
+                debug_info.append(f"{ticker}E: {' '.join(reasons)}")
+
+        # ── Model F: RSI Trend Crossover ────────────────────────────────────
+        r = check_tjl_model_f(price, highs, lows, closes, volumes, day_high, day_low)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "F"
+            f_long  = r.get("long_fire")
+            f_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and f_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and f_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "F" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "F" for s in short_signals):
+                    short_signals.append(r)
+            else:
+                debug_info.append(f"{ticker}F: regime={regime} long={f_long} short={f_short}")
+
+        # ── Model G: Opening Range Breakout ───────────────────────────────────
+        r = check_tjl_model_g(price, highs, lows, closes, volumes, day_high, day_low, today_open)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "G"
+            g_long  = r.get("long_fire")
+            g_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and g_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and g_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "G" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "G" for s in short_signals):
+                    short_signals.append(r)
+
+        # ── Model H: Gold EMA/BB ─────────────────────────────────────────────
+        r = check_tjl_model_h(price, highs, lows, closes, volumes, day_high, day_low)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "H"
+            h_long  = r.get("long_fire")
+            h_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and h_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and h_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "H" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "H" for s in short_signals):
+                    short_signals.append(r)
+
+        # ── Model I: 63WMA Swing ─────────────────────────────────────────────
+        r = check_tjl_model_i(price, highs, lows, closes, volumes, day_high)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "I"
+            i_long  = r.get("long_fire")
+            i_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and i_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and i_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "I" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "I" for s in short_signals):
+                    short_signals.append(r)
+
+        # ── Model J: Follow the Money DMA ────────────────────────────────────
+        r = check_tjl_model_j(price, highs, lows, closes, volumes, day_high)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "J"
+            j_long  = r.get("long_fire")
+            j_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and j_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and j_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "J" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "J" for s in short_signals):
+                    short_signals.append(r)
+
+        # ── Model K: EMA/VWAP/Bollinger Session ───────────────────────────────
+        r = check_tjl_model_k(price, highs, lows, closes, volumes, day_high, day_low)
+        if r:
+            r["ticker"] = ticker; r["name"] = name; r["signal_model"] = "K"
+            k_long  = r.get("long_fire")
+            k_short = r.get("short_fire")
+            regime_ok_long  = regime in ("BULLISH", "neutral") and k_long
+            regime_ok_short = regime in ("BEARISH", "neutral") and k_short
+            if regime_ok_long:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "K" for s in long_signals):
+                    long_signals.append(r)
+            elif regime_ok_short:
+                if not any(s["ticker"] == ticker and s.get("signal_model") == "K" for s in short_signals):
+                    short_signals.append(r)
+
+        # ── TJS SHORT (suppressed in BULLISH) ───────────────────────────────
+        if regime == "BEARISH":
+            r, err = check_tjs(ticker, name, price, day_low, prev_day_low,
+                                highs, lows, closes, premarket_low=premarket_low)
             if err:
                 debug_info.append(err)
             else:
-                short_signals.append(result)
-        else:
-            debug_info.append(f"{ticker}: SHORT suppressed (BULLISH regime)")
+                short_signals.append(r)
 
     all_signals = long_signals + short_signals
 
