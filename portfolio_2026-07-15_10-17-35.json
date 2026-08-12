@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-07-15 10:17:35",
+  "total_stocks": 10,
+  "results": [
+    {
+      "code": "700",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "2800",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "9988",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "1810",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "5",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "2828",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "1299",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "3690",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "2269",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    },
+    {
+      "code": "1211",
+      "error": "[Errno 32] Broken pipe",
+      "timestamp": "2026-07-15 10:17:35"
+    }
+  ]
+}

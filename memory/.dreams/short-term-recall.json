@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-14T16:01:49.677Z",
+  "entries": {
+    "memory:memory/2026-05-07.md:1:12": {
+      "key": "memory:memory/2026-05-07.md:1:12",
+      "path": "memory/2026-05-07.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "# Daily Notes - 2026-05-07 ## Futu Account - Account: 90130881 - Password: stored in Mac Keychain (security find-internet-password -s \"futunn.com\") - Used for: futunn.com stock discussion board scraping - App: FutuNiuniu.app installed at /Applications/FutuNiuniu.app ## OpenClaw Config Backed Up - GitHub: https://github.com/brucekwok5-star/openclaw-config - Secrets redacted before push",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.269526470810591,
+      "maxScore": 0.6347632354052954,
+      "firstRecalledAt": "2026-05-13T12:59:45.240Z",
+      "lastRecalledAt": "2026-05-14T16:01:49.677Z",
+      "queryHashes": [
+        "2c3858f9c58e",
+        "66b9cbb0fb47"
+      ],
+      "recallDays": [
+        "2026-05-13",
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "find-internet-password",
+        "futunn.com",
+        "futuniuniu.app",
+        "applications/futuniuniu.app",
+        "futu",
+        "account",
+        "password",
+        "stored"
+      ]
+    }
+  }
+}

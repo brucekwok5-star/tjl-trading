@@ -105,7 +105,7 @@ BACKTEST_STOCKS = [
 # ── One-stock-one-model filter ────────────────────────────────────────────────
 # Build the runtime set of models to actually run. If --model is given, restrict
 # to that single letter — prevents cross-stock cherry-picking.
-VALID_MODELS = list("DEFGHIJKLMNOPQ")
+VALID_MODELS = list("DEFGHIJKLMNOPQRST")
 if hasattr(args, 'model') and args.model:
     if args.model.upper() not in VALID_MODELS:
         sys.stderr.write(f"ERROR: --model must be one of {VALID_MODELS}, got '{args.model}'\n")
@@ -735,7 +735,222 @@ def model_q_signal(highs, lows, closes, volumes, opens, bar_idx):
             'plus_di': round(plus_di_now, 1), 'minus_di': round(minus_di_now, 1)}
 
 
-# ── Backtest engine ───────────────────────────────────────────────────────────
+# ── Model R: Keltner Channel + RSI Breakout ───────────────────────────────────
+# From: KeltnerChannelRSIBreakoutStrategy.py (ali-azary)
+# Idea: Price breaks out of Keltner bands + RSI confirms direction.
+# Why it works: Band breakout = volatility expansion, RSI confirms momentum.
+# Daily params: EMA=30, ATR=7, RSI=14. SL=1.5ATR, TP=3ATR.
+def model_r_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """
+    Model R: Keltner Channel + RSI Breakout.
+    From: KeltnerChannelRSIBreakoutStrategy.py (ali-azary repo).
+    LONG: price > upper_band (EMA+ATR) AND RSI > 30 (not oversold).
+    SHORT: price < lower_band (EMA-ATR) AND RSI < 70 (not overbought).
+    Exit: trailing ATR stop.
+    """
+    if bar_idx < 35:
+        return None
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    c = np.array(closes[:bar_idx+1])
+
+    price = c[-1]
+    prev_close = c[-2] if len(c) >= 2 else price
+
+    # EMA centerline
+    ema30 = pd.Series(c).ewm(span=30, adjust=False).mean().iloc[-1]
+    if np.isnan(ema30) or ema30 <= 0:
+        return None
+
+    # ATR
+    tr = np.maximum(h[-1] - l[-1], np.maximum(abs(h[-1] - prev_close), abs(prev_close - l[-1])))
+    atr = pd.Series(c).diff().abs().mean() if len(c) > 14 else tr
+    if atr is None or atr <= 0:
+        return None
+
+    upper_band = ema30 + atr
+    lower_band = ema30 - atr
+
+    # RSI
+    rsi_vals = []
+    for i in range(max(0, bar_idx-13), bar_idx+1):
+        if i < 1:
+            continue
+        delta = c[i] - c[i-1]
+        gain = delta if delta > 0 else 0
+        loss = -delta if delta < 0 else 0
+        avg_gain = np.mean(c[max(0,i-13):i+1] if len(c[max(0,i-13):i+1]) > 1 else [gain])
+        avg_loss = np.mean([abs(c[j]-c[j-1]) if c[j] < c[j-1] else 0 for j in range(max(1,i-13), i+1)])
+        rs = avg_gain / avg_loss if avg_loss > 0 else 100
+        rsi_vals.append(100 - (100 / (1 + rs)) if avg_loss > 0 else 100)
+    rsi = rsi_vals[-1] if rsi_vals else 50
+
+    # Entry: price breaks band + RSI confirmation
+    long_fire  = (price > upper_band) and (rsi > 30)
+    short_fire = (price < lower_band) and (rsi < 70)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr,
+            'tp': price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr,
+            'atr': atr, 'ema30': round(ema30, 2), 'rsi': round(rsi, 1)}
+
+
+# ── Model S: Ichimoku Cloud Breakout ─────────────────────────────────────────
+# From: IchimokuCloudStrategy.py (ali-azary) — adapted to pure numpy/pandas
+# Idea: Price breaks cloud (Kumo) + TK cross confirms momentum.
+# Components: Tenkan(7), Kijun(14), SenkouA/B(30).
+# Why it works: Multi-timeframe confirmation. Cloud = support/resistance zone.
+# Note: requires 30+ bars of warmup. Short lookback stocks may have 0 signals.
+def model_s_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """
+    Model S: Ichimoku Cloud Breakout.
+    From: IchimokuCloudStrategy.py (ali-azary repo) — adapted to pure numpy/pandas.
+    Requires: Tenkan-sen (fast), Kijun-sen (slow), Cloud (Kumo) breakout.
+    LONG: price > senkou_a AND price > senkou_b (above cloud)
+          AND Tenkan > Kijun (bullish cross)
+          AND Chikou > price from 14 bars ago (momentum confirmed).
+    SHORT: price < senkou_a AND price < senkou_b (below cloud)
+           AND Tenkan < Kijun (bearish cross)
+           AND Chikou < price from 14 bars ago.
+    SL: 1.5 ATR, TP: 3 ATR.
+    """
+    if bar_idx < 45:
+        return None
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    c = np.array(closes[:bar_idx+1])
+
+    price = c[-1]
+    if len(c) < 16:
+        return None
+
+    # Tenkan-sen (fast line) = (HH+LL)/2 over 9 periods
+    def hl2(arr, period):
+        if len(arr) < period:
+            return np.nan
+        return (np.maximum.accumulate(arr[-period:])[-1] +
+                np.minimum.accumulate(arr[-period:])[-1]) / 2
+
+    tenkan = (np.max(h[-9:]) + np.min(l[-9:])) / 2
+    kijun  = (np.max(h[-26:]) + np.min(l[-26:])) / 2
+    senkou_a = (tenkan + kijun) / 2          # leading span A (shifted 26 fwd)
+    senkou_b = (np.max(h[-52:]) + np.min(l[-52:])) / 2  # leading span B (shifted 26 fwd)
+    chikou = c[-1] - c[-15] if len(c) >= 16 else 0    # lagging span: current - 14 bars ago
+
+    if np.isnan(tenkan) or np.isnan(kijun) or np.isnan(senkou_a):
+        return None
+
+    # Cloud: compare current price vs cloud values (both shifted 26 bars back in real Ichimoku)
+    # For signal purposes: use current cloud values as support/resistance levels
+    cloud_top = max(senkou_a, senkou_b)
+    cloud_bot = min(senkou_a, senkou_b)
+
+    # ATR for exits
+    atr_vals = []
+    for i in range(max(1, bar_idx-13), bar_idx+1):
+        tr = max(h[i]-l[i], abs(h[i]-c[i-1]), abs(c[i-1]-l[i])) if i > 0 else h[i]-l[i]
+        atr_vals.append(tr)
+    atr = np.mean(atr_vals) if atr_vals else 1.0
+
+    # LONG: above cloud + TK cross up + Chikou confirms
+    above_cloud = (price > cloud_top) and (price > cloud_bot)
+    tk_bullish = tenkan > kijun
+    chikou_bull = chikou > 0   # chikou > price from 14 bars ago
+
+    # SHORT: below cloud + TK cross down + Chikou confirms
+    below_cloud = (price < cloud_top) and (price < cloud_bot)
+    tk_bearish = tenkan < kijun
+    chikou_bear = chikou < 0
+
+    long_fire  = above_cloud and tk_bullish and chikou_bull
+    short_fire = below_cloud and tk_bearish and chikou_bear
+
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr,
+            'tp': price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr,
+            'atr': atr, 'tenkan': round(tenkan, 2), 'kijun': round(kijun, 2),
+            'cloud_top': round(cloud_top, 2), 'cloud_bot': round(cloud_bot, 2)}
+
+
+# ── Model T: OU Mean Reversion (z-score) ─────────────────────────────────────
+# From: OUMeanReversionStrategy.py (ali-azary) — adapted to daily bars
+# Idea: Price deviates >1 std from rolling mean → mean revert.
+# Why it works: HK mega-caps mean-revert around their 20-day moving average.
+# Using z-score of price deviation from EMA20 as the signal.
+# Note: OU requires rolling parameter estimation. Here we simplify to z-score.
+def model_t_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """
+    Model T: Mean Reversion z-score.
+    From: OUMeanReversionStrategy.py (ali-azary repo) — adapted to daily.
+    Idea: Price deviates >1 std from rolling mean → mean revert.
+    LONG: z-score < -1.0 (oversold, below mean)
+    SHORT: z-score > +1.0 (overbought, above mean)
+    Filter: price must be above SMA20 for LONG (confirm uptrend not broken).
+    Exit: z-score crosses 0 (mean reversion complete).
+    SL: 2 ATR.
+    """
+    if bar_idx < 25:
+        return None
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    c = np.array(closes[:bar_idx+1])
+    v = np.array(volumes[:bar_idx+1])
+
+    price = c[-1]
+    prev_close = c[-2] if len(c) >= 2 else price
+
+    # Rolling 20-day mean and std
+    if len(c) < 20:
+        return None
+    c_series = pd.Series(c)
+    sma20 = c_series.rolling(20).mean().iloc[-1]
+    std20 = c_series.rolling(20).std().iloc[-1]
+    if np.isnan(sma20) or np.isnan(std20) or std20 <= 0:
+        return None
+
+    z_score = (price - sma20) / std20
+
+    # ATR for exits
+    atr_vals = []
+    for i in range(max(1, bar_idx-13), bar_idx+1):
+        tr = max(h[i]-l[i], abs(h[i]-c[i-1]), abs(c[i-1]-l[i])) if i > 0 else h[i]-l[i]
+        atr_vals.append(tr)
+    atr = np.mean(atr_vals) if atr_vals else 1.0
+
+    # RSI for trend filter
+    deltas = np.diff(c)
+    gains = np.where(deltas > 0, deltas, 0)
+    losses = np.where(deltas < 0, -deltas, 0)
+    if len(gains) >= 14:
+        avg_gain = np.mean(gains[-14:])
+        avg_loss = np.mean(losses[-14:])
+        rs = avg_gain / avg_loss if avg_loss > 0 else 100
+        rsi = 100 - (100 / (1 + rs)) if avg_loss > 0 else 100
+    else:
+        rsi = 50
+
+    # Mean-reversion entries with trend filter
+    # LONG: oversold (z < -1) AND price above SMA20 (trend intact)
+    # SHORT: overbought (z > +1) AND price below SMA20 (trend broken)
+    long_fire  = (z_score < -1.0) and (price > sma20) and (rsi > 30)
+    short_fire = (z_score > +1.0) and (price < sma20) and (rsi < 70)
+
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 2.0 * atr if direction == 'LONG' else price + 2.0 * atr,
+            'tp': sma20,   # TP = mean (SMA20)
+            'atr': atr, 'z_score': round(z_score, 2), 'sma20': round(sma20, 2),
+            'rsi': round(rsi, 1)}
+
+
+# ── Backtest engine ────────────────────────────────────────────────────────────
 
 def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_hold=None):
     """

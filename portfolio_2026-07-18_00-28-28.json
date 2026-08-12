@@ -1,0 +1,1340 @@
+{
+  "timestamp": "2026-07-18 00:28:28",
+  "total_stocks": 10,
+  "results": [
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 205.11,
+      "stop": null,
+      "target": null,
+      "rr": null,
+      "reasons": [
+        "Price above EMA20 but BELOW EMA50 - no strong uptrend confirmed",
+        "Neutral trend signal contradicts bullish MACD",
+        "RSI at 42.2 is neutral - no extreme oversold for high-probability entry",
+        "Stochastic neutral zone (K=73, D=65) - no oversold bounce setup",
+        "Bollinger position at 50.9% - price centered in middle band, no edge",
+        "ATR at 1.0% just barely meets volatility threshold - marginal for day trading",
+        "News sentiment slightly bearish (0.30) with institutional selling reports",
+        "Low confidence environment - mixed signals reduce probability of success"
+      ],
+      "warnings": [
+        "Institutional investors reducing positions (Burney Co, R Squared Ltd)",
+        "Negative news regarding challenging AI demand environment",
+        "No clear catalyst for directional move today",
+        "Risk-reward not favorable for day trade entry"
+      ],
+      "stock_name": "NVIDIA Corporation",
+      "market_bias": "NEUTRAL",
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 205.11,
+        "ema20": 204.9906618078383,
+        "ema50": 206.61467003198212,
+        "ema200": 206.94464999999994,
+        "rsi": 42.24790753288156,
+        "rsi_15m": 58.38203629652411,
+        "atr": 2.101857142857142,
+        "vwap": 202.66957805630162,
+        "sma_5_5m": 204.892,
+        "sma_8_5m": 204.84237499999998,
+        "sma_13_5m": 204.51646153846156,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 202.95105000000004,
+        "sma_50_15m": 203.69511999999995,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 205.4,
+        "support_15m": 203.09,
+        "macd": {
+          "macd": -1.428512414119126,
+          "signal": -1.5624238407542346,
+          "histogram": 0.13391142663510847,
+          "trend": "BULLISH"
+        },
+        "bollinger": {
+          "upper": 209.6344240909347,
+          "middle": 204.99469999999997,
+          "lower": 200.35497590906525,
+          "bandwidth": 0.045266771198813636,
+          "position": 50.865353180773354
+        },
+        "stochastic": {
+          "k": 73.32301341589258,
+          "d": 65.40628266957421,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 204.29666666666665,
+          "r1": 206.2233333333333,
+          "r2": 207.32666666666665,
+          "s1": 203.1933333333333,
+          "s2": 201.26666666666665
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -0.021938377535109164
+      },
+      "news": [
+        {
+          "title": "The Two Radically Different Paths Priced Into NVIDIA Stock - Trefis",
+          "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQSFZHcUZ6SS0zb2x5a1l3RHZGOGRxeTk3OFZlQUIxdlUyallqZHRfdHNnVUtZUnhJWUVTN05vb2xxWkdjVHg0aE5iSzJqaGZWRW1kaTViR0xJRU5aT3kwb0FCNE5mTzVBUjd2TTBQTWh5eHdQMWVmV0djV1B2TVotMFpKUUk2dTVNdU1VdHFwZkpOUHZodDcydDJzWWN4NzRuSHFOOXlIZlBhb0U5ZGdDOTBUTE90N0k1T2tF?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:39:11 GMT"
+        },
+        {
+          "title": "R Squared Ltd Trims Stock Holdings in NVIDIA Corporation $NVDA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPMldLOHJqYmhzMEdYRER1Skc5cUpNVjUwVDZUd0F1TkxRSDZhcE1xUnUxSEpUdjlMRmN1cmQyRWhWLUFVbUl5S2tGSzItbzhyb19Kei1Eb3gwMjZnRUVtZ2RWQzFZVFNFT2EtSnVEcEV6YldlRGp0dnpUSHNoclF4bWp0T3pPVUlXVjdYalBNbEFqXzRuN1dKVTZYSmY1alNkWlpuTHhCRnM5R01leDFGVkVhQWlGb050dnF3QTNrVQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:56:50 GMT"
+        },
+        {
+          "title": "Nvidia and AMD Investors Must Be Prepared for Aug. 4 - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQdnNkR2cyYnlXV1lsbzNScTBGZ21wZjVHVzZ3WTFwUnZTVGNKQmZqNzM1Mm11S0lzdGUwM1dNdnpiei0wSjd5MFR3cF9OcFlnRGN6OU5zcVBLcEFHUkpJUThvajdMWEFKdjYyTGFpMG9DTm5pVzlocGF2VGRNdmE5N05xckZfUW1jb0F5M2F5emxfTjIzbWlNZndxSXRzamFG?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 11:40:00 GMT"
+        },
+        {
+          "title": "Nvidia (NASDAQ:NVDA) shares fall after Japan Rubin order highlights more challenging AI demand environment - TechStock\u00b2",
+          "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNLXp2NGQ3U2FGNFhjSXhZQWhuRDdnV1I1Y0dsMEYweGxMT0tpY2lZeW9Ra20wYjZxNXR5Zm1vMXFuYnFSeHhJRk5vNGR6cFRzeWFmZFhrS0xTeXhZd2lVLVVXZFFiWFV6Q3loVHRXYjhDZFlqQ3hGN0Q5cUdUdFFzMWlxYmxnU29PWkZuWEpvNUN5WTB2MEdRWFcxck5TZUJfT3FWSTlaQUNqakJrZU9mN2ZDYXlEMi1oLURuZ0ZyeTFHQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:40:50 GMT"
+        },
+        {
+          "title": "NVIDIA Corporation $NVDA Position Cut by Burney Co. - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNRFpzNzFlcGkwS2NOa0ZIcnBqdUtmUjdLMVpZeERzd3R0bXFfWjJZaS1Vemw3N1MyUHZ5cFBDbks3VEFHckFleGcwM0xOV3RZQ052TDdubGYwTTJhYnJYdEw5dEZzdmxEMDhmU29MeUtTMnRlaHFwdUNYRjYya3BCM3JDV0NyUU95alFSbVVhbEE1NVdEYWVmYWJNTDVMQ0hmbjljRGVuYndLYkx1TERJ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:43 GMT"
+        },
+        {
+          "title": "Hapanowicz & Associates Financial Services Inc Has $862,000 Stock Position in NVIDIA Corporation $NVDA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPYWZZNDJLanJfaEVCb2VsWUJUNDk5d3ZCUXIxbmUzaFN4Q0xVdC1LWXJiMHgzeGZTYVZ5R3l2ZEhXYjRWSmZLSkJldVRrLTBkSE82ZF9rczhrblBtRDhPUWxyR3BWV2NCRjlKQ1VpVTdXNFJ2VU5fazZGb3RfZ1RWSGdXU0lud1I3RWR0U25XWHJZMkk5QXFsRDdGS2IxOFZtWEtwZjdkRy1ZOXVwR0MzLUR1akl6VDhyMU85MmlCNTZYbjlmaWxYOGViX2dfc3hNMzJnZlpvUzFfZi1pUENNQkM1NUlNUnFKMFdESTFoWQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 09:00:56 GMT"
+        },
+        {
+          "title": "Clare Market Investments LLC Makes New $14.47 Million Investment in NVIDIA Corporation $NVDA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxORWI2WVdhZm90U1ZWeWJiNEFLOE0tTnJGNjJDZ202MWNEb1QzYWhSSjBLTXJnQVpQZnZtYnk0MHpJZW1vdm5kaVk5Zm5TcVFieHhPSXFXbk1kNUx5UklZUTR4UG1ZbWNGcnVWaGRZRlpiV2k0aTZzS2hXOGE3cjNHanZlc3d4WEFvYjRuOWE4b3haVDJiTGdRUUVNdW94NmlQNkhmVl9fOWdFMDgyYnItc0xPR3QzZEphOThJSVZrSEI3dENXWGNJa3NRWUIwM0dIWDByZlBXUmsyWjVnQzhwSWJYWUY?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:42 GMT"
+        },
+        {
+          "title": "NVIDIA Corporation $NVDA Shares Purchased by Swedbank AB - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPaFZGajJscWdHdnp2ZzNSWklTbzF3aHNoYzdRaWYxX2lxMm1KWWJJUkxKaklRUzM4V0hCcmVUbl9Pamx2V0w3UVN1bi1tYTJmaC0xX094WG9mS3QyekN5VXRzWnAxb3hfMlpJQ01hRWk5RE9DUXp5aUJHVklRd215OC1GMmxOVzlxckt6TUg1aXF5QzY2LUNyd2VIbXdOWHB3NkUzR1V3a2hZU3lmREsxendISl9mOTQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 09:00:45 GMT"
+        },
+        {
+          "title": "Baxter Bros Inc. Raises Position in NVIDIA Corporation $NVDA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPWldQYU5MSVdBdFpBRTZvRHBOUFYzdU5UOW91Zkp4emREc3c0X25RN1NKa054bnA5dy00MzBJbjVBR2dJeFBLWjFfemQ2XzBSZXplbGpMWkdhY3MzcmxCQVp2QldxaGtVckpVak9SMGhoSDNqbXpSaHB5c190OFhiS09pSVZoX1d6V1N0QmJUSWJia0JfMlhWamNaY2xMZjFjaWJjYnJ5TGtELVdJeUc0ejk4MTVLUDZ3MEJN?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:42 GMT"
+        }
+      ],
+      "sentiment": 0.3,
+      "atr_pct": 1.02,
+      "vwap_distance": 1.19,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Price above EMA20 but BELOW EMA50 - no strong uptrend confirmed",
+          "Neutral trend signal contradicts bullish MACD",
+          "RSI at 42.2 is neutral - no extreme oversold for high-probability entry",
+          "Stochastic neutral zone (K=73, D=65) - no oversold bounce setup",
+          "Bollinger position at 50.9% - price centered in middle band, no edge",
+          "ATR at 1.0% just barely meets volatility threshold - marginal for day trading",
+          "News sentiment slightly bearish (0.30) with institutional selling reports",
+          "Low confidence environment - mixed signals reduce probability of success"
+        ],
+        "warnings": [
+          "Institutional investors reducing positions (Burney Co, R Squared Ltd)",
+          "Negative news regarding challenging AI demand environment",
+          "No clear catalyst for directional move today",
+          "Risk-reward not favorable for day trade entry"
+        ]
+      },
+      "ai_sentiment": 0.3,
+      "code": "NVDA",
+      "timestamp": "2026-07-18 00:19:39"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "MEDIUM",
+      "entry": 330.87,
+      "stop": 330.0,
+      "target": 333.5,
+      "rr": "2.1:1",
+      "reasons": [
+        "RSI at 39.5 is approaching oversold territory (bullish reversal potential)",
+        "Bollinger Bands position at 12.9% indicates price near lower band (oversold)",
+        "Price has dropped from near EMA20 ($331.65) suggesting intraday momentum shift",
+        "News sentiment at 0.70 is strongly bullish with HSBC upgrade and positive catalysts",
+        "Strong support zone at S1 pivot ($331.29) provides bounce potential"
+      ],
+      "warnings": [
+        "Trend Signal: BEARISH - price below EMA20 confirms downtrend",
+        "MACD Histogram: -0.6823 BEARISH - momentum favors sellers",
+        "ATR at 0.7% is below 1.5% threshold - insufficient volatility for optimal day trading",
+        "VWAP distance at 0.5% is below 1% - entry timing not ideal",
+        "Stochastic: K below D - bearish crossover signal",
+        "Do not take long positions unless price recaptures VWAP ($332.49) with volume"
+      ],
+      "stock_name": "Apple Inc.",
+      "market_bias": "NEUTRAL",
+      "trend_strength": "WEAK",
+      "pattern_type": "BREAKOUT",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 330.868,
+        "ema20": 331.6454842976812,
+        "ema50": 327.50946338999034,
+        "ema200": 320.76397999999995,
+        "rsi": 39.479926205745315,
+        "rsi_15m": 42.77531054901193,
+        "atr": 2.2833571428571497,
+        "vwap": 332.48502803585177,
+        "sma_5_5m": 330.966,
+        "sma_8_5m": 331.9025,
+        "sma_13_5m": 332.6807692307693,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 332.6537,
+        "sma_50_15m": 333.24606000000006,
+        "trend_15m": "BEARISH",
+        "resistance_15m": 334.87,
+        "support_15m": 330.0,
+        "macd": {
+          "macd": 1.4762847842732754,
+          "signal": 2.1586130754395896,
+          "histogram": -0.6823282911663142,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 335.1005246032366,
+          "middle": 332.62344999999993,
+          "lower": 330.1463753967633,
+          "bandwidth": 0.014894166982133372,
+          "position": 12.890701846490268
+        },
+        "stochastic": {
+          "k": 21.496565851307885,
+          "d": 36.65546776336637,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 333.08,
+          "r1": 334.14,
+          "r2": 335.93,
+          "s1": 331.28999999999996,
+          "s2": 330.22999999999996
+        },
+        "patterns": {
+          "pattern": "EVENING_STAR",
+          "signal": "BEARISH",
+          "volume_spike": false
+        },
+        "change_pct": -0.47088912291259144
+      },
+      "news": [
+        {
+          "title": "Why Did AAPL, ATAI, UNH Stocks Jump To 52-Week Highs Today? - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPRXVGdlNiOVI1bV91UGd1ODVFZzg1ZXQtTzRJT2V6UnUwQkJwbnM0S3FxcFVyNTAwTzhER2YxRlN0RjdNRG1oQjBYLUE4RjJfQWlyQTA3M2M0dG9GQXJEV3FycU1qMDkzRDNkemMzeE1Fdnd2ck0tcm10SGpRQ0lXQmJfXzI5WGtYS2pBTWxESQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 03:02:00 GMT"
+        },
+        {
+          "title": "AAPL Stock Bucks Tech Rout: Retail Calls It 'Safe Haven' Ahead Of Q3 Report This Month - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPSzh3WUtGNWZrZG0xb01tV0pBWE41VWNFd0xyWnhIcUdGaEJzT2U5cDJkLUhpS1UxMF8tU0IzUEpBenpyOFdsV25feHdjTXJnSUpXdmpYYnVNb1VkUEotblJybWlLbTJiQUp4QUNMXzJVaWRvdW5xNkszLWM4TnlvS0NHOUtEWlF4TWZGSzd3UzBWeDB3cFE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 10:37:59 GMT"
+        },
+        {
+          "title": "AAPL Stock Lands HSBC Upgrade \u2013 iPhone-Maker Reportedly Escalates Trade Secret War With OpenAI - TradingView",
+          "link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxOQUFLQk9qdDJ5SnRqNERKUE04azlxV3JNbG1tZFBjRWlKLWg5TDNITHFnQzZ2VjhNVWhvLWlfUnVXcFlBZlkwWm4zaGZrNjJ4NWx0N3U5eEdMWkY3dkRFdzJpOEZ6MHFaRFBQNFBFT0xiLXl6WWVfUkZHeHlZRXpKTEZ3dnlwc3hTRkxiR3V2SjIzdmZ6TnNEclJjTTVpZDFsVHBhZ2hhSS1LWU5nLTh5em5ETFc0NmJ3U1d4VDItRnRwVVVfY1hYRDRhM2g4dWVUXzZDQmZxbERsNHNoaFd2Sk1ScldRYU5r?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 13:24:22 GMT"
+        },
+        {
+          "title": "AAPL Stock Lands HSBC Upgrade \u2013 iPhone-Maker Reportedly Escalates Trade Secret War With OpenAI - Stocktwits",
+          "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQM0toNHViT1R6LWtvbm0teGItYU82aTh5b3FCZHItYTQ2MkNJYW9naHVHZ2xwOVNJcjRIWkprb3RIQjFYSXA2QzZTaTFDT3dMc2ZpZ0dadEhIVW9IeU1IUm9RUy1pSGNDT3p2QlpKN3lybW9nUTh6Q0UtTHVKamhVbmJOUU1wSjUwYnFydlo4UXoyOG9CYV9iZFJXOWtaR1VfZTFqemRUYUdITGxtbXR5RjJ3SktFN1lHVF94ZERR?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:55:32 GMT"
+        },
+        {
+          "title": "Why Did AAPL, ATAI, UNH Stocks Jump To 52-Week Highs Today? - Stocktwits",
+          "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOVnl3QVR6d3lXLVpfZDBlYVRsZEpwRTNfWHpZd2pQdGpLV1RMbkRSOS12aTd5QTRTVnRTT2J6SGFMalB0ZGlraUZLOXp0QlhYWEJqM2VXRmxFODNyWjBLejgwRkRGdGNRaEx0T2I5ckg2anNtbzlYUGVsUXliUERuMHNQUWREaEVCZ19yN3FjbmVzME1HMURVMS1JbWZZREdNNHVwLTlZczRQMlhmMTktc01Ta05DRWtnUjk2VQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 03:04:47 GMT"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 0.69,
+      "vwap_distance": 0.49,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "MEDIUM",
+        "entry_price": 331.29,
+        "stop_loss": 330.0,
+        "target_price": 333.5,
+        "risk_reward": "2.1:1",
+        "reasons": [
+          "RSI at 39.5 is approaching oversold territory (bullish reversal potential)",
+          "Bollinger Bands position at 12.9% indicates price near lower band (oversold)",
+          "Price has dropped from near EMA20 ($331.65) suggesting intraday momentum shift",
+          "News sentiment at 0.70 is strongly bullish with HSBC upgrade and positive catalysts",
+          "Strong support zone at S1 pivot ($331.29) provides bounce potential"
+        ],
+        "warnings": [
+          "Trend Signal: BEARISH - price below EMA20 confirms downtrend",
+          "MACD Histogram: -0.6823 BEARISH - momentum favors sellers",
+          "ATR at 0.7% is below 1.5% threshold - insufficient volatility for optimal day trading",
+          "VWAP distance at 0.5% is below 1% - entry timing not ideal",
+          "Stochastic: K below D - bearish crossover signal",
+          "Do not take long positions unless price recaptures VWAP ($332.49) with volume"
+        ]
+      },
+      "ai_sentiment": 0.7,
+      "code": "AAPL",
+      "timestamp": "2026-07-18 00:20:32"
+    },
+    {
+      "recommendation": "SELL",
+      "confidence": "HIGH",
+      "entry": 502,
+      "stop": 489.45,
+      "target": 522.08,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [
+        "US: RSI 54.5 not in optimal zone (25-50 or 50-75) but not rejecting"
+      ],
+      "stock_name": "Advanced Micro Devices, Inc.",
+      "market_bias": "NEUTRAL",
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 502,
+        "ema20": 496.6239737627379,
+        "ema50": 512.6927389439969,
+        "ema200": 533.45157,
+        "rsi": 54.54861062893169,
+        "rsi_15m": 64.76514931864308,
+        "atr": 9.784571428571427,
+        "vwap": 482.0921148774027,
+        "sma_5_5m": 501.929,
+        "sma_8_5m": 500.03875000000005,
+        "sma_13_5m": 495.50676923076924,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 485.61165,
+        "sma_50_15m": 489.1375199999999,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 503.57,
+        "support_15m": 483.5,
+        "macd": {
+          "macd": -7.985549691542019,
+          "signal": -10.306507320331033,
+          "histogram": 2.3209576287890137,
+          "trend": "BULLISH"
+        },
+        "bollinger": {
+          "upper": 514.3330669445921,
+          "middle": 494.62204999999994,
+          "lower": 474.91103305540776,
+          "bandwidth": 0.0797013272845082,
+          "position": 68.41343351386939
+        },
+        "stochastic": {
+          "k": 96.10470479704793,
+          "d": 83.01648216978201,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 494.59666666666664,
+          "r1": 507.38333333333327,
+          "r2": 514.6066666666666,
+          "s1": 487.3733333333333,
+          "s2": 474.58666666666664
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": 0.3440898912347942
+      },
+      "news": [
+        {
+          "title": "Nvidia and AMD Investors Must Be Prepared for Aug. 4 - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQdnNkR2cyYnlXV1lsbzNScTBGZ21wZjVHVzZ3WTFwUnZTVGNKQmZqNzM1Mm11S0lzdGUwM1dNdnpiei0wSjd5MFR3cF9OcFlnRGN6OU5zcVBLcEFHUkpJUThvajdMWEFKdjYyTGFpMG9DTm5pVzlocGF2VGRNdmE5N05xckZfUW1jb0F5M2F5emxfTjIzbWlNZndxSXRzamFG?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 11:40:00 GMT"
+        },
+        {
+          "title": "Nvidia and AMD Investors Must Be Prepared for Aug. 4 - The Motley Fool",
+          "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNbFlwVHljSkZLaUhzVXRyNVZ4S0Q0NmRmeVpjekpOaEhRbTJVeG8zelUwVWdneXY1UVQxblF6SVNTbFlkNUtldjRESlJBckZlZFV4YmlkU1NfZG9hMEppblMzY3ZoUmZoWVBmNjRwdHM4ODRGc3dRWVZ0c0gyNTVzUEw4eGJub0FJQy12ZmpDWmY2WEpHQVVTTQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:20:00 GMT"
+        },
+        {
+          "title": "Nasdaq Crashes 2% Pre-Market As Chip Stocks Crack; Micron, AMD, Nvidia Plunge Up To 4% - NDTV Profit",
+          "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxOYkFEeEJhVVVMTDFqMXJaSlp4TC13Z1hOXzlfcDRzdHBLeFJPdU0wVGxfbmhHVnZIaF94SzE5YzIzcVRjRzY3bDN1NmxjMkFZVTV3ZGpKS1hhZllFYTRwUUs2a3huNTBHdV8xRTllUXQ2Nzc4SzZiS08wOUtXdzFMTENBdUFobG9CazROUXEwUTlUUjVwcW1lNUcyb2pmT1FJeXZWcnk1Q0paWWxIWVpKcEdhVXJWVktKMEVKcThPMlFmN2Z5UGhNN2RadDhleFlVeGxMaUpNQTTSAeABQVVfeXFMT1VDSHFaV3ljYTljblA2ckJqcGF3YkJUYVY3Qm9OYVViYmNZbzFxYzMtLVg2Y2FMdXFJeENGWkVoZlNsS1NwM0NCMzNqN3Mxa3drdUs5MWRIcFZSVnYwMm13cVExak52RDl0YTllWEFvc3RfVGVTVEc5UUgtVWpNdFRmaXY5ZXBfdkRINnNUQWtVX0VtbFBJS1FSYlRCR0dva2hEX2E4WFFLcElVdWx4WWo2Z2k3NWIxOHpUM2ZMSGxxbDRZbDluMWNrbE5ZbVlUUktaWlJXa0NMdEhiRHdBUWQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:21:47 GMT"
+        },
+        {
+          "title": "Advanced Micro Devices Inc Stock (AMD) Moved Down by 4.99% on Jul 17: A Full Analysis - TradingKey",
+          "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPNDk2R18xSVlYVVZuVU5MZDMxNlpPWnM0OTE5bWt0cFNtaE56N1FjRDBWempTaWs5RFpQUmxPMlNXekJUVDBVV2w4YWl2VC1JTENQWnJWMnh6VkZVTmJHYmFWQ2dLT0NKeWx6SFl2dnJILTN2eUtfUEp5OUQ1MUJmNTQ5NnZ2U204VGc?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:15:14 GMT"
+        },
+        {
+          "title": "AMD shares drop 7%; Wall Street rethinks targets as GPU sales remain key focus - TechStock\u00b2",
+          "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxPeVh5aExodDVGMkRrczBGamNtMmVNUU1UcG1HaGdQRE9PaDd1bkhBUERoWEtXV2luUjZZUTMxNW5McDlkRHJvU0dKbG5SRC00cVM1dkw4RTJOZ1F0cl81YjZybHNuQTZtUmxHMHVfS180aTAzbFh1dFN4WmFUUC1rZ3R5RmVxdG16NU1ZNVU1eTNSRVQtajdrTEcycWpKUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:36:50 GMT"
+        },
+        {
+          "title": "Advanced Micro Devices, Inc. $AMD Shares Purchased by Allspring Global Investments Holdings LLC - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxNZ1dFSFpidEI4aGdPZHUwa0ExejZ1TWswMUg1T1ZrbFNhdm9aQ0tEa2JwOHM4VWZFV0RET2xRWloydlhHaFNOWm1JZFNRZFp2TGoxa1ZGa1FKcU1oLWRHY2VRRGUxa1dQYl9NVlZUdy1pTHpYVTBLMHFlVkhrTlBFTGs3a0t4VjdjbGRQb1hxa3ZwWFUxUjlXRHIyYTFIdjBVNGlDX0tMVGc5bnhCM0gyR3RRSS1ENFlSZ0pNUERrclIyaVhDRHFGc0RRZFZySENKU2NvY2lMRndYQXFMSUJick1kRnFvaUJf?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:31:11 GMT"
+        }
+      ],
+      "sentiment": -0.85,
+      "atr_pct": 1.95,
+      "vwap_distance": 3.97,
+      "ai_recommendation": {
+        "recommendation": "SELL",
+        "confidence": "HIGH",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 502,
+        "stop_loss": 489.45,
+        "target_price": 522.08,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": -0.85,
+      "code": "AMD",
+      "timestamp": "2026-07-18 00:21:34"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "HIGH",
+      "entry": 95.75,
+      "stop": 92.16,
+      "target": 101.5,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [
+        "US: RSI 46.9 not in optimal zone (25-50 or 50-75) but not rejecting"
+      ],
+      "stock_name": "Intel Corporation",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 95.755,
+        "ema20": 95.92812837160541,
+        "ema50": 99.79077149096317,
+        "ema200": 104.75295,
+        "rsi": 46.893961282866165,
+        "rsi_15m": 59.17194207960416,
+        "atr": 1.9738571428571439,
+        "vwap": 93.38235327231457,
+        "sma_5_5m": 95.89020000000001,
+        "sma_8_5m": 95.4995,
+        "sma_13_5m": 94.79853846153846,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 93.56965,
+        "sma_50_15m": 94.30080000000004,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 96.54,
+        "support_15m": 92.73,
+        "macd": {
+          "macd": -1.9813557899125698,
+          "signal": -2.344673736216101,
+          "histogram": 0.3633179463035314,
+          "trend": "BULLISH"
+        },
+        "bollinger": {
+          "upper": 99.72771147678831,
+          "middle": 95.56855,
+          "lower": 91.40938852321169,
+          "bandwidth": 0.08704038047638711,
+          "position": 52.24143737915136
+        },
+        "stochastic": {
+          "k": 79.73357475426788,
+          "d": 65.40507121602961,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 94.55966666666667,
+          "r1": 96.53933333333335,
+          "r2": 97.68266666666668,
+          "s1": 93.41633333333334,
+          "s2": 91.43666666666667
+        },
+        "patterns": {
+          "pattern": "SHOOTING_STAR",
+          "signal": "BEARISH",
+          "volume_spike": false
+        },
+        "change_pct": 0.37632605140676195
+      },
+      "news": [
+        {
+          "title": "Intel Corp Stock (INTC) Moved Down by 3.86% on Jul 17: Drivers Behind the Movement - TradingKey",
+          "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPTk9pZW1fbUxVRl9tS3VVeUdGOEEzNnpQc0psREs4dXZDdFZtTFhuZ3NFUHJUVTh0LTd3VGtobUZlSVdfcUtMUGhpT1djbzNCRjZ3S3ZnVjdBajRDbHV5ZjlpbkhDVVprTU9OLWJaYUlZdTQyS2Nzb1NjcG8wczB0M1Z5ZVFVOVliYWd3?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:15:16 GMT"
+        },
+        {
+          "title": "Intel Corporation $INTC Shares Bought by SteelPeak Wealth LLC - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQZUxYVzZwX04zdHF4OHJ4cFJHc21MUkFCb2pPc2FjbzhVTmdSUXhCOWdBUTZPV1RuS3dNRXFOVnJqWTQ3UnZZTk5DcGxQd2tkVk8zNGFGX0JGc285MzI5MXpMaG03ODlXUDZLZUhGZHhLMk1iUnQ2eVdoUEFlNFlqX192bWh1aGk1US1FcU14Ty16TGY0a21fcXBfX3hKMngtc2VLdHRETUJLU0hUZ3ZoeENRazlEYUVGWG1keWJB?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 10:25:38 GMT"
+        },
+        {
+          "title": "Graphene Investments SAS Lowers Holdings in Intel Corporation $INTC - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQS0pjaUVOVmgzcWdFOWdnVjhYWDJJckk3VW1oUHdkLUZSRGNoaVdrZzNRVFkzM2dqa2RTS01HbWVuUU9tR0tqRHFEZmhOcUpaakEyTDVXZTFlWVVwVmpIMEpWcWhsUkpTM1ZsY1FnbzgxVFZPYzE2eUp5R3JRdmRKa3NUb3pBMDZ4MDNfWlJWOTdMa2FxSUZJWUhKYk9EQmpNRmdTSGY0OWUwbk1odTZDaGowaGFoMnMzM1pUckltc1RSeE9wT3c?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 10:25:41 GMT"
+        },
+        {
+          "title": "Intel Stock Price Prediction: Can INTC Hold $94 Before Q2 Earnings? - TradingKey",
+          "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQeU5CSjJkdHc5OV8zbHA1Z25mVzZTNjE3R25SWHp4ajU5anZ5OTdVVEVOaGx3NXBybHVNREtGZUxabmFKbUExc1MxdkhLUmlLOEgtck13QkFfdlpMRzRUeHFsTnpMc1A3RWU3OFVJRk5nSnktRmlLVFVFcWRLSEQ1bF9kdXh6MGxRdHFoLWptQi1XdXVoeXFKbF9jbS14U3cxVzY0bmdnWFNoRTExWVdlTS1POHVtTzFyOEFOZjZFNnJXYjdQSV9zd1kxYnNXeWpDMEFkYkYzNng?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 02:05:28 GMT"
+        },
+        {
+          "title": "Bastion Asset Management Inc. Takes $1.16 Million Position in Intel Corporation $INTC - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPVHdmVmNtWWhiZGZVWEI4OEQtZF9MXzJsT0F3YmlXdUxaMDNZRk9hNjdxMFprU2FocTUzTm9kZWpKOVdJYl92SVZ0NGZqMWY1bmFwUDNtaXdLb3plNHhvWGwxMGRFU1NRSXFxWGdMMDh1TXJnOGZucjBSU0dnQnJCekxhczh5djhsLWtWUExEWTVTOFZhcUYxdUNIRkkyNnRnUGZNYTE3TWZyVk8tZHFzc0R5RklHLWVrZlpXZG5EZk9xZF9WbG9yTklsNk5ickVVUWRXa1lYS29iUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:40 GMT"
+        }
+      ],
+      "sentiment": 0.0,
+      "atr_pct": 2.06,
+      "vwap_distance": 2.48,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "HIGH",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 95.755,
+        "stop_loss": 92.16,
+        "target_price": 101.5,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.0,
+      "code": "INTC",
+      "timestamp": "2026-07-18 00:22:41"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "MEDIUM",
+      "entry": 383.12,
+      "stop": 373.54,
+      "target": 398.44,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [
+        "US: RSI 29.9 not in optimal zone (25-50 or 50-75) but not rejecting"
+      ],
+      "stock_name": "Tesla, Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 383.12,
+        "ema20": 386.44014917623747,
+        "ema50": 391.1452893628155,
+        "ema200": 396.91995,
+        "rsi": 29.940764674205724,
+        "rsi_15m": 49.46723494938735,
+        "atr": 2.852357142857142,
+        "vwap": 380.87284917989797,
+        "sma_5_5m": 383.18100000000004,
+        "sma_8_5m": 382.59174999999993,
+        "sma_13_5m": 381.64261538461534,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 381.9432,
+        "sma_50_15m": 385.13201999999995,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 384.24,
+        "support_15m": 378.8,
+        "macd": {
+          "macd": -3.1133719924711727,
+          "signal": -2.741990117083099,
+          "histogram": -0.37138187538807355,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 394.9022845446983,
+          "middle": 387.02045,
+          "lower": 379.13861545530165,
+          "bandwidth": 0.04073084274848182,
+          "position": 24.178283133728332
+        },
+        "stochastic": {
+          "k": 39.16609706083365,
+          "d": 31.416974048552763,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 381.388,
+          "r1": 383.97599999999994,
+          "r2": 385.48799999999994,
+          "s1": 379.876,
+          "s2": 377.288
+        },
+        "patterns": {
+          "pattern": "MORNING_STAR",
+          "signal": "BULLISH",
+          "volume_spike": false
+        },
+        "change_pct": 0.1270707831325275
+      },
+      "news": [
+        {
+          "title": "TSLA Stock On Track To Snap 8-Week Losing Streak Ahead Of Q1 Earnings - Stocktwits",
+          "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNMkdyeFN6YWswZFh6WlNOTndza2RHTXgzOGxtel9UOE5lMkpUa0I1el9EMEJCN3B2YTByMGptdkEtT3lqX1NvLU5nR2x0a011TVgtb0tzaDNyVnVBQnZDdWItZjQ5Y2QwRUZFa0pTWXpBMGNUckxRNHdqRUwyVjRZT0F3VUhKdkRKZWlGc2hEZzZmYmZXV0RLbW1iM1JFSXhJZ0FrTnNLWkN5TlJCNnJmTnNfX1phLURiQ1hQVHg5V2tac2h2dnJ1RUpn?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:25:03 GMT"
+        },
+        {
+          "title": "TSLA Stock Slips Overnight: Gary Black Says SpaceX Can\u2019t Afford Tesla \u2013 \u2018The Math Won\u2019t Pass Muster\u2019 - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQM2Q3N0hQWURGTnV5T0lGUS1iMlpBSHdwb0RuQTdoM3Faa0w5bFluRDZhV3RtVzNqLVd6amQyd1RxZkVEZnQtR253R2IteDB5SkN1UDNIRTlOZmRWS3pWZHlYMUJFbVZTbjhQTGlEcjQzT0tjd29wb1hieGdSdjVRRGJjRGJIOWRGN2E0VGI2MWZwa3dZcC02ZzhQMGE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 06:29:00 GMT"
+        },
+        {
+          "title": "Three Seasons Wealth LLC Cuts Stock Holdings in Tesla, Inc. $TSLA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPWUk2MDdfVXlwanluRnUzRmtBVmtLTkUtZnJaLUc2MjhrTFNadk5hTzdLWUQxV0hmczdlTENqQ3RnRUZFTktFQnBkMHl4bmxHTWVlTjVnMFFUYi1TcU40SjJBdGhNNVdXMjM5eHM3OUxMSC12SE9JLVRmSjBQNkFPYXVqNFl5Skk0UndVTDBfWnlOOUI2RVVhUktTeDFncEl3bVl1bmRyWm90TUhsSFBIYXdwOWk0emZnQWlkX1AyeWk?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 10:05:15 GMT"
+        },
+        {
+          "title": "Tesla Stock in the Spotlight: A Look at Upcoming Earnings, Analyst Activity, Technical Picture - Benzinga",
+          "link": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxQQ1RxaTkzZG9QbnVfeG9yTFFMVnVNbGlrQWZTTUxrNEowU3VLc09aclNTNHZzRFMzdGZlTXJaLUJkcTdnYkE3NHhqcnhkb0JscEhRM0RWVkE5TEJOVUZKOE8yanNwNHN3MEhxSENhdE1kbE4zNHdjeU1GNnA1b0lLNENsOVhIYkxPRHd3bzZ5TXRhZ0RTUHh3MDZwYWNWOERuMVJmU29KN01WTlMzNnplX255ZUJsaG9TM1dKOWpGbmNWeDE5bm5nYkNtUk5xUnUxM3BkZlQ3NndLVnd4UEhfTjVqVU9NRkk?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:00:49 GMT"
+        },
+        {
+          "title": "TSLA Stock Jumps After Strong China EV Sales In April Bucks Q1\u2019s Global Downturn Trend - Stocktwits",
+          "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOcl9MaktMQ0xHb2MzMUh1RERkODNaaHI0UVRscVE0dmJ2Q0lHay1raHhDM29fNmtkekRlU1doekhJM0NLakdNMmV3dkZaanlGN193QnQyZlNEbGJXUHFrQUdlOEhHdVFxdVRQa1h2c09sNDdENGM0Y1dmT282TW1RX3NDOWNjT0JBbzJ1aVVzbWVIUmtxZGhuMUMwMlhxaUZ3bWRnY05qRE5PbnBRdk10NkVTQ01OczJ5a3RpcDM3MmhsSnRZMVlyNHE0YThXWXFWc2p0M25Dc1NhZ3hSRlVEVzRR?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:38:24 GMT"
+        },
+        {
+          "title": "Independent Financial Group LLC Invests $24.35 Million in Tesla, Inc. $TSLA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQb2N6MjExQnJQdC0yS3BRNC1kcDYxTDBoaHhGRjRQb1pMTkFTWEZRVnVNczNhWkc4UnRURUdMdjlGLUhWU3RzZjN5XzR0UHFQeGVqWnBOY1IxVWpNQV9VOTVsa3AyTTloY0ZFTmlhckxDeDVPaTZ6c0pXTEYzcjhWMFdmY0p2bjhiOThGNEpVVEJzTjFxVl9yUDdTTEVodE9JVXdLbm5WcVozaEJGZWZnSjA3VnFBQUhyYl8wcWtnM1Vyd1pKdHdsSG40dw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 10:25:42 GMT"
+        },
+        {
+          "title": "Angeles Wealth Management LLC Grows Stake in Tesla, Inc. $TSLA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNeW9xdmxydi1mc0w2eWMyT2dsbVNrcnJTTUZORFNOWHgzRndyRkFPUUtkVkhtVF9pdzd2bUNFMTV5bVlKMWNiXzM3VVFSRFZMbnhFaHR5ZFRqdWxsaS1TTUMyRUgwY1BINzlfeER4NVhHS21idnVfbWplWThiUVRZUDBocV84RFByVmpubFN0elZsWHdabklMaWdwS2hIXzU1TTh2MU1JZ196dVVmTVY0ZmhCSERsRDdjeG9LTw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:31:08 GMT"
+        },
+        {
+          "title": "Aware Super Pty Ltd as trustee of Aware Super Makes New Investment in Tesla, Inc. $TSLA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQRG9SZVRYekMxNWx0OUgwTllPUjZMUXhLV1p5bW5jRGR3azZQZTlZZUdfMERCdFpnV2pxcTBORFljZi04T1V0NFNEZFc2MEFiTTJ6QzVFNHBKYmdTcGExYUpYQlQ0Zzdjc1AzNGJmVktJaWtjUGlFbUFmeENfTWV5TUxHR25XUWhJMVdyTFprck5LV0RVbEFVUmc2eVpsWElZTjF4czZFa0dENjRBT01JWWR4Mjdud3BRbUR4clNsZ3NDclZzcHlMUWVsWVM1Q1gwa1k5dzhGWDZ5Q0FKUXc?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:24:36 GMT"
+        },
+        {
+          "title": "Tesla, Inc. (NASDAQ:TSLA) Given Average Rating of \"Hold\" by Brokerages - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQRnRDTk5PQ2RwZS1fNDdxR01zQUF2azl4WUZqeGU3OUFSbUNhWW9ndXhDR3NmaFlraGtObnJSWUlWZWRvZWJ4b2JKZDFFMkY1dWhlM0hSaXhEYTZFQW96bzBETDd3a0F1a0FvekpwaTRHR1RwejVBZ2pNOE51czNMRlk2Zk9LNXRQN1BrRlFkWFotSk5tamFqYTZrc3FYVXpOY2ZENUktcEE2LUl3X0E4QmFLN2VCa25l?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:30:57 GMT"
+        },
+        {
+          "title": "Assetmark Inc. Purchases 11,084 Shares of Tesla, Inc. $TSLA - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNNGxKUXI1TDVtX3ZEVWNBQW0tSlBHZmpHejhtQUM0ZzgyalI0dklWZ0dRb3FRM0x5bHZlVmFuNGN4ZWNuSFI3cXNDUnBFZ0xNdjdpTWpBVFc5MEpWNmlFWXdONFRmM3JvendSQlo5UTVjQnZpV054RjAxdE1zcGF3QndGck5hMG5GaEtJS2JPbGIxbXFsODF3UmlmcElfRlBrSW9wOFQ0WDAtSUM5Wm5IMS1hZHJldw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:31:09 GMT"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 0.74,
+      "vwap_distance": 0.59,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "MEDIUM",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 383.12,
+        "stop_loss": 373.54,
+        "target_price": 398.44,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.6,
+      "code": "TSLA",
+      "timestamp": "2026-07-18 00:23:39"
+    },
+    {
+      "recommendation": "BUY",
+      "confidence": "MEDIUM",
+      "entry": 392.12,
+      "stop": 389.37,
+      "target": 395.0,
+      "rr": "2:1",
+      "reasons": [
+        "RSI at 10.1 is extremely oversold - historically high probability of mean reversion bounce",
+        "Stochastic K=16.4, D=13.0 - both in oversold territory below 20, classic BUY signal",
+        "Bollinger Bands at 20.1% position near lower band - oversold confirmation",
+        "Stock surged 1.8% while Nasdaq dropped - positive relative strength divergence",
+        "Price holding above S1 pivot at 390.37 - structural support intact"
+      ],
+      "warnings": [
+        "MACD histogram negative at -1.0499 - bearish momentum remains strong",
+        "Price below EMA20 (395.49) and EMA50 (394.20) - short-term trend bearish",
+        "ATR at 0.8% is below 1.5% threshold - limited volatility for day trading scalp",
+        "VWAP distance only 0.2% - entry timing not optimal per rules",
+        "News sentiment mixed at 0.60 - no strong bullish catalyst",
+        "High-risk counter-trend trade - only suitable for experienced traders"
+      ],
+      "stock_name": "Microsoft Corporation",
+      "market_bias": "NEUTRAL",
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 392.115,
+        "ema20": 395.48766324682157,
+        "ema50": 394.19900179438184,
+        "ema200": 389.93606,
+        "rsi": 10.05284721809889,
+        "rsi_15m": 46.673167804365754,
+        "atr": 3.1213571428571436,
+        "vwap": 392.9754863943298,
+        "sma_5_5m": 392.007,
+        "sma_8_5m": 392.16100000000006,
+        "sma_13_5m": 391.871,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 392.91324999999995,
+        "sma_50_15m": 395.58018,
+        "trend_15m": "BEARISH",
+        "resistance_15m": 392.97,
+        "support_15m": 389.39,
+        "macd": {
+          "macd": -0.968731814283899,
+          "signal": 0.08120105850298354,
+          "histogram": -1.0499328727868824,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 405.72968073696126,
+          "middle": 397.2139,
+          "lower": 388.6981192630388,
+          "bandwidth": 0.04287755658581551,
+          "position": 20.062052103636574
+        },
+        "stochastic": {
+          "k": 16.415662650602524,
+          "d": 12.967462714510454,
+          "zone": "OVERSOLD"
+        },
+        "pivot": {
+          "pivot": 391.5416666666667,
+          "r1": 393.6933333333334,
+          "r2": 394.8616666666667,
+          "s1": 390.3733333333334,
+          "s2": 388.2216666666667
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -0.10445194573593228
+      },
+      "news": [
+        {
+          "title": "Microsoft (NASDAQ: MSFT) Stock Price Surges 1.8% As Nasdaq Drops, Valuation Discount Draws Investor Attention - foreignpolicyjournal.com",
+          "link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxPWnZ0d3B5WFRZQURWaVNlWldsSXViNHR1VW13bHg4cDNrZVQ4Q0NrdVMyYTk1YjRFNVpIMXZQNW9GT1VQeFBNSVVaU3lGLU95d3ZFRkZNeGVxdWtncVBTV2VvemttWFpMWVJIUzlrNVU1dF9kbUR2TUhiT1k5SkdkME04U1BpWDZUdWRaUU5HcFJ2c0ItajdqYVRfMEhFSy1nYUxkSFdwWjh3a1cxbUdJY0kySEpxamRjUWUtT1ppQi0zOG5fUzVoZ29PajhhWk13OXUyNzlvUDhVU295YTNWYUVyRGxKbjlu?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 09:22:00 GMT"
+        },
+        {
+          "title": "MSFT Stock Dips Overnight: Satya Nadella Calls Anthropic\u2019s Fable 5 \u2018Editorially Controlled\u2019 Amid Backlash Over Safeguards - Stocktwits",
+          "link": "https://news.google.com/rss/articles/CBMijwJBVV95cUxOeG92VzhrOGhub245THpqQTVoSmw4cUVxckpNdGlxQlJHc2IyYzVqbnNaSHlmUFJjakZmMWVfNmdDN3NxM2ZZd1YxblhkaHZGSlZpS0VVLUZGX1ZLaF9iZDk2dGt6dS05UmhFYTh0R25oR1M3SFNYejEwUml1elE4NFZkUmFveUxKTHZSV1JqdmNsTWhnM09xZHhQWGZaSUhqS3BtcnFyMlB1ZnF2bzdNM0FEVFdUT2I1MERpNDdSVV8tX2NIam8xckxsSzBKMThndWtvNkFhQl8wUXp5cjNCRkpDa2lEODNrLW9NdE5xWGxRbkpmT0VGd3R3M3VrZmhEQXF4dXRQYUFpY1A4OEJJ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 05:35:03 GMT"
+        },
+        {
+          "title": "Microsoft Holds the Key To Understanding Micron - Benzinga",
+          "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQblpUVFBxczRhbkxiUkxfV0N4QTNJOVZPbENUYWJUZFdlTTE5ZXh6RWJSUEFfRkN5UkdGUU1Xd2JwNjlTZEMwREtUZldxN2FZQ1FZUFRJdWF0bWFndXh4aGVoVno2b0wzWkIwOVlDU2tLMjhzQjZFLUxXczBHYnpYRWFhdWJDQzhJRFozSm9YSXRWaVZ0TjU2bnh4dDU1bXNUYzhEaWtYa2RQam5aTlRCWm5n?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 15:21:31 GMT"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 0.8,
+      "vwap_distance": 0.22,
+      "ai_recommendation": {
+        "recommendation": "BUY",
+        "confidence": "MEDIUM",
+        "entry_price": 391.54,
+        "stop_loss": 389.37,
+        "target_price": 395.0,
+        "risk_reward": "2:1",
+        "reasons": [
+          "RSI at 10.1 is extremely oversold - historically high probability of mean reversion bounce",
+          "Stochastic K=16.4, D=13.0 - both in oversold territory below 20, classic BUY signal",
+          "Bollinger Bands at 20.1% position near lower band - oversold confirmation",
+          "Stock surged 1.8% while Nasdaq dropped - positive relative strength divergence",
+          "Price holding above S1 pivot at 390.37 - structural support intact"
+        ],
+        "warnings": [
+          "MACD histogram negative at -1.0499 - bearish momentum remains strong",
+          "Price below EMA20 (395.49) and EMA50 (394.20) - short-term trend bearish",
+          "ATR at 0.8% is below 1.5% threshold - limited volatility for day trading scalp",
+          "VWAP distance only 0.2% - entry timing not optimal per rules",
+          "News sentiment mixed at 0.60 - no strong bullish catalyst",
+          "High-risk counter-trend trade - only suitable for experienced traders"
+        ]
+      },
+      "ai_sentiment": 0.6,
+      "code": "MSFT",
+      "timestamp": "2026-07-18 00:24:34"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 68.88,
+      "stop": 66.29,
+      "target": 73.01,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [
+        "US: RSI 26.4 not in optimal zone (25-50 or 50-75) but not rejecting"
+      ],
+      "stock_name": "Netflix, Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 68.875,
+        "ema20": 69.40621127563182,
+        "ema50": 71.42987845795939,
+        "ema200": 73.23832,
+        "rsi": 26.401369276850687,
+        "rsi_15m": 74.35470441298929,
+        "atr": 1.7111428571428584,
+        "vwap": 67.32230519924987,
+        "sma_5_5m": 68.814,
+        "sma_8_5m": 68.78437499999998,
+        "sma_13_5m": 68.66715384615385,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 67.22825,
+        "sma_50_15m": 67.47956,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 69.04,
+        "support_15m": 67.46,
+        "macd": {
+          "macd": -1.503498162424222,
+          "signal": -1.589525375131387,
+          "histogram": 0.08602721270716485,
+          "trend": "BULLISH"
+        },
+        "bollinger": {
+          "upper": 76.08980418967377,
+          "middle": 69.83305000000001,
+          "lower": 63.576295810326265,
+          "bandwidth": 0.1791917778093253,
+          "position": 42.34387374861874
+        },
+        "stochastic": {
+          "k": 31.98080279232115,
+          "d": 30.802792321116957,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 68.42166666666667,
+          "r1": 69.49333333333334,
+          "r2": 70.11166666666668,
+          "s1": 67.80333333333333,
+          "s2": 66.73166666666665
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": 0.0
+      },
+      "news": [
+        {
+          "title": "5 Things to Know Before the Stock Market Opens on Friday - Investopedia",
+          "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZDZxUlFHN05wUFhpOXh4NHIzRWVQUzVBU3dUYUhpVXJwNDAxS3VVUVVTbTV4cTJHSzBvcnRsNzE1Vkg2VzcyX0J3Mmg1N3J6ZnVRbF9ZcTVucVdQeEFyMTRhMjlFZ01icEtHX1lDbFRNRl9EV3NRMHhJYVZ5MUliUThFVFRWdmVNZkJHNWxQTUlaeWdXRS1QbWlnLWhWWDN3ZExHbFpTNzB4ZGs?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:03:50 GMT"
+        },
+        {
+          "title": "Futures Fall As NFLX, SPCX Skid; Will AI Bulls Make A Stand? - Investor's Business Daily",
+          "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxObmhVaW5WYU5ZckFzendEYTNsVW13LWplckpJNU0tcFUzeG5OMVIzVUF2SnRqZEtYMGg0aUFwcDZtdzZjMVNHTmQzSmVzWFRnZ0hDMmVXd2o5ZnlHU1ROaVZBNzg1V19OSjBNcWg1amg2UHpOZmtybi1pNDBrZWJvTFNGVTlSUUNLa2RsYXBscm5DanI1dFo5dGRBY29jcVJvS0pwSkJtS2dVYl81Q3Ezb1Z3OFhZNlBmam1ranM0OENnWUltbEFlU0VCLVBsQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:05:00 GMT"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 2.48,
+      "vwap_distance": 2.25,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "LOW",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 68.875,
+        "stop_loss": 66.29,
+        "target_price": 73.01,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.6,
+      "code": "NFLX",
+      "timestamp": "2026-07-18 00:25:29"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "MEDIUM",
+      "entry": 642.47,
+      "stop": null,
+      "target": null,
+      "rr": null,
+      "reasons": [
+        "RSI at 31.4 is in oversold territory, which could signal a potential bounce",
+        "MACD histogram deeply negative at -2.9324, confirming strong bearish momentum",
+        "Price trading below both EMA20 (654.42) and EMA50 (660.40), indicating downtrend",
+        "Bollinger Bands position at 21.6% suggests price is near lower band (oversold)",
+        "Stock dropped 3.46% on July 17, showing recent bearish pressure",
+        "Weak bullish news sentiment at 0.35 provides minimal support",
+        "Multiple bearish confirmations outweigh oversold bounce potential"
+      ],
+      "warnings": [
+        "ATR at 1.2% is below 1.5% threshold - insufficient volatility for day trading",
+        "VWAP distance at 0.8% is below 1% - poor entry timing signal",
+        "Price below EMA20 and EMA50 - NOT a strong trend setup",
+        "MACD bearish momentum strong - risk of continued selling",
+        "Recent news focus on stock drops creates negative sentiment pressure",
+        "Strategy rules not met for high-probability setup"
+      ],
+      "stock_name": "Meta Platforms, Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 642.47,
+        "ema20": 654.4158738685486,
+        "ema50": 660.3996954638727,
+        "ema200": 658.2634200000002,
+        "rsi": 31.44044120840148,
+        "rsi_15m": 42.74517684887461,
+        "atr": 7.396999999999999,
+        "vwap": 637.2305208129001,
+        "sma_5_5m": 639.3860000000001,
+        "sma_8_5m": 636.494375,
+        "sma_13_5m": 634.0896153846154,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 641.1056500000001,
+        "sma_50_15m": 652.0853999999999,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 647,
+        "support_15m": 627.84,
+        "macd": {
+          "macd": -8.920465409059716,
+          "signal": -5.9881041234655745,
+          "histogram": -2.9323612855941414,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 685.805425128774,
+          "middle": 658.1819499999999,
+          "lower": 630.5584748712258,
+          "bandwidth": 0.08393871976821635,
+          "position": 21.560511617827764
+        },
+        "stochastic": {
+          "k": 38.661971830985955,
+          "d": 7.375629641402704,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 630.5733333333334,
+          "r1": 635.1466666666668,
+          "r2": 637.4333333333334,
+          "s1": 628.2866666666667,
+          "s2": 623.7133333333334
+        },
+        "patterns": {
+          "pattern": "MORNING_STAR",
+          "signal": "BULLISH",
+          "volume_spike": false
+        },
+        "change_pct": 1.5185033024681625
+      },
+      "news": [
+        {
+          "title": "Meta Plans To Hire AWS Executive As It Explores Cloud Push: Report - Investor's Business Daily",
+          "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1FaFctaEk1Z3RTY3dNa1MtUkVuVU5hUDRPdFk0aGFuWG5jX09XNjU5LWdUV2gxLXlFbGVoU1dQUlFsNEVNYmg3X3E1eXZCT3A2QXFEQWxwVmhUdXpBeDRBZXlPcFdZZmpINTBTUEpPV2JJbkhvc2NjX2pqZ296QVE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 13:19:00 GMT"
+        },
+        {
+          "title": "Why Meta Stock Dropped on Friday - The Motley Fool",
+          "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNRzJxTnNQTTZ3MDhsSWd1aVdYbnJxVm5UaEwxOWFlS3ExYW1ESUxaVlNwaUFlZjNrb0EyRHRxNEItYlQzaFItem0wR3ltX3JyZ1BhbnZMY3pxY0JxR3dUelJzR245ekRDYlpzNUp6YklxTkxNWUlhMFpVQ3UxN3otdA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 16:03:40 GMT"
+        },
+        {
+          "title": "Why Meta Stock Dropped on Friday - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPTUFPMEs2Qm93TE5FamdIeXhhYTRpT0FIam9OSnRrd0tWQWJGZ0cxZVFWNGgyZHVZbEVZRkl5NTFxQUFONlFjWVFFTWJITWxOQ1pfUGdXU0x6TmZlLUxEYVRlOXAyRHV2WTRfZVZpR1lWZ1hwXzRJRGpxR1JUTDNLeVdLZDNTUkwwUkpCTE9hS3dyTGI4ckN6RWhR?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 15:58:45 GMT"
+        },
+        {
+          "title": "Meta Platforms Inc Stock (META) Moved Down by 3.46% on Jul 17: What Investors Need To Know - TradingKey",
+          "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNTWRuVTQ3VTNVdmFiUnRrQ193U1BZNXd3YnY0UDJxNG5oTHMtY19CNzlWTlM3WURTNHp4QkM4eXFla1d3MGJTWElRUkh1dmF1dkR0RjE0SlViY3FpOFFwczF2eTY1LVFJTXVIMGtmRkwxSkZTWDc2eE1fQWdhZHQxbnd3S0Q0WTc4T2lR?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:15:17 GMT"
+        },
+        {
+          "title": "Is SpaceX\u2019s stock a bust because it fell below $135? Look what happened after Meta\u2019s IPO. - MarketWatch",
+          "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxOSklZZ1lFQ3NiOFlrdWpHeWEzcUU4R0hlU3lTU0IzSmF5LTJ0MnhzdmozTGIwRWg3ZUllMjdpWDJ4NzlsbW1DbjRmLTRkUkVqcFo5LWkwZDJCbml1eUdicW81MWV3S0xDMEFwY3BEWEdHUk5rV2FUYUpmUldpUll5UkRKQldwUG1wSmdCVUdZcVJPRkY5RUFsRnhiTkhybUpsZXJ4cWRvWFVjVncxVkpKeWsyS0luSG1aYmU3NHhpX2kzVjBaSVE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 13:25:00 GMT"
+        },
+        {
+          "title": "BMO Capital reiterates Meta stock rating on AI spending concerns - Investing.com",
+          "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQQWFOVE9ockh3dTY2SjhVYnVkX2pDVUw0UV9nci15NkxVZXRCWHZsOFhBSzVzWENWQnpsNkd6QjB4aXZkSG5hd2I5QWZpamZDOGF0ZEowb09ZZmczVXNfbS1PVWhxdG9Ed3lWdjc3dzhtc21RY25RQ1JlUE9Wdjl5ZE1HUWdkc29XNTJfQmpuSm1Fa1FjY1RTV2VlaGNlalFDeGFralpQVDNBSnVma3pQSHYzNGs3X016UGRPV2JtdTY2Zw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 11:40:51 GMT"
+        },
+        {
+          "title": "Here\u2019s How Much You Would Have Made Owning Meta Platforms Stock In The Last 10 Years - Benzinga",
+          "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQTExBVXVxaERXT1Z6azFMSm5URTRIWktIT1JrT01JQnl3OGs1eDR0WFhib1FEQks2MkRsWmk0aS12d1BCZFptTlB0TjdrVE14X2paSGZQZFBQSVNtckRrNVJKQlViSEVpRXluaDM3QnFLZUxycENtUEZsblNlYW9vUXJuRlBhNDI4S2VQUmZxUlR0WjZtTVR3SHJFQkNQTEs5ZkZaVUV3SzdoX0NQTzRpVzNXODdSOFI0c28yUjV5aw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 15:30:26 GMT"
+        },
+        {
+          "title": "The $145 Billion Hangover: Why Meta Stock is Facing a Hard Reality Check - EBC Financial Group",
+          "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1NLXluYXJNakhneFFTcGRfWFplNF9oekk5V0Z1UjlLU3F6Y0xkYy1iOUJZWTd0Y0FJcG1ubm1qSmhlVG13MEE2N09wcXplX1ZlMWp6UEdFd2owTjN4VHRiMGtCZjJwV2xiTlVWcG41UEpZMXVCVmxMYmh3NA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:25:00 GMT"
+        },
+        {
+          "title": "Why is Meta Platforms stock sliding today? By Investing.com - Investing.com Canada",
+          "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPS0Jpa3pVc3AzZktrZldWRkhNNXpTcmxnUkJKTTFITGh6VTk3RXNGdjVCYXNHZnVQclo3Z0lWWFlWNDdObEpxSF9VUk5JaU1waVhnV0xZR2FrVEZvaXc4WjhKbWxiMjhRT2d3bDJHVV96UWZGVGg4NFdKcW5EVUVidEpXR0Vwc2lDMkdMZEdDYS1wOGxuVkpQY1lhblIxQ1JteFo1MA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 14:33:32 GMT"
+        }
+      ],
+      "sentiment": 0.35,
+      "atr_pct": 1.15,
+      "vwap_distance": 0.82,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "MEDIUM",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 31.4 is in oversold territory, which could signal a potential bounce",
+          "MACD histogram deeply negative at -2.9324, confirming strong bearish momentum",
+          "Price trading below both EMA20 (654.42) and EMA50 (660.40), indicating downtrend",
+          "Bollinger Bands position at 21.6% suggests price is near lower band (oversold)",
+          "Stock dropped 3.46% on July 17, showing recent bearish pressure",
+          "Weak bullish news sentiment at 0.35 provides minimal support",
+          "Multiple bearish confirmations outweigh oversold bounce potential"
+        ],
+        "warnings": [
+          "ATR at 1.2% is below 1.5% threshold - insufficient volatility for day trading",
+          "VWAP distance at 0.8% is below 1% - poor entry timing signal",
+          "Price below EMA20 and EMA50 - NOT a strong trend setup",
+          "MACD bearish momentum strong - risk of continued selling",
+          "Recent news focus on stock drops creates negative sentiment pressure",
+          "Strategy rules not met for high-probability setup"
+        ]
+      },
+      "ai_sentiment": 0.35,
+      "code": "META",
+      "timestamp": "2026-07-18 00:26:24"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "MEDIUM",
+      "entry": 248.02,
+      "stop": null,
+      "target": null,
+      "rr": null,
+      "reasons": [
+        "RSI at 35.7 approaching oversold territory but not yet triggering buy signal",
+        "Price at 36% Bollinger Band position shows bearish lean without extreme oversold",
+        "Strong institutional buying (multiple institutional purchases reported)",
+        "News sentiment at 0.75 (moderately bullish)",
+        "Bearish trend alignment with price below both EMAs"
+      ],
+      "warnings": [
+        "ATR at 0.9% below 1.5% threshold - insufficient volatility for day trading setups",
+        "VWAP distance at 0.1% below 1% threshold - poor entry timing",
+        "MACD histogram negative at -0.1403 confirms bearish momentum",
+        "Trend signal BEARISH - counter-trend trading higher risk"
+      ],
+      "stock_name": "Amazon.com, Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 248.02,
+        "ema20": 249.40601524547014,
+        "ema50": 250.06477037567333,
+        "ema200": 248.51980999999995,
+        "rsi": 35.684983266760256,
+        "rsi_15m": 63.73626373626375,
+        "atr": 2.3132142857142832,
+        "vwap": 247.7223781338377,
+        "sma_5_5m": 247.9886,
+        "sma_8_5m": 248.11675,
+        "sma_13_5m": 248.28723076923077,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 247.31270000000004,
+        "sma_50_15m": 247.60917999999998,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 249.03,
+        "support_15m": 247.29,
+        "macd": {
+          "macd": -1.4080989602745717,
+          "signal": -1.2677771825656667,
+          "histogram": -0.14032177770890497,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 257.32468642949283,
+          "middle": 250.05995000000001,
+          "lower": 242.7952135705072,
+          "bandwidth": 0.0581039581067885,
+          "position": 35.959917336309864
+        },
+        "stochastic": {
+          "k": 46.26719056974464,
+          "d": 40.14135434714325,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 248.55499999999998,
+          "r1": 249.10999999999996,
+          "r2": 249.58499999999998,
+          "s1": 248.07999999999996,
+          "s2": 247.52499999999998
+        },
+        "patterns": {
+          "pattern": "EVENING_STAR",
+          "signal": "BEARISH",
+          "volume_spike": false
+        },
+        "change_pct": -0.24735053391516912
+      },
+      "news": [
+        {
+          "title": "Amazon Stock Adds Market Power, Not Portfolio Ballast - Trefis",
+          "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQQlcwYmttMGd6c1ZYNXV0Y0hzMlI4ZUJHazhhX1ZlY1N5U09zUVhlYmxRUHowcHJ3VXJleXFiUzI5YkZYMEtCVGQ3ZnNOaEMxci1rcGRnWVBBTFg1N0NGZG9EZnktQk8wd055VElXaG5Nd3dxQWxNSUtRYkNtR0RHekNCZEZQOFBjNWpqYUVESmQ1Z0NRZi0xNmJQYzVBNTdRTXI4c3MtLVhtd3F3VnFNMC0zOA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 11:53:23 GMT"
+        },
+        {
+          "title": "Amazon.com, Inc. $AMZN Shares Bought by Whittier Trust Co. - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNdFpxLXdaM0oxbHVablFBNk1mcXpRcElVcWJOdVBDdG9BV2VCd1lvQ1g5aE1Dd3EtQlFidjVaMTRFMldFVGxkS3hSZS16WFpGaHVKbmRISFdDdG5LZ0ozZjA5dGNBczhPa0hqa0wxaGJPVllfdWVjaDdUcXdrYTFvX0hiWkZuTHFTc1owVF9IUWJNNGRNRFp1RHBjYm5LUTMtaG1hempuOFpnQWw1MGZZTS1sMEM?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 11:23:58 GMT"
+        },
+        {
+          "title": "Amazon stock is struggling: will upcoming earnings ignite a comeback? - Invezz",
+          "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPWlhiaXh4RzNPTVBqa05nMjcxZzZpbkltM1lIVXJiaUlSeHZ5RUdYWm9BZ1lxU0gyLWJfLVZZcDkxUnp1TGxtdFp6eXRIM0g3NXIwSW8xWTlubFZRUzVDQ2lZNU8zYmtOLVo5MWMwdEkzQWxrTjRtVUltaEdvOF9qc0JRVy1sOXlrWDFPeG5pWTd1NE1WWk5STFJKU2J5X3lRdlNLeGhn?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 12:04:28 GMT"
+        },
+        {
+          "title": "Amazon.com, Inc. $AMZN Shares Bought by PUREfi Wealth LLC - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPNmxrbGpCcVlQNFdJVXpaclhyQ0pCTTZDMlIwWTBZTlAxdXBWQ3UwLTZNdUZYTjBBRDQyRTdjdHJxTTRKaEZTTzlFTTBscE1IdFdmWl9WaGZ2Z3dLdGdlNmVqTnhqbnd2amJaZWFpclFIblNGRXVPZ2FMSmVKdUxaM1Y4TGhfNzVDYS1LOWJWWEZ2UWFyZ0xEYkduV0swVF8tX3Jybi1kRHIxdl9ic0EyUGx6N2w?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 09:00:47 GMT"
+        },
+        {
+          "title": "DGS Capital Management LLC Buys 3,019 Shares of Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNeDY2SHFvamtvcDNnMm1USTM3ck50bDhpSkR0Y0RxMmZvWlY0akNsTFBnVzRxRVd0WENkcW1fZURtem1PdkNWRXFyenc1S2VDdzEtdGRZR25FdDVISnp6RU52bzAxZ1RqTDZoRVBNV244WnZyUjI1LTlWU3duWVI2MTYyTnI1eldHTThIaEs2bUxKZFlEMUNTbEFIODNQQ09XdjNNOXBHcGlKbmhjWmFLcFZmSGFUbnV6dUV1YWFYNk40Q2FP?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:42 GMT"
+        },
+        {
+          "title": "Fortune 45 LLC Sells 5,499 Shares of Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOYk1XckROdzh3OVVUYlZWRnpQQ3JxQVpoelppS1l6anJrSVhsUEVXOHdxZDh1TmstWFU2RU9HNE1TSlI3QW85YklCZUEweUtKbjRZQUQyaTlGZmdMZlByV29xRjN6dHhPZmtyZUdQZkViSktJbFNKMkdscXczYm9MdEJqQ2R5UzFqamdXX0ZTSElvajBQQU1oUFFXaWJXRU41c09NTWtQcDIwUE83U2lkS3NoYVd3Zw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:40 GMT"
+        },
+        {
+          "title": "Collaborative Fund Advisors LLC Invests $2.14 Million in Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNemNHcHRxWlBoMmpGM0NYQk5FZGFIRTRHTkV3NnBjUElIeUIzOGdzUzFqc2U0cm5OUzh1US1KSDFiZEVncW9ZcnJHQWZUS3J6V0pWaEpPanRUdjJMWFRLMFNlTFpGMG1pWU1OdWFrQklVZmNqdG9PNkdfSXFhU3k2M3JKVjJhbDZXaWhXX0l6QUVhTWNYbTdJLThWcTFaM1NEc3c3dUhuNERTUnB2ZVRTaXJUbkNQMS1hU3E1MnBpdWN3ajJPWG5vd1JjQ1M1SFE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:41 GMT"
+        },
+        {
+          "title": "Busey Bank Has $121.37 Million Stake in Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNSHh0OW1nUS1tbGNpQWs2Y3FXVTNLTlN5dHF5MUlfWDZRR3BlU3VmVjR3TWlHQXFIcnFsY1oyOWN3NEVtZlljdVprb0Rtcy03YUpXbnFnWUJCWjlLZWVRZTlEcGRhVGRETjZMLVM2UmN5MjhHQXhHRXFFeG9LcUFGT3p4UkNVVGFQOURLWVpkMjNKbWk0RVNxbzMtT184WWEzalpnLVpadHY4cmxQcHVrVTIycTM3aWZn?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:42 GMT"
+        },
+        {
+          "title": "California First Leasing Corp Makes New $6.22 Million Investment in Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQUzVHWHFIc0hoeWFYZTQ0Z2JCWGdDOUtZNXUwQXBPZk5KUUFQTkN3WVY3b2I2bmdUaGFkZHc1ckxvbUpTQnRXSnJ2YzJ0bGVPVFFNT0JkV04tNVl5X0s3bllIdXppNHNrWTh3N2RVQ0k5UmFQWVpWbXdiUGVMWVN0dEhmV3VEQklUZi1OSWVxVXQ4QmFCZUdDTkgwOWVQRWg4QmRfeFNxWjhVbllxTjlzZHZTTFFJaUR5alUzelpaeVdlQkRGMTFuNEUtN2ozbzZaZGNXcXptRzQxMkxjQ2c?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 07:32:43 GMT"
+        },
+        {
+          "title": "Kathmere Capital Management LLC Grows Stake in Amazon.com, Inc. $AMZN - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQTnRGTFI2WnRCalZFM0NBZk5nUDZLVEFiVXNRZXJnOFU1RVI3VUZBb1RGWlFaTncxTUFlbk5oU2VZTzJmd1dRNFh0VlZ3VGZ2Yjd1UmtmZVJjSUVyWFlCX09VSy1TcDRFRTA3dFIzY3VCNzQxTkJvamVTMDJqLUpsZE1mVGlwVFpsMC1sVjdtNXF1UTdYc25ZakF0NmRsMk9BQXpDVHIzQkpTN3hnR0ljZXB0bHVpeWdWeHpiYTVRLXpqS2t3?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 09:00:43 GMT"
+        }
+      ],
+      "sentiment": 0.75,
+      "atr_pct": 0.93,
+      "vwap_distance": 0.12,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "MEDIUM",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 35.7 approaching oversold territory but not yet triggering buy signal",
+          "Price at 36% Bollinger Band position shows bearish lean without extreme oversold",
+          "Strong institutional buying (multiple institutional purchases reported)",
+          "News sentiment at 0.75 (moderately bullish)",
+          "Bearish trend alignment with price below both EMAs"
+        ],
+        "warnings": [
+          "ATR at 0.9% below 1.5% threshold - insufficient volatility for day trading setups",
+          "VWAP distance at 0.1% below 1% threshold - poor entry timing",
+          "MACD histogram negative at -0.1403 confirms bearish momentum",
+          "Trend signal BEARISH - counter-trend trading higher risk"
+        ]
+      },
+      "ai_sentiment": 0.75,
+      "code": "AMZN",
+      "timestamp": "2026-07-18 00:27:26"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 346.87,
+      "stop": null,
+      "target": null,
+      "rr": null,
+      "reasons": [
+        "RSI at 32.2 indicates oversold condition - potential bounce opportunity but not a confirmed entry",
+        "Price below both EMA20 (354.31) and EMA50 (358.77) - no strong uptrend confirmation",
+        "MACD histogram negative (-0.9835) confirms bearish short-term momentum",
+        "VWAP distance only 0.3% - insufficient for optimal entry timing per strategy rules",
+        "ATR at 1.0% below 1.5% threshold - marginal volatility for day trading",
+        "Negative news sentiment (-0.65) with stock actively falling today",
+        "Stochastic not in oversold zone (<20) - lacks clear BUY signal",
+        "No multiple confirmations to justify high-confidence entry"
+      ],
+      "warnings": [
+        "All strategy rule conditions unmet - no strong setup present",
+        "Current bearish momentum and negative sentiment outweigh oversold RSI",
+        "Risk-reward not favorable given conflicting signals",
+        "Recommend waiting for price to reclaim EMA20 or VWAP with confirming volume"
+      ],
+      "stock_name": "Alphabet Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 346.87,
+        "ema20": 354.30775621572633,
+        "ema50": 358.7658988806578,
+        "ema200": 358.67095,
+        "rsi": 32.23563849249919,
+        "rsi_15m": 52.7733026467203,
+        "atr": 3.455071428571423,
+        "vwap": 345.9342797961993,
+        "sma_5_5m": 346.625,
+        "sma_8_5m": 346.83087499999993,
+        "sma_13_5m": 347.13784615384617,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 346.52095,
+        "sma_50_15m": 350.46128000000004,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 348.52,
+        "support_15m": 345.94,
+        "macd": {
+          "macd": -5.392808398841169,
+          "signal": -4.409294043539653,
+          "histogram": -0.9835143553015158,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 375.60746332950083,
+          "middle": 356.2969999999999,
+          "lower": 336.986536670499,
+          "bandwidth": 0.10839531811663261,
+          "position": 25.59095336257903
+        },
+        "stochastic": {
+          "k": 32.64024643089864,
+          "d": 17.620852456196857,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 347.06333333333333,
+          "r1": 349.08666666666664,
+          "r2": 350.5433333333333,
+          "s1": 345.6066666666667,
+          "s2": 343.58333333333337
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -0.21862324885654028
+      },
+      "news": [
+        {
+          "title": "META_TITLE_QUOTE - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE51cTBUdmJTdWRuVFN1QjQxcDh1ZzMtcElOUHNJck5hcVpNSXNzbE9yYjFOakNHMzBDa3Z6ektnUEV4MkYyU1FkNzZ3TXM1S3M?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 08:42:12 GMT"
+        },
+        {
+          "title": "Why Alphabet (GOOGL) Stock Is Falling Today - Yahoo Finance",
+          "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxNOHd0UHkwSGtwZXJGTnl1QW5teE5fT1BjRzhGSGgybElUdDl2dzhrTEN2YTE3NE1uT19RazZNcVJsQlBrZ0dCMTNFVE1fWkpTcjZuVllmWG00cElHV2xhWVhwQ0hpMW55WHF0WTAyM25tSExzb01TZ0FOUHRzVjFsRmZCVFQ2eHRHNEZHN1RpVlQ5UjVKU3ktM014ZDFPUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 00:57:00 GMT"
+        },
+        {
+          "title": "Why Alphabet Stock Dropped on Friday - The Motley Fool",
+          "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPUzJiaGFtUmkwOHFZVmI4NGM4bFJLSW1hYzNvRUVCWDlyOXpaQjJNS2xWWnRqTU1Tc1VUYmNfRXhzOEc5RzU0ZkxBNGVfVlhjOHBpZTV5WEpHRjVxV0FNTE5SNjFUTTVZU01SaUJ1RGJnMjBES3JqcUQwamNManpuVU14bTM0QQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Fri, 17 Jul 2026 15:47:02 GMT"
+        }
+      ],
+      "sentiment": -0.65,
+      "atr_pct": 1.0,
+      "vwap_distance": 0.27,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 32.2 indicates oversold condition - potential bounce opportunity but not a confirmed entry",
+          "Price below both EMA20 (354.31) and EMA50 (358.77) - no strong uptrend confirmation",
+          "MACD histogram negative (-0.9835) confirms bearish short-term momentum",
+          "VWAP distance only 0.3% - insufficient for optimal entry timing per strategy rules",
+          "ATR at 1.0% below 1.5% threshold - marginal volatility for day trading",
+          "Negative news sentiment (-0.65) with stock actively falling today",
+          "Stochastic not in oversold zone (<20) - lacks clear BUY signal",
+          "No multiple confirmations to justify high-confidence entry"
+        ],
+        "warnings": [
+          "All strategy rule conditions unmet - no strong setup present",
+          "Current bearish momentum and negative sentiment outweigh oversold RSI",
+          "Risk-reward not favorable given conflicting signals",
+          "Recommend waiting for price to reclaim EMA20 or VWAP with confirming volume"
+        ]
+      },
+      "ai_sentiment": -0.65,
+      "code": "GOOGL",
+      "timestamp": "2026-07-18 00:28:28"
+    }
+  ]
+}

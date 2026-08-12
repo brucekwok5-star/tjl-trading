@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-06-10 18:49:04",
+  "total_stocks": 2,
+  "results": [
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 0,
+      "stop": 0,
+      "target": 0,
+      "rr": "0:1",
+      "reasons": [
+        "AI explicitly recommended NO TRADE"
+      ],
+      "warnings": [
+        "All price data is invalid (showing $0) - cannot establish entry/exit points",
+        "RSI at 50.0 is neutral, not in overbought or oversold territory",
+        "MACD histogram at 0 indicates neutral momentum",
+        "Stochastic neutral with no crossover signals",
+        "Bollinger Bands at 50% position shows price is at middle of range",
+        "Bearish news sentiment (-0.65) suggests headwinds"
+      ],
+      "stock_name": "SPDR S&P 500 ETF",
+      "market_bias": "BEARISH",
+      "analysis": {},
+      "news": [],
+      "sentiment": 0.0,
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "ai_recommendation": {
+        "recommendation": "NO TRADE",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "All price data is invalid (showing $0) - cannot establish entry/exit points",
+          "RSI at 50.0 is neutral, not in overbought or oversold territory",
+          "MACD histogram at 0 indicates neutral momentum",
+          "Stochastic neutral with no crossover signals",
+          "Bollinger Bands at 50% position shows price is at middle of range",
+          "Bearish news sentiment (-0.65) suggests headwinds"
+        ],
+        "warnings": [
+          "INVALID DATA: Price field shows $0 - cannot generate actionable trade",
+          "INVALID DATA: ATR showing 0.0000 - cannot assess volatility for day trading",
+          "INVALID DATA: All EMA and pivot point values are $0.00 - cannot determine trend or support/resistance",
+          "Recommend obtaining valid price data before making trading decisions"
+        ]
+      },
+      "ai_sentiment": -0.65,
+      "code": "SPY",
+      "timestamp": "2026-06-10 18:48:29"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 0,
+      "stop": 0,
+      "target": 0,
+      "rr": "0:1",
+      "reasons": [
+        "AI explicitly recommended NO TRADE"
+      ],
+      "warnings": [
+        "Critical data missing - price and most technical indicators show $0.00 values",
+        "All moving averages (EMA20, EMA50) at 0.00 - cannot assess trend",
+        "ATR at 0.00% - insufficient data to measure volatility for day trading",
+        "VWAP at 0.00 - cannot determine relative price position",
+        "All pivot points at 0.00 - no support/resistance levels available",
+        "Strategy Rule 3 (ATR > 1.5%) NOT MET",
+        "Strategy Rule 4 (VWAP distance > 1%) NOT MET",
+        "Neutral readings across RSI (50), Stochastic (50/50), MACD (0)"
+      ],
+      "stock_name": "Invesco QQQ Trust",
+      "market_bias": "BEARISH",
+      "analysis": {},
+      "news": [],
+      "sentiment": 0.0,
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "ai_recommendation": {
+        "recommendation": "NO TRADE",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Critical data missing - price and most technical indicators show $0.00 values",
+          "All moving averages (EMA20, EMA50) at 0.00 - cannot assess trend",
+          "ATR at 0.00% - insufficient data to measure volatility for day trading",
+          "VWAP at 0.00 - cannot determine relative price position",
+          "All pivot points at 0.00 - no support/resistance levels available",
+          "Strategy Rule 3 (ATR > 1.5%) NOT MET",
+          "Strategy Rule 4 (VWAP distance > 1%) NOT MET",
+          "Neutral readings across RSI (50), Stochastic (50/50), MACD (0)"
+        ],
+        "warnings": [
+          "INVALID DATA - Price shows $0 which is not a valid market price for QQQ",
+          "All technical indicator values appear to be placeholders or data retrieval errors",
+          "Cannot provide actionable recommendation with current dataset",
+          "This appears to be a test case or data error - real QQQ data required for analysis"
+        ]
+      },
+      "ai_sentiment": 0.65,
+      "code": "QQQ",
+      "timestamp": "2026-06-10 18:49:04"
+    }
+  ]
+}

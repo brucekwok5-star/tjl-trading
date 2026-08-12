@@ -1,0 +1,1191 @@
+{
+  "timestamp": "2026-05-27 08:23:01",
+  "total_stocks": 10,
+  "results": [
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 25.82,
+      "stop": 0,
+      "target": 0,
+      "rr": "0:1",
+      "reasons": [
+        "AI explicitly recommended NO TRADE"
+      ],
+      "warnings": [
+        "ATR of 0.5% is well below the 1.5% threshold required for day trading volatility",
+        "VWAP distance of only 0.1% indicates poor entry timing - price is tightly range-bound",
+        "Neutral trend: Price below both EMA20 (25.87) and EMA50 (25.87)",
+        "MACD histogram at 0.0000 provides no directional bias",
+        "Stochastic at K=50, D=50 is neutral with no oversold/overbought signal",
+        "Bollinger Band position at 0% (middle) offers no extreme reading",
+        "Tight R1-S1 spread of only 0.16 points limits profit potential"
+      ],
+      "stock_name": "TRACKER FUND OF HONG KONG",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 25.82,
+        "ema20": 25.871666666666666,
+        "ema50": 25.871666666666666,
+        "ema200": 25.871666666666666,
+        "rsi": 56.75675675675684,
+        "rsi_15m": 29.411764705882476,
+        "atr": 0.13454545454545458,
+        "vwap": 25.845220519290514,
+        "sma_5_5m": 25.928000000000004,
+        "sma_8_5m": 25.9325,
+        "sma_13_5m": 25.944615384615382,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 25.887999999999998,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 25.92,
+        "support_15m": 25.8,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 25.886666666666667,
+          "r1": 25.973333333333333,
+          "r2": 26.046666666666667,
+          "s1": 25.813333333333333,
+          "s2": 25.726666666666667
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": 0.07751937984495957
+      },
+      "news": [
+        {
+          "title": "Hang Seng Index(800000) Stock Price Today | Quotes & News - Moomoo",
+          "link": "https://news.google.com/rss/articles/CBMiogJBVV95cUxPdXhTSU8zakZFckgtSFRtYTVGMkR1RHlSX05XaGd6eFdzOWplMTEtanJJQnFOc050Q2Z4cEJWVGYwTGhVRC1hVHhTa1dMakNpb2FNQkw3XzdFVFF0OXRxZXZadWlFYnlTel9LeVJWZHM2QWxwSXFqNUdKSGk4YTRLRUVtVWJ3M2NoTlJLNEZkcFIyV1A0SW11XzRaWHNPSFlSbmxEU3JURFVnQThEbS01NnNLamt4N2w0Yk4zVTJaTWVJRmdScF82TDFtbUdJTk8tR1FxaW5sWTk2dUJqTnpodkNKVVlWeEF3ZEd2dHhwLUZ1dlZrVllNWDRIUjZLVG5QUDZnckQ4ZDNiakFXaEQ1Zzl3aGdpOXY5T3AtUThDUVhFZw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 11:48:45 GMT"
+        },
+        {
+          "title": "Hong Kong Market Close: Hang Seng Tech Index Rises 1.59%, Semiconductor Stocks Surge! Hua Hong Semiconductor and GigaDevice Hit Record Highs, Aluminum Stocks Strong - \u5bcc\u9014\u725b\u725b",
+          "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOMWVsNlZHRFp2YlNvSjNScGVRNXUyTDBmNnpQQ3RoUEw0UGQ3M3FDUXVPNGNpeXVKTW1GODJndUJoRThnVDJyRHppdUVFcVVONC1aa1ZfRUhLQVFKR0k1dVlFXzJSeTFLN09oV3ZfaWNsU2RkTXFZUFlpOXZjYkpuRTh6MTBPN0RXaGdrcS1CbmhOcHZjaUtv?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 08:26:11 GMT"
+        },
+        {
+          "title": "Hong Kong Market Compass | Increased liquidity leads to Hang Seng Index consolidation amid rising influence of geopolitical and other macro risks - Moomoo",
+          "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQaXp4bzgxZ0RBbkdTSnlPN2pfVjhHQVdLaEtaa0F4S21QMkczVWh1WGhzdG5WSnpOX0pjcTFBT0xmZUNVelF1R0JPZUs2dXNaSXBVd3NDX3VMRDVyVjR5djhWU1doby1MQkhVdnFkOHVqUUFZMmFTRDVZOFgxblhmVkdtUUxOVENRbjBRdWRiX1VLbHZmRHo1d1hwQXdrWV9La2d5a2Q2ckU?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 13:40:35 GMT"
+        },
+        {
+          "title": "Hang Seng Index slid on Tuesday's close, Lenovo rose 15 percent - The Standard (HK)",
+          "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPOVJXbDdUejE5bG5HU3BzR1BiLVdrUzVaTU14RXE1cnVJQVBuTkNBMHgyeDFRS0xTTG9qZklpQ2FkX2U2RnUwcEZFbWpoVnJsTUNSeEJOZkJ6azhaREVxOW5UYmp0QzQ4R1B3ZDFTSHNzQUg3NkJKY1BqOVZtQVp1NThPOHBmdGpGcmdXbjlhMDRNTUk3OGtiRkxDRUU4Wm9EWHI5ZjlxcFQ3TEM1MUdIY2hESEFiUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 08:44:17 GMT"
+        },
+        {
+          "title": "Hong Kong's Hang Seng Index closes 0.03 pct lower - bastillepost.com",
+          "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPbUpzb3c1c0V5WlFPbnhJLVBIaXozN2IyVTN4dXF0VVhWcVlLXzU4bTBaYWt6dFpsaERhbVd1T2xQUUVBc2o3WEJDekUxWnFFV3dRQnZzT2FWZDVYRWdjSnFzVnJ3RzNObFAzNnVDSXU5blgzVWdxZGNFR0U5U1RtbXc4dHB0SWdpejdCU19Bd2haU2JkdDB6em1mZHBGdW5WS1E?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 09:42:00 GMT"
+        }
+      ],
+      "sentiment": 0.5,
+      "atr_pct": 0.52,
+      "vwap_distance": 0.1,
+      "ai_recommendation": {
+        "recommendation": "NO TRADE",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "ATR of 0.5% is well below the 1.5% threshold required for day trading volatility",
+          "VWAP distance of only 0.1% indicates poor entry timing - price is tightly range-bound",
+          "Neutral trend: Price below both EMA20 (25.87) and EMA50 (25.87)",
+          "MACD histogram at 0.0000 provides no directional bias",
+          "Stochastic at K=50, D=50 is neutral with no oversold/overbought signal",
+          "Bollinger Band position at 0% (middle) offers no extreme reading",
+          "Tight R1-S1 spread of only 0.16 points limits profit potential"
+        ],
+        "warnings": [
+          "Insufficient volatility for day trading setup",
+          "Low risk-reward ratio due to compressed trading range",
+          "Neutral news sentiment (0.50) provides no catalyst",
+          "ETF tracking Hang Seng Index lacks near-term directional conviction"
+        ]
+      },
+      "ai_sentiment": 0.5,
+      "code": "2800",
+      "timestamp": "2026-05-27 08:19:37"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 439.0,
+      "stop": 428.025,
+      "target": 456.56,
+      "rr": null,
+      "reasons": [
+        "Price is trading below EMA20/EMA50 resistance at $440.08",
+        "ATR of 0.7% is below the 1.5% threshold for day trading opportunities",
+        "VWAP distance of only 0.1% indicates poor entry timing",
+        "MACD histogram at 0.0000 shows no momentum confirmation",
+        "Neutral trend signal with all oscillators at midpoint (RSI 49.3, Stochastic 50)",
+        "Price at middle of Bollinger Bands with no directional bias"
+      ],
+      "warnings": [
+        "Low volatility conditions not favorable for day trading",
+        "No clear trend direction - risk of choppy price action",
+        "All confirmations missing for a HIGH confidence setup",
+        "R1 resistance at $440.13 is only $1.13 above current price with tight range"
+      ],
+      "stock_name": "TENCENT",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 439.0,
+        "ema20": 440.0833333333333,
+        "ema50": 440.0833333333333,
+        "ema200": 440.0833333333333,
+        "rsi": 49.29577464788736,
+        "rsi_15m": 52.17391304347816,
+        "atr": 3.272727272727278,
+        "vwap": 439.60612347584964,
+        "sma_5_5m": 438.96000000000004,
+        "sma_8_5m": 438.975,
+        "sma_13_5m": 438.92307692307685,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 438.4500000000001,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 440.0,
+        "support_15m": 438.0,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 438.4666666666667,
+          "r1": 440.1333333333334,
+          "r2": 441.2666666666667,
+          "s1": 437.33333333333337,
+          "s2": 435.6666666666667
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -0.543724512913452
+      },
+      "news": [
+        {
+          "title": "8 New 5-Star Stocks This Week - Morningstar",
+          "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE9tNThsdUJpX2ozQXJpdmlUMERabWZIZEpoVkxhWmZMRlcyLTlKcVlvYVRLZFBvRmViSDFvNGY0ZGw0R0ZhMU44U0dXVzd2Y2IxdVhyd1JHdUFiVXZxZUttUDRvSjZCRUpTM1RrSXpFZ1BTUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 14:34:17 GMT"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 0.75,
+      "vwap_distance": 0.14,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Price is trading below EMA20/EMA50 resistance at $440.08",
+          "ATR of 0.7% is below the 1.5% threshold for day trading opportunities",
+          "VWAP distance of only 0.1% indicates poor entry timing",
+          "MACD histogram at 0.0000 shows no momentum confirmation",
+          "Neutral trend signal with all oscillators at midpoint (RSI 49.3, Stochastic 50)",
+          "Price at middle of Bollinger Bands with no directional bias"
+        ],
+        "warnings": [
+          "Low volatility conditions not favorable for day trading",
+          "No clear trend direction - risk of choppy price action",
+          "All confirmations missing for a HIGH confidence setup",
+          "R1 resistance at $440.13 is only $1.13 above current price with tight range"
+        ]
+      },
+      "ai_sentiment": 0.7,
+      "code": "700",
+      "timestamp": "2026-05-27 08:19:57"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 88.16,
+      "stop": 85.95599999999999,
+      "target": 91.6864,
+      "rr": null,
+      "reasons": [
+        "Neutral trend - EMA20 equals EMA50 (no confirmation of uptrend)",
+        "Low volatility - ATR of 0.6% is below the 1.5% threshold needed for day trading",
+        "VWAP distance of 0.2% indicates poor entry timing (needs >1%)",
+        "MACD histogram at 0.0000 provides no trend confirmation",
+        "Stochastic at neutral 50 level offers no directional bias",
+        "Bollinger position at 0% (middle) shows no overbought/oversold conditions"
+      ],
+      "warnings": [
+        "Insufficient volatility for day trading opportunities",
+        "No clear trend direction - trading range-bound",
+        "Multiple neutral indicators suggest waiting for better setup",
+        "Risk-reward ratio unfavorable given tight pivot levels (R1: 88.65, S1: 88.07 = only $0.58 range)"
+      ],
+      "stock_name": "Hang Seng H-Share Index ETF",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 88.16,
+        "ema20": 88.13000000000001,
+        "ema50": 88.13000000000001,
+        "ema200": 88.13000000000001,
+        "rsi": 61.96319018404913,
+        "rsi_15m": 34.21052631578959,
+        "atr": 0.4872727272727259,
+        "vwap": 88.02198648890568,
+        "sma_5_5m": 88.516,
+        "sma_8_5m": 88.52749999999999,
+        "sma_13_5m": 88.55692307692308,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 88.35100000000003,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 88.48,
+        "support_15m": 88.1,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 88.33333333333333,
+          "r1": 88.64666666666666,
+          "r2": 88.91333333333333,
+          "s1": 88.06666666666666,
+          "s2": 87.75333333333333
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": 0.5474452554744409
+      },
+      "news": [],
+      "sentiment": 0.0,
+      "atr_pct": 0.55,
+      "vwap_distance": 0.16,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Neutral trend - EMA20 equals EMA50 (no confirmation of uptrend)",
+          "Low volatility - ATR of 0.6% is below the 1.5% threshold needed for day trading",
+          "VWAP distance of 0.2% indicates poor entry timing (needs >1%)",
+          "MACD histogram at 0.0000 provides no trend confirmation",
+          "Stochastic at neutral 50 level offers no directional bias",
+          "Bollinger position at 0% (middle) shows no overbought/oversold conditions"
+        ],
+        "warnings": [
+          "Insufficient volatility for day trading opportunities",
+          "No clear trend direction - trading range-bound",
+          "Multiple neutral indicators suggest waiting for better setup",
+          "Risk-reward ratio unfavorable given tight pivot levels (R1: 88.65, S1: 88.07 = only $0.58 range)"
+        ]
+      },
+      "ai_sentiment": 0.0,
+      "code": "2828",
+      "timestamp": "2026-05-27 08:20:10"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 127.6,
+      "stop": 124.41,
+      "target": 132.704,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [
+        "Price only 0.5% from VWAP (need >0.5%)"
+      ],
+      "stock_name": "BABA-W",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 127.6,
+        "ema20": 127.82499999999999,
+        "ema50": 127.82499999999999,
+        "ema200": 127.82499999999999,
+        "rsi": 58.22784810126581,
+        "rsi_15m": 37.499999999999666,
+        "atr": 1.4727272727272769,
+        "vwap": 126.96702887051372,
+        "sma_5_5m": 128.22,
+        "sma_8_5m": 128.3,
+        "sma_13_5m": 128.3076923076923,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 128.04,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 128.9,
+        "support_15m": 127.6,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 128.5,
+          "r1": 129.4,
+          "r2": 130.20000000000002,
+          "s1": 127.69999999999999,
+          "s2": 126.79999999999998
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": 0.47244094488188526
+      },
+      "news": [
+        {
+          "title": "Is It Time To Revisit Alibaba Group Holding (NYSE:BABA) After Recent Share Price Weakness - simplywall.st",
+          "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQaDVaWVdVMjlwX1B3eS05bkhBRmliOUwza3NocUhQU1ZSN2ZUY0VnSm1wVmhrVmhzT21LWV9TTU1sRHI5MTByVi12LXU3Rk5HS24wZS1BazlGY1FWbmY5ekdzQ3U0d2VRNkpJaV8xRERmckF6bGdJRE5oUGZPUlc0VU1CV19JcGdISHlENVluUlBGU3dVOGdqVVlZTVJ1RjRnQm54NlpicFYweGZqd1JfUVFFczBON0NLVFZ0Z0RVWWtUcDVCbk5STVB5TVVpdTAxVlHSAdcBQVVfeXFMTjMzT3lfTTdrTzEwUUVuU201cWQwWWRNUzJldlZLZDNBZFNxVlVGVUZick1FN1B0LUJtNWhUa1ZUMXJPdjMyeUl4RXhTQ3NYYXNQRDNWZk9nTjd5Q3Zhai0zcThwYVBrRjM0N2QtN0Y0SzFvWGllWUZuTUJmZy1sNkFhWGx3YnA0cGxqVEpWS3ZtYUx5aU9kTzhoMHkzZWlqT3M0U0I4cjV5ZzI0eUw4VGFrb1FQQ0otRlNfTzVsakxQbDFHT184ajVMam5WaFJzTXBlYjBISEE?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 22:26:10 GMT"
+        },
+        {
+          "title": "1 No-Brainer Artificial Intelligence (AI) Stock to Buy With $150 Right Now - The Motley Fool",
+          "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNVGhvVGxhSUNzMEpIN1N5TmdfclR2RnZPWXFFRERmNUJwNGdyZUd1RU1uT3E2NXdVRmQzZ3Zmbmd0bXVvbl8ycFpvaTRDc1VJdE9SSW5PdkltaXFLakpMdmpBcWplZ3c2aW1TVUhXLXZ0MkpzeDY3S25SbFBva0RIYkUxRkxfRUVWX0kyT2UyQTg0RzFUTUxZ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 15:30:00 GMT"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 1.15,
+      "vwap_distance": 0.5,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "LOW",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 127.6,
+        "stop_loss": 124.41,
+        "target_price": 132.7,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.7,
+      "code": "9988",
+      "timestamp": "2026-05-27 08:20:40"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 78.8,
+      "stop": 76.83,
+      "target": 81.952,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "MEITUAN-W",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 78.8,
+        "ema20": 80.39166666666667,
+        "ema50": 80.39166666666667,
+        "ema200": 80.39166666666667,
+        "rsi": 33.88429752066112,
+        "rsi_15m": 31.37254901960776,
+        "atr": 1.1272727272727279,
+        "vwap": 79.91299654832713,
+        "sma_5_5m": 79.37,
+        "sma_8_5m": 79.46249999999999,
+        "sma_13_5m": 79.51153846153846,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 79.23749999999998,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 79.65,
+        "support_15m": 78.55,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 79.48333333333333,
+          "r1": 80.06666666666666,
+          "r2": 80.58333333333333,
+          "s1": 78.96666666666667,
+          "s2": 78.38333333333334
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -3.134603564843266
+      },
+      "news": [
+        {
+          "title": "China Is Moving Quickly to \u2018Instant Retail.\u2019 3 Stocks to Watch.",
+          "link": "https://www.barrons.com/articles/china-instant-delivery-retail-e814ddbe?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-05-23T05:00:00Z"
+        },
+        {
+          "title": "Assessing Meituan (SEHK:3690) Valuation After Recent Share Price Weakness And Ongoing Losses",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/assessing-meituan-sehk-3690-valuation-151405137.html",
+          "pubDate": "2026-05-16T15:14:05Z"
+        },
+        {
+          "title": "Alibaba, Tencent Investors Look Past Slow Growth to AI Potential",
+          "link": "https://finance.yahoo.com/sectors/technology/articles/alibaba-tencent-disappoint-investors-hoping-133805445.html",
+          "pubDate": "2026-05-14T02:07:19Z"
+        },
+        {
+          "title": "Alibaba\u2019s Profit Plunges and the Stock Rises. Thank Trump and Xi.",
+          "link": "https://www.barrons.com/articles/alibaba-earnings-stock-price-056bdae2?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-05-13T14:42:00Z"
+        },
+        {
+          "title": "JD.com Stock Rises After Earnings. It\u2019s Shrugging Off China\u2019s Price War.",
+          "link": "https://www.barrons.com/articles/jd-com-earnings-stock-price-6d369cc2?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-05-12T13:48:00Z"
+        },
+        {
+          "title": "Kimi Chatbot Maker Moonshot AI Valued at $20 Billion in Meituan-Led Round",
+          "link": "https://finance.yahoo.com/sectors/technology/articles/kimi-chatbot-maker-moonshot-ai-032926690.html",
+          "pubDate": "2026-05-07T03:29:26Z"
+        },
+        {
+          "title": "Asian Growth Companies With Insider Ownership As High As 38%",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/asian-growth-companies-insider-ownership-043619455.html",
+          "pubDate": "2026-05-04T04:36:19Z"
+        },
+        {
+          "title": "Alibaba Stock Is Getting Hit Again, but Qwen and Cloud Growth Are Surging",
+          "link": "https://www.marketbeat.com/originals/alibaba-stock-is-getting-hit-again-but-qwen-and-cloud-growth-are-surging/?utm_source=yahoofinance&utm_medium=yahoofinance",
+          "pubDate": "2026-03-20T17:31:00Z"
+        },
+        {
+          "title": "JD.com Stock Falls as Profits Dive Despite Rising Revenue",
+          "link": "https://www.barrons.com/articles/jd-com-earnings-stock-price-1dec392c?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-03-05T15:01:00Z"
+        },
+        {
+          "title": "Is It Time To Reassess Meituan (SEHK:3690) After Its Prolonged Share Price Slide?",
+          "link": "https://finance.yahoo.com/news/time-reassess-meituan-sehk-3690-011357037.html",
+          "pubDate": "2026-02-27T01:13:57Z"
+        }
+      ],
+      "sentiment": 0.15,
+      "atr_pct": 1.43,
+      "vwap_distance": 1.41,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "LOW",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 78.8,
+        "stop_loss": 76.83,
+        "target_price": 81.95,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.15,
+      "code": "3690",
+      "timestamp": "2026-05-27 08:21:11"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 29.76,
+      "stop": 29.016000000000002,
+      "target": 30.950400000000002,
+      "rr": null,
+      "reasons": [
+        "Price below both EMA20 (30.05) and EMA50 (30.05) - no established uptrend",
+        "ATR at 1.2% is below 1.5% threshold - insufficient volatility for day trading",
+        "VWAP distance at 0.8% is below 1% threshold - poor entry timing",
+        "MACD histogram at 0.0000 - no momentum confirmation",
+        "All momentum indicators (RSI, Stochastic, MACD) are neutral - no directional bias",
+        "Price at middle of Bollinger Bands - no oversold/overbought signal"
+      ],
+      "warnings": [
+        "Multiple criteria not met for day trading setup",
+        "Low ATR indicates choppy, low-volume conditions unsuitable for day trading",
+        "Price trading below VWAP and EMAs suggests bearish short-term bias",
+        "Tight resistance zone at 30.05 leaves limited upside potential"
+      ],
+      "stock_name": "XIAOMI-W",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 29.76,
+        "ema20": 30.046666666666667,
+        "ema50": 30.046666666666667,
+        "ema200": 30.046666666666667,
+        "rsi": 48.54368932038838,
+        "rsi_15m": 30.434782608695713,
+        "atr": 0.358181818181818,
+        "vwap": 29.989322369253607,
+        "sma_5_5m": 30.131999999999998,
+        "sma_8_5m": 30.152500000000003,
+        "sma_13_5m": 30.18769230769231,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 30.018,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 29.94,
+        "support_15m": 29.72,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 29.846666666666668,
+          "r1": 30.053333333333335,
+          "r2": 30.186666666666667,
+          "s1": 29.713333333333335,
+          "s2": 29.506666666666668
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -0.7999999999999948
+      },
+      "news": [
+        {
+          "title": "Xiaomi Corp (HKSE:01810) Stock Price, Trades & News - GuruFocus",
+          "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1WaXo2WmJmX1RYeUtSTkEtQmFfZmo1b3ExQkUtaXZwV2xxTVVndGswMEFUM0htMDAyb0E3ZXp1YjFSM2ozYjVtMkxoeUJMZ0dKSWQ2UjItTUFudGVVaFRV?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 17:06:10 GMT"
+        },
+        {
+          "title": "Xiaomi Corp (XIACF) Q1 2026 Earnings Call Highlights: Strong Revenue Growth Amidst Industry ... By GuruFocus - Investing.com Canada",
+          "link": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNQk1rVS1WSk1FVnBhR0tuMi1JSzZxTFZSMTBjWDc0cVZpT1hYVWZEOVFmZEtiU0p6T3l4Zi0tSlB5VDlXVGtsWXMzS1NiZWR0NktmTXoxdjgzSHcxR0txWDhjV0hWeVFRRUx6eDJRSzl3Qy00ZUU2SFBURUxnWGlWMUhyXzlXel83UkFMQzJ5WkxLd3U1STlFQlp4Q2NZMTJiaHU3X21KM0dIUEV3ekh5bkJmS2FhcURFSllWTFVGVEpmVG5QcUhIemJlRkRZY01zXzZrbmplMA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 19:28:04 GMT"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 1.2,
+      "vwap_distance": 0.77,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Price below both EMA20 (30.05) and EMA50 (30.05) - no established uptrend",
+          "ATR at 1.2% is below 1.5% threshold - insufficient volatility for day trading",
+          "VWAP distance at 0.8% is below 1% threshold - poor entry timing",
+          "MACD histogram at 0.0000 - no momentum confirmation",
+          "All momentum indicators (RSI, Stochastic, MACD) are neutral - no directional bias",
+          "Price at middle of Bollinger Bands - no oversold/overbought signal"
+        ],
+        "warnings": [
+          "Multiple criteria not met for day trading setup",
+          "Low ATR indicates choppy, low-volume conditions unsuitable for day trading",
+          "Price trading below VWAP and EMAs suggests bearish short-term bias",
+          "Tight resistance zone at 30.05 leaves limited upside potential"
+        ]
+      },
+      "ai_sentiment": 0.7,
+      "code": "1810",
+      "timestamp": "2026-05-27 08:21:34"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "MEDIUM",
+      "entry": 84.3,
+      "stop": 82.1925,
+      "target": 87.672,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "AIA",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 84.3,
+        "ema20": 85.73333333333335,
+        "ema50": 85.73333333333335,
+        "ema200": 85.73333333333335,
+        "rsi": 34.21052631578951,
+        "rsi_15m": 14.99999999999936,
+        "atr": 0.7727272727272715,
+        "vwap": 85.74006403977442,
+        "sma_5_5m": 85.43,
+        "sma_8_5m": 85.55,
+        "sma_13_5m": 85.6423076923077,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 85.04749999999999,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 85.2,
+        "support_15m": 84.2,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 84.95,
+          "r1": 85.2,
+          "r2": 85.45,
+          "s1": 84.7,
+          "s2": 84.45
+        },
+        "patterns": {
+          "pattern": "BEARISH_ENGULFING,VOLUME_SPIKE_BEAR",
+          "signal": "BEARISH",
+          "volume_spike": true
+        },
+        "change_pct": -2.033701336432307
+      },
+      "news": [
+        {
+          "title": "Is It Too Late To Consider AIA Group (SEHK:1299) After Its 82% One Year Rally?",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/too-consider-aia-group-sehk-042100864.html",
+          "pubDate": "2026-04-11T04:21:00Z"
+        },
+        {
+          "title": "Is AIA (AAGIY) Outperforming Other Finance Stocks This Year?",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/aia-aagiy-outperforming-other-finance-134003763.html",
+          "pubDate": "2026-03-25T13:40:03Z"
+        },
+        {
+          "title": "AIA Group Ltd (AAGIY) Full Year 2025 Earnings Call Highlights: Record Growth and Strategic ...",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/aia-group-ltd-aagiy-full-070027207.html",
+          "pubDate": "2026-03-19T07:00:27Z"
+        },
+        {
+          "title": "RGA Offers Upside on Strong Growth Prospects - Buy or Hold the Stock?",
+          "link": "https://finance.yahoo.com/news/rga-offers-upside-strong-growth-171900060.html",
+          "pubDate": "2026-03-17T17:19:00Z"
+        },
+        {
+          "title": "Assessing AIA Group (SEHK:1299) Valuation After Mixed Short Term Returns And Stronger Long Term Momentum",
+          "link": "https://finance.yahoo.com/news/assessing-aia-group-sehk-1299-171324212.html",
+          "pubDate": "2026-03-12T17:13:24Z"
+        },
+        {
+          "title": "4 Stocks to Add to Your Portfolio From a Prospering Life Insurance Industry",
+          "link": "https://finance.yahoo.com/news/4-stocks-add-portfolio-prospering-165200719.html",
+          "pubDate": "2026-03-11T16:52:00Z"
+        },
+        {
+          "title": "Futu Holdings Gears Up to Report Q4 Earnings: What's in the Cards?",
+          "link": "https://finance.yahoo.com/news/futu-holdings-gears-report-q4-124300693.html",
+          "pubDate": "2026-03-10T12:43:00Z"
+        },
+        {
+          "title": "Are Finance Stocks Lagging  AIA (AAGIY) This Year?",
+          "link": "https://finance.yahoo.com/news/finance-stocks-lagging-aia-aagiy-134003878.html",
+          "pubDate": "2026-03-09T13:40:03Z"
+        },
+        {
+          "title": "Is AIA (AAGIY) Stock Outpacing Its Finance Peers This Year?",
+          "link": "https://finance.yahoo.com/news/aia-aagiy-stock-outpacing-finance-144002305.html",
+          "pubDate": "2026-02-19T14:40:02Z"
+        },
+        {
+          "title": "Assessing AIA Group (SEHK:1299) Valuation After Recent Results And Mixed Share Price Performance",
+          "link": "https://finance.yahoo.com/news/assessing-aia-group-sehk-1299-090743742.html",
+          "pubDate": "2026-02-16T09:07:43Z"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 0.92,
+      "vwap_distance": 1.71,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "MEDIUM",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 84.3,
+        "stop_loss": 82.19,
+        "target_price": 87.67,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.7,
+      "code": "1299",
+      "timestamp": "2026-05-27 08:22:02"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 93.65,
+      "stop": 91.30875,
+      "target": 97.39600000000002,
+      "rr": "N/A",
+      "reasons": [
+        "RSI at 74.0 indicates overbought conditions - elevated risk of pullback",
+        "ATR of 1.0% is below the 1.5% threshold - insufficient volatility for day trading",
+        "EMA20 and EMA50 are equal at 92.45 - no confirmed uptrend",
+        "MACD Histogram at 0.0000 provides no directional confirmation",
+        "Stochastic at K=50, D=50 is neutral - no momentum signal",
+        "Trend Signal is NEUTRAL - lacks clear directional bias",
+        "Bollinger position unclear/conflicting with RSI"
+      ],
+      "warnings": [
+        "Multiple conflicting indicators - low confidence setup",
+        "Overbought RSI with neutral trend increases risk of reversal",
+        "Insufficient ATR volatility for optimal day trading entries",
+        "Price is near pivot resistance (93.87) with limited upside to R1 (94.53)"
+      ],
+      "stock_name": "BYD COMPANY",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 93.65,
+        "ema20": 92.45,
+        "ema50": 92.45,
+        "ema200": 92.45,
+        "rsi": 74.00000000000006,
+        "rsi_15m": 58.333333333333364,
+        "atr": 0.9636363636363644,
+        "vwap": 92.28194520620166,
+        "sma_5_5m": 94.24,
+        "sma_8_5m": 93.8375,
+        "sma_13_5m": 93.46153846153847,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 93.45750000000001,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 94.15,
+        "support_15m": 93.6,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 93.86666666666667,
+          "r1": 94.53333333333335,
+          "r2": 94.91666666666667,
+          "s1": 93.48333333333335,
+          "s2": 92.81666666666668
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": 2.2379912663755586
+      },
+      "news": [
+        {
+          "title": "BYD Co Ltd stock (CNE100000296): China?EV heavyweight navigates price war and global expansion - AD HOC NEWS",
+          "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxORE1kZ0VUT1hRSGljY2N0MVFUblNrNGJXb3p4UlR2cjlrX3cyRnBSWTEtbEljTUpEb1BWNjR2VGhJemFONWQ0UkV1anlTNGdFNHRCZ1dNczdCa016WkxRSnRZcDA4di1JMXVScFUydzhOSXBVUnFTRTJXS0V3elo1Qnd5TW93TjBwc0NCeDVCYzNuMWlMNlZ6QUZFZkdCc0F2cG45M1g1X0tDYmI0RFk1LVdWMVFJeDlmc0oxS2xwWFhnaFFWRmpQbw?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 26 May 2026 08:43:20 GMT"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 1.03,
+      "vwap_distance": 1.46,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": "N/A",
+        "reasons": [
+          "RSI at 74.0 indicates overbought conditions - elevated risk of pullback",
+          "ATR of 1.0% is below the 1.5% threshold - insufficient volatility for day trading",
+          "EMA20 and EMA50 are equal at 92.45 - no confirmed uptrend",
+          "MACD Histogram at 0.0000 provides no directional confirmation",
+          "Stochastic at K=50, D=50 is neutral - no momentum signal",
+          "Trend Signal is NEUTRAL - lacks clear directional bias",
+          "Bollinger position unclear/conflicting with RSI"
+        ],
+        "warnings": [
+          "Multiple conflicting indicators - low confidence setup",
+          "Overbought RSI with neutral trend increases risk of reversal",
+          "Insufficient ATR volatility for optimal day trading entries",
+          "Price is near pivot resistance (93.87) with limited upside to R1 (94.53)"
+        ]
+      },
+      "ai_sentiment": 0.7,
+      "code": "1211",
+      "timestamp": "2026-05-27 08:22:24"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "HIGH",
+      "entry": 145.5,
+      "stop": 141.86249999999998,
+      "target": 151.32,
+      "rr": null,
+      "reasons": [
+        "RSI at 90.0 is extremely overbought - extreme reversal risk",
+        "ATR of 0.4% is well below the 1.5% threshold for day trading volatility",
+        "MACD histogram at 0.0000 provides no trend confirmation",
+        "Trend signal is NEUTRAL - no clear directional bias",
+        "Stochastic at K=50, D=50 is neutral/mid-range",
+        "Bearish China news headline creates headwind for HSBC (major China exposure)",
+        "EMAs are flat at 143.98 indicating consolidation, not a trend",
+        "Multiple conflicting signals reduce probability of successful trade"
+      ],
+      "warnings": [
+        "RSI above 90 indicates extreme overbought conditions - historically precedes mean reversion",
+        "Low volatility environment limits day trading profit potential",
+        "News sentiment of 0.25 is weak bullish amid bearish catalyst",
+        "Price has moved 1.3% above VWAP suggesting limited upside remaining"
+      ],
+      "stock_name": "HSBC HOLDINGS",
+      "market_bias": "BULLISH",
+      "trend_strength": "MODERATE",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 145.5,
+        "ema20": 143.98333333333332,
+        "ema50": 143.98333333333332,
+        "ema200": 143.98333333333332,
+        "rsi": 89.99999999999972,
+        "rsi_15m": 81.8181818181817,
+        "atr": 0.5909090909090909,
+        "vwap": 143.61872688458234,
+        "sma_5_5m": 143.98,
+        "sma_8_5m": 143.95,
+        "sma_13_5m": 143.98461538461538,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 144.265,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 145.5,
+        "support_15m": 144.2,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 144.23333333333332,
+          "r1": 144.46666666666664,
+          "r2": 144.63333333333333,
+          "s1": 144.06666666666663,
+          "s2": 143.83333333333331
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BULL",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": 1.111883252258509
+      },
+      "news": [
+        {
+          "title": "China investors rush for exit after crackdown on illicit cross-border stock trading",
+          "link": "https://www.straitstimes.com/business/companies-markets/china-investors-rush-for-exit-after-crackdown-on-illicit-cross-border-stock-trading",
+          "pubDate": "2026-05-26T00:18:52Z"
+        }
+      ],
+      "sentiment": 0.25,
+      "atr_pct": 0.41,
+      "vwap_distance": 1.29,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "HIGH",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 90.0 is extremely overbought - extreme reversal risk",
+          "ATR of 0.4% is well below the 1.5% threshold for day trading volatility",
+          "MACD histogram at 0.0000 provides no trend confirmation",
+          "Trend signal is NEUTRAL - no clear directional bias",
+          "Stochastic at K=50, D=50 is neutral/mid-range",
+          "Bearish China news headline creates headwind for HSBC (major China exposure)",
+          "EMAs are flat at 143.98 indicating consolidation, not a trend",
+          "Multiple conflicting signals reduce probability of successful trade"
+        ],
+        "warnings": [
+          "RSI above 90 indicates extreme overbought conditions - historically precedes mean reversion",
+          "Low volatility environment limits day trading profit potential",
+          "News sentiment of 0.25 is weak bullish amid bearish catalyst",
+          "Price has moved 1.3% above VWAP suggesting limited upside remaining"
+        ]
+      },
+      "ai_sentiment": 0.25,
+      "code": "5",
+      "timestamp": "2026-05-27 08:22:43"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "LOW",
+      "entry": 8.73,
+      "stop": 0,
+      "target": 0,
+      "rr": "0:1",
+      "reasons": [
+        "AI explicitly recommended NO TRADE"
+      ],
+      "warnings": [
+        "Trend is NEUTRAL - price below both EMA20 and EMA50",
+        "ATR of 0.7% is below the 1.5% threshold - insufficient volatility for day trading",
+        "VWAP distance of 0.4% is below the 1% threshold - poor entry timing",
+        "MACD histogram at 0.0000 provides no directional confirmation",
+        "Stochastic at K=50, D=50 is neutral with no crossover or oversold signal",
+        "Bollinger position at 0% indicates price is mid-range, not oversold",
+        "Very tight pivot ranges (R1 at +0.23%, S1 at -0.11%) - limited profit potential",
+        "No recent news to catalyze movement"
+      ],
+      "stock_name": "CCB",
+      "market_bias": "BEARISH",
+      "trend_strength": "MODERATE",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 8.73,
+        "ema20": 8.771666666666668,
+        "ema50": 8.771666666666668,
+        "ema200": 8.771666666666668,
+        "rsi": 54.545454545454696,
+        "rsi_15m": 17.64705882352922,
+        "atr": 0.06454545454545478,
+        "vwap": 8.76901044392116,
+        "sma_5_5m": 8.812000000000001,
+        "sma_8_5m": 8.815000000000001,
+        "sma_13_5m": 8.82,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 8.777,
+        "sma_50_15m": 0,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 8.76,
+        "support_15m": 8.72,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 50,
+          "d": 50,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 8.74,
+          "r1": 8.75,
+          "r2": 8.77,
+          "s1": 8.72,
+          "s2": 8.71
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -0.45610034207524686
+      },
+      "news": [],
+      "sentiment": 0.0,
+      "atr_pct": 0.74,
+      "vwap_distance": 0.45,
+      "ai_recommendation": {
+        "recommendation": "NO TRADE",
+        "confidence": "LOW",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Trend is NEUTRAL - price below both EMA20 and EMA50",
+          "ATR of 0.7% is below the 1.5% threshold - insufficient volatility for day trading",
+          "VWAP distance of 0.4% is below the 1% threshold - poor entry timing",
+          "MACD histogram at 0.0000 provides no directional confirmation",
+          "Stochastic at K=50, D=50 is neutral with no crossover or oversold signal",
+          "Bollinger position at 0% indicates price is mid-range, not oversold",
+          "Very tight pivot ranges (R1 at +0.23%, S1 at -0.11%) - limited profit potential",
+          "No recent news to catalyze movement"
+        ],
+        "warnings": [
+          "Low volatility conditions are unfavorable for day trading strategies",
+          "Multiple neutral indicators suggest waiting for clearer setup",
+          "Risk/reward ratio would be unfavorable given tight ranges"
+        ]
+      },
+      "ai_sentiment": 0.0,
+      "code": "939",
+      "timestamp": "2026-05-27 08:23:01"
+    }
+  ]
+}

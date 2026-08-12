@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HK TJL System — Flowchart</title>
+<style>
+  body { font-family: -apple-system, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+  h1 { text-align: center; color: #1e1e1e; font-size: 22px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 24px; }
+  .diagram { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+  .row { display: flex; align-items: center; gap: 40px; margin-bottom: 0; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .box { border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 200px; position: relative; }
+  .box .title { font-size: 15px; font-weight: 600; color: #1e1e1e; }
+  .box .sub { font-size: 11px; color: #555; margin-top: 4px; }
+  .arrow { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 18px; margin: 2px 0; }
+  .arrow-h { display: flex; align-items: center; color: #888; font-size: 18px; }
+  .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 6px 12px; border-radius: 4px; margin: 8px 0; }
+  .blue { background: #e8f4fd; color: #1a5f8a; }
+  .green { background: #d3f8dd; color: #1a6b3a; }
+  .purple { background: #ede7f6; color: #4a2d7a; }
+  .yellow { background: #fff9db; color: #7a5a00; }
+  .orange { background: #ffe8cc; color: #7a3d00; }
+  .red { background: #ffe3e3; color: #7a0000; }
+  .label-blue { background: #a5d8ff; color: #0a4a6e; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .label-purple { background: #d0bfff; color: #3a1a7a; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .label-green { background: #c3fae8; color: #0a5a3a; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .label-yellow { background: #fff3bf; color: #6a4a00; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .label-orange { background: #ffd8a8; color: #6a2a00; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .label-red { background: #ffc9c9; color: #6a0000; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 260px 40px 280px 40px 280px; gap: 0; align-items: start; margin-top: 20px; }
+  .grid-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .grid-row { display: flex; align-items: center; gap: 0; }
+  .box-sm { border-radius: 8px; padding: 8px 12px; text-align: center; min-width: 180px; }
+  .box-sm .title { font-size: 14px; font-weight: 600; color: #1e1e1e; }
+  .box-sm .sub { font-size: 11px; color: #555; margin-top: 3px; }
+  .connector { color: #aaa; font-size: 16px; }
+  .spacer { height: 16px; }
+  .spacer-lg { height: 32px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  table { border-collapse: collapse; margin: 0 auto; font-size: 12px; }
+  th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f0f0f0; }
+  .note { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 6px; padding: 8px 14px; font-size: 12px; color: #92400e; max-width: 700px; margin: 20px auto 0; }
+</style>
+</head>
+<body>
+
+<h1>HK TJL System — Full Architecture Flowchart</h1>
+<p class="subtitle">Live Scan (yfinance + TradingView MCP) + Historical Backtest Pipeline</p>
+
+<div class="legend">
+  <span class="label-blue">⏰ Scheduler</span>
+  <span class="label-purple">⚙️ Scanner</span>
+  <span class="label-green">📡 Data Source</span>
+  <span class="label-yellow">🔍 Filter</span>
+  <span class="label-orange">📤 Output</span>
+  <span class="label-red">📊 Backtest</span>
+</div>
+
+<div class="grid">
+
+  <!-- ========== COLUMN 1: LIVE SCAN (yfinance) ========== -->
+  <div class="grid-col">
+
+    <div class="spacer"></div>
+    <div class="box-sm" style="background:#e8f4fd; border: 2px solid #74c0fc;">
+      <div class="title">⏰ Cron Scheduler</div>
+      <div class="sub">Every 30 min | 10AM–2PM HKT weekdays</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">hk-tjl-scanner</div>
+      <div class="sub">scripts/scanner.py</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#e6fcf5; border: 2px solid #63e6be;">
+      <div class="title">Yahoo Finance</div>
+      <div class="sub">5-min bars, 47 HK stocks, daily PMH</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#fff9db; border: 2px solid #ffe066;">
+      <div class="title">Regime Check (HSI)</div>
+      <div class="sub">BULLISH if HSI ↑ 2 of last 3 days</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">TJL 3-Condition Filter</div>
+      <div class="sub" style="text-align:left; font-size:10px; line-height:1.5;">
+        1. EMA9 &gt; EMA20 &gt; EMA50 (stack)<br>
+        2. Price within 0.2% of EMA9<br>
+        3. Price &gt; PMH + 0.70 buffer
+      </div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#d3f8dd; border: 2px solid #69db7c;">
+      <div class="title">Signal Table</div>
+      <div class="sub">Ticker | Entry | SL | TP | PMH</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ffe8cc; border: 2px solid #ffa94d;">
+      <div class="title">Discord Forum Post</div>
+      <div class="sub">DISCORD_WEBHOOK_HK_TJL</div>
+    </div>
+
+  </div>
+
+  <!-- ========== ARROWS BETWEEN COLS ========== -->
+  <div class="grid-col" style="justify-content: center;">
+    <div class="spacer"></div>
+    <div style="color:#b197fc; font-size:20px; font-weight:bold;">⟷</div>
+    <div style="font-size:10px; color:#888; text-align:center; max-width:60px; line-height:1.3;">
+      Same<br>logic<br>path
+    </div>
+  </div>
+
+  <!-- ========== COLUMN 2: TV MCP SCAN ========== -->
+  <div class="grid-col">
+
+    <div class="spacer"></div>
+    <div class="box-sm" style="background:#e8f4fd; border: 2px solid #74c0fc;">
+      <div class="title">⏰ Cron / Manual</div>
+      <div class="sub">Any time — no market hours restriction</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">tradingview-control</div>
+      <div class="sub">scripts/scanner.py (TV MCP CLI)</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#e6fcf5; border: 2px solid #63e6be;">
+      <div class="title">TV MCP CLI</div>
+      <div class="sub">~/tradingview-mcp/src/cli/index.js</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#e6fcf5; border: 2px solid #63e6be;">
+      <div class="title">TradingView Desktop</div>
+      <div class="sub">CDP localhost:9222 | Active chart tab</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#e8f4fd; border: 2px solid #74c0fc;">
+      <div class="title">84 OpenClaw TV MCP Tools</div>
+      <div class="sub" style="text-align:left; font-size:10px; line-height:1.5;">
+        chart nav | Pine Script | data read<br>
+        alerts | screenshots | replay<br>
+        streaming | drawings | watchlist
+      </div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ffe8cc; border: 2px solid #ffa94d;">
+      <div class="title">Pine Script (via TV)</div>
+      <div class="sub">Write/compile/inject strategies</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#fff9db; border: 2px solid #ffe066;">
+      <div class="title">Same TJL Filter + Regime</div>
+      <div class="sub">Reuses identical logic from col 1</div>
+    </div>
+
+  </div>
+
+  <!-- ========== ARROWS ========== -->
+  <div class="grid-col" style="justify-content: center;">
+    <div class="spacer"></div>
+    <div style="color:#b197fc; font-size:20px; font-weight:bold;">⟷</div>
+    <div style="font-size:10px; color:#888; text-align:center; max-width:60px; line-height:1.3;">
+      Backtest<br>+ Signals
+    </div>
+  </div>
+
+  <!-- ========== COLUMN 3: BACKTEST ========== -->
+  <div class="grid-col">
+
+    <div class="spacer"></div>
+    <div class="box-sm" style="background:#ffe3e3; border: 2px solid #ff8787;">
+      <div class="title">Backtest (Historical)</div>
+      <div class="sub">~/stock-analysis/backtest/</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">run_backtest_batch.py</div>
+      <div class="sub">Batch runner: ticker + date range</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">stock_analysis_backtest.py</div>
+      <div class="sub">Core engine — EMA, PMH, ATR, entry/exit</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ede7f6; border: 2px solid #b197fc;">
+      <div class="title">verify_trades_backtest.py</div>
+      <div class="sub">Match buys → sells (FIFO) | P&L per trade</div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#d3f8dd; border: 2px solid #69db7c;">
+      <div class="title">Backtest Results</div>
+      <div class="sub" style="text-align:left; font-size:10px; line-height:1.5;">
+        CSV: backtest_results_v2.csv<br>
+        Portfolio JSONs: 1 per ticker per day<br>
+        Metrics: Trades, WR%, NetPnL, Profit Factor
+      </div>
+    </div>
+
+    <div class="connector">↓</div>
+
+    <div class="box-sm" style="background:#ffe8cc; border: 2px solid #ffa94d;">
+      <div class="title">Signal → Discord (optional)</div>
+      <div class="sub">Include backtest stats in posts</div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="note">
+  <strong>📌 User Preference (2026-07-31):</strong> When posting TJL signals to Discord, always include backtest stats: <em>Trades, Win Rate %, NetPnL per ticker</em>. This is tracked in MEMORY.md.
+</div>
+
+<table style="margin-top: 32px;">
+  <tr>
+    <th>Component</th>
+    <th>Path</th>
+    <th>Data Source</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <td><strong>hk-tjl-scanner</strong> (live)</td>
+    <td>~/.openclaw/skills/bkskills/hk-tjl-scanner/scripts/scanner.py</td>
+    <td>Yahoo Finance (5-min bars)</td>
+    <td>Discord Forum + console table</td>
+  </tr>
+  <tr>
+    <td><strong>tradingview-control</strong> (live)</td>
+    <td>~/.openclaw/skills/bkskills/tradingview-control/scripts/scanner.py</td>
+    <td>TradingView MCP → Desktop chart</td>
+    <td>JSON file + optional Discord</td>
+  </tr>
+  <tr>
+    <td><strong>backtest batch</strong></td>
+    <td>~/stock-analysis/backtest/run_backtest_batch.py</td>
+    <td>Yahoo Finance (historical)</td>
+    <td>CSV + portfolio JSONs</td>
+  </tr>
+  <tr>
+    <td><strong>backtest core</strong></td>
+    <td>~/stock-analysis/backtest/stock_analysis_backtest.py</td>
+    <td>Yahoo Finance (daily bars)</td>
+    <td>Trade log per ticker</td>
+  </tr>
+  <tr>
+    <td><strong>Pine Script</strong> (TV MCP)</td>
+    <td>OpenClaw → tradingview-mcp MCP tools</td>
+    <td>TradingView Desktop chart</td>
+    <td>Strategy + backtest via replay</td>
+  </tr>
+</table>
+
+</body>
+</html>

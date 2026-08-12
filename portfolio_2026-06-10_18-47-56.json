@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-06-10 18:47:56",
+  "total_stocks": 2,
+  "results": [
+    {
+      "recommendation": "BUY",
+      "confidence": "MEDIUM",
+      "entry": 821.76,
+      "stop": 801.216,
+      "target": 854.6304,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "Lumentum Holdings Inc.",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 821.76,
+        "ema20": 837.197973556837,
+        "ema50": 870.7813566514731,
+        "ema200": 915.3380900000002,
+        "rsi": 19.26889190105048,
+        "rsi_15m": 38.20449007103244,
+        "atr": 22.972500000000007,
+        "vwap": 816.9410858825597,
+        "sma_5_5m": 805.34,
+        "sma_8_5m": 804.9875,
+        "sma_13_5m": 806.1147692307691,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 811.4770500000001,
+        "sma_50_15m": 814.8416400000001,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 809.1,
+        "support_15m": 803,
+        "macd": {
+          "macd": -22.253086502984388,
+          "signal": -19.79587227497627,
+          "histogram": -2.4572142280081195,
+          "trend": "BEARISH"
+        },
+        "bollinger": {
+          "upper": 940.0070994347741,
+          "middle": 847.73205,
+          "lower": 755.4570005652258,
+          "bandwidth": 0.21769862171608148,
+          "position": 27.966931337846408
+        },
+        "stochastic": {
+          "k": 20.646104759372538,
+          "d": 19.659672745495367,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 806.6640000000001,
+          "r1": 810.5280000000002,
+          "r2": 813.8640000000001,
+          "s1": 803.3280000000002,
+          "s2": 799.464
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -0.015114124025009817
+      },
+      "news": [
+        {
+          "title": "What A Market Shock Means For Lumentum Stock - Trefis",
+          "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQckxTT1VEdUNZeDB5a2ZRbEtUUVAyMVlyY2wyTlhNOU1tUlFTcWdwMmR2Rk96bURFR0tNRXNkLS1SLWJUdzV3OWR6Q1k1c2QwYTFXOXFaSHJIRXBmR0VOclMwdzBBeTZPU1hna3FVTFFkRjF3VGpYWTRmTVg0RWNObFpuZTIwZGl2WGtvU1NMXzhLOEJlMUlLN3JuRmhaN1NaMnJ1dC1HN2g?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Wed, 10 Jun 2026 05:13:28 GMT"
+        },
+        {
+          "title": "Lumentum (NASDAQ:LITE) Shares Down 8.2% - What's Next? - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPVlJBSHBlMXY1WWlKOG1rNjQ5TTdSYzVuV1liRzFWclZjWUR2R3lWVlIwYm9kR3RQektnUkRGcmRRQ01KcDBiYmxqNnFKNVZLZ240QTFobmVBdk1iRWlBVjNsRWxpLVR2UjlrMUpYRmxDeU1MOWdrZnRXMDdYTDlRTFJxT0IwbF9pcjVJVWM3a016N0wyQTlhamxwQ0ZGSWhX?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Tue, 09 Jun 2026 21:54:03 GMT"
+        },
+        {
+          "title": "Analysts Conflicted on These Technology Names: Micron (MU), Lumentum Holdings (LITE) and SailPoint, Inc. (SAIL) - The Globe and Mail",
+          "link": "https://news.google.com/rss/articles/CBMilwJBVV95cUxPNllibG9iM0V5R2NkVjc1dXZzbTVYR0NQbnIxbDlrMVF0TDNFLTZpdHZXb1o4ZElFVUNvbDNmN3M0Z1UzeGp1bUZ0RWlwRUtKLUcyVnlTSUpSQkVnWERpNDR0UG1WbThoYkYzYWU5WjNOX2xUMEJHNndRYW9maVlsY192OER1eEpxTXExaWlGS3lpZmt1RmNubjV0UFotNHN1TkhKeTQzZDU0OGZQRXVzR21oaUlpMDBSc05RVEJILWxRdWIwaEpkNlZtUWhuMGRLY21Rc01xQk1OSnBidExISG0yRUZXUktXdEtJVjNyaWFyRkNBY0w2SVRzZkxHd0EydUhhcW9CTUpKN3FXcWM4cUhPZXVjbzg?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Wed, 10 Jun 2026 09:44:46 GMT"
+        }
+      ],
+      "sentiment": -0.3,
+      "atr_pct": 2.8,
+      "vwap_distance": 0.59,
+      "ai_recommendation": {
+        "recommendation": "BUY",
+        "confidence": "MEDIUM",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 821.76,
+        "stop_loss": 790.94,
+        "target_price": 871.07,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": -0.3,
+      "code": "LITE",
+      "timestamp": "2026-06-10 18:47:30"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 0,
+      "stop": 0,
+      "target": 0,
+      "rr": "0:1",
+      "reasons": [
+        "Insufficient data for analysis"
+      ],
+      "warnings": [
+        "Ticker unavailable or no data"
+      ],
+      "stock_name": "1H,4H",
+      "market_bias": "BEARISH",
+      "analysis": {},
+      "news": [],
+      "sentiment": 0.0,
+      "trend_strength": "WEAK",
+      "pattern_type": "NONE",
+      "ai_recommendation": {
+        "recommendation": "NO ACTION",
+        "confidence": "NONE",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "Insufficient data - Price is $0.00 indicating no real market data",
+          "All technical indicators show neutral/zero values",
+          "No volatility data (ATR = 0) to assess trading opportunity",
+          "Cannot provide analysis without valid price and indicator data"
+        ],
+        "warnings": [
+          "Data appears invalid or placeholder - do not trade based on this analysis",
+          "No recent news or sentiment data available",
+          "All pivot points are zero - no support/resistance levels identifiable"
+        ]
+      },
+      "ai_sentiment": 0.0,
+      "code": "1H,4H",
+      "timestamp": "2026-06-10 18:47:56"
+    }
+  ]
+}

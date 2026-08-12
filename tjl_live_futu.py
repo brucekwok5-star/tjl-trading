@@ -1003,6 +1003,163 @@ def check_tjl_model_m(price, highs, lows, closes, volumes, today_high, today_low
     }
 
 
+# ── Model R: Keltner Channel + RSI Breakout ─────────────────────────────────
+# From: KeltnerChannelRSIBreakoutStrategy.py (ali-azary repo)
+# Idea: Price breaks Keltner band (EMA±ATR) + RSI confirms direction.
+# LONG: price > upper_band AND RSI > 30. SHORT: price < lower_band AND RSI < 70.
+# SL: 1.5 ATR, TP: 3 ATR.
+def check_tjl_model_r(price, highs, lows, closes, volumes, today_high, today_low):
+    if len(closes) < 35 or len(volumes) < 14:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+
+    s = pd.Series(closes)
+    ema30 = float(s.ewm(span=30, adjust=False).mean().iloc[-1])
+    if np.isnan(ema30) or ema30 <= 0:
+        return None
+
+    upper_band = ema30 + atr
+    lower_band = ema30 - atr
+
+    # RSI
+    deltas = pd.Series(closes).diff()
+    gains = deltas.where(deltas > 0, 0.0)
+    losses = (-deltas).where(deltas < 0, 0.0)
+    avg_gain = gains.ewm(com=13, adjust=False).mean().iloc[-1]
+    avg_loss = losses.ewm(com=13, adjust=False).mean().iloc[-1]
+    rs = avg_gain / avg_loss if avg_loss > 0 else 100
+    rsi = 100 - (100 / (1 + rs)) if avg_loss > 0 else 100
+
+    prev_close = float(closes[-2]) if len(closes) >= 2 else price
+
+    long_fire  = (price > upper_band) and (rsi > 30)
+    short_fire = (price < lower_band) and (rsi < 70)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {
+        'price': round(price, 2),
+        'ema30': round(ema30, 2),
+        'atr': round(atr, 3),
+        'rsi': round(rsi, 1),
+        'sl': round(price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr, 2),
+        'tp': round(price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr, 2),
+        'rr_ratio': 2.0,
+        'direction': direction,
+        'long_fire': long_fire,
+        'short_fire': short_fire,
+    }
+
+
+# ── Model S: Ichimoku Cloud Breakout ────────────────────────────────────────
+# From: IchimokuCloudStrategy.py (ali-azary repo) — adapted to pure numpy/pandas
+# Idea: Price breaks cloud (Kumo) + Tenkan/Kijun cross + Chikou confirms.
+# LONG: above cloud AND TK > KJ AND Chikou > price 14 bars ago.
+# SHORT: below cloud AND TK < KJ AND Chikou < price 14 bars ago.
+# SL: 1.5 ATR, TP: 3 ATR.
+def check_tjl_model_s(price, highs, lows, closes, volumes, today_high, today_low):
+    if len(closes) < 55:
+        return None
+    h = np.array(highs)
+    l = np.array(lows)
+    c = np.array(closes)
+
+    if len(c) < 16:
+        return None
+
+    tenkan = (np.max(h[-9:]) + np.min(l[-9:])) / 2
+    kijun  = (np.max(h[-26:]) + np.min(l[-26:])) / 2
+    senkou_a = (tenkan + kijun) / 2
+    senkou_b = (np.max(h[-52:]) + np.min(l[-52:])) / 2
+    chikou = c[-1] - c[-15] if len(c) >= 15 else 0
+
+    if np.isnan(tenkan) or np.isnan(kijun) or np.isnan(senkou_a):
+        return None
+
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+
+    cloud_top = max(senkou_a, senkou_b)
+    cloud_bot = min(senkou_a, senkou_b)
+
+    long_fire  = (price > cloud_top) and (tenkan > kijun) and (chikou > 0)
+    short_fire = (price < cloud_bot) and (tenkan < kijun) and (chikou < 0)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {
+        'price': round(price, 2),
+        'atr': round(atr, 3),
+        'tenkan': round(tenkan, 2),
+        'kijun': round(kijun, 2),
+        'cloud_top': round(cloud_top, 2),
+        'cloud_bot': round(cloud_bot, 2),
+        'sl': round(price - 1.5 * atr if direction == 'LONG' else price + 1.5 * atr, 2),
+        'tp': round(price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr, 2),
+        'rr_ratio': 2.0,
+        'direction': direction,
+        'long_fire': long_fire,
+        'short_fire': short_fire,
+    }
+
+
+# ── Model T: Mean Reversion z-score ─────────────────────────────────────────
+# From: OUMeanReversionStrategy.py (ali-azary repo) — adapted to daily bars
+# Idea: Price deviates >1 std from SMA20 → mean revert. Trend filter via SMA20.
+# LONG: z-score < -1.0 AND price > SMA20 (trend intact, reversion bounces).
+# SHORT: z-score > +1.0 AND price < SMA20 (trend broken, reversion falls).
+# SL: 2 ATR, TP: SMA20 (mean).
+def check_tjl_model_t(price, highs, lows, closes, volumes, today_high, today_low):
+    if len(closes) < 25:
+        return None
+    c = np.array(closes)
+    h = np.array(highs)
+    l = np.array(lows)
+
+    if len(c) < 20:
+        return None
+    c_series = pd.Series(c)
+    sma20 = float(c_series.rolling(20).mean().iloc[-1])
+    std20 = float(c_series.rolling(20).std().iloc[-1])
+    if np.isnan(sma20) or np.isnan(std20) or std20 <= 0:
+        return None
+    z_score = (price - sma20) / std20
+
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+
+    deltas = pd.Series(c).diff()
+    gains = deltas.where(deltas > 0, 0.0)
+    losses = (-deltas).where(deltas < 0, 0.0)
+    avg_gain = gains.ewm(com=13, adjust=False).mean().iloc[-1]
+    avg_loss = losses.ewm(com=13, adjust=False).mean().iloc[-1]
+    rs = avg_gain / avg_loss if avg_loss > 0 else 100
+    rsi = 100 - (100 / (1 + rs)) if avg_loss > 0 else 100
+
+    long_fire  = (z_score < -1.0) and (price > sma20) and (rsi > 30)
+    short_fire = (z_score > +1.0) and (price < sma20) and (rsi < 70)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {
+        'price': round(price, 2),
+        'atr': round(atr, 3),
+        'z_score': round(z_score, 2),
+        'sma20': round(sma20, 2),
+        'rsi': round(rsi, 1),
+        'sl': round(price - 2.0 * atr if direction == 'LONG' else price + 2.0 * atr, 2),
+        'tp': round(sma20, 2),
+        'rr_ratio': round(abs(price - sma20) / (2.0 * atr), 1),
+        'direction': direction,
+        'long_fire': long_fire,
+        'short_fire': short_fire,
+    }
+
+
 def check_tjs(price, highs, lows, closes, today_low):
     """Short entry: bearish stack + pullback to EMA9 + below PML."""
     if len(closes) < 60:
@@ -1351,6 +1508,45 @@ def run_scan(notify=False):
             elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'M' for s in short_signals):
                 result_m['signal_model'] = 'M'
                 short_signals.append(result_m)
+
+        # ── Model R: Keltner Channel + RSI Breakout ──────────────────
+        result_r = check_tjl_model_r(price, highs, lows, closes, volumes, today_high, today_low)
+        if result_r:
+            result_r['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'R' for s in long_signals):
+                result_r['signal_model'] = 'R'
+                long_signals.append(result_r)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'R' for s in short_signals):
+                result_r['signal_model'] = 'R'
+                short_signals.append(result_r)
+
+        # ── Model S: Ichimoku Cloud Breakout ──────────────────────────
+        result_s = check_tjl_model_s(price, highs, lows, closes, volumes, today_high, today_low)
+        if result_s:
+            result_s['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'S' for s in long_signals):
+                result_s['signal_model'] = 'S'
+                long_signals.append(result_s)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'S' for s in short_signals):
+                result_s['signal_model'] = 'S'
+                short_signals.append(result_s)
+
+        # ── Model T: Mean Reversion z-score ───────────────────────────
+        result_t = check_tjl_model_t(price, highs, lows, closes, volumes, today_high, today_low)
+        if result_t:
+            result_t['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'T' for s in long_signals):
+                result_t['signal_model'] = 'T'
+                long_signals.append(result_t)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'T' for s in short_signals):
+                result_t['signal_model'] = 'T'
+                short_signals.append(result_t)
 
         # ── Short side (TJS — unchanged) ────────────────────
         if regime in ('bearish', 'neutral'):

@@ -1,0 +1,1248 @@
+{
+  "timestamp": "2026-08-11 10:10:51",
+  "total_stocks": 10,
+  "results": [
+    {
+      "recommendation": "HOLD",
+      "confidence": "MEDIUM",
+      "entry": 128.2,
+      "stop": 124.99499999999999,
+      "target": 133.328,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "BABA-W",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "MOMENTUM",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 128.2,
+        "ema20": 124.74444444444443,
+        "ema50": 124.74444444444443,
+        "ema200": 124.74444444444443,
+        "rsi": 69.8412698412698,
+        "rsi_15m": 69.3548387096775,
+        "atr": 1.3499999999999994,
+        "vwap": 123.96911155521795,
+        "sma_5_5m": 123.62,
+        "sma_8_5m": 123.6875,
+        "sma_13_5m": 123.74615384615383,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 126.69499999999998,
+        "sma_50_15m": 125.07800000000003,
+        "trend_15m": "BULLISH",
+        "resistance_15m": 130.3,
+        "support_15m": 126.7,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 86.44067796610176,
+          "d": 87.00564971751415,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 126.63333333333333,
+          "r1": 127.06666666666665,
+          "r2": 127.43333333333332,
+          "s1": 126.26666666666665,
+          "s2": 125.83333333333333
+        },
+        "patterns": {
+          "pattern": "SHOOTING_STAR,VOLUME_SPIKE_BULL",
+          "signal": "BEARISH",
+          "volume_spike": true
+        },
+        "change_pct": 1.1838989739542112
+      },
+      "news": [
+        {
+          "title": "Can Alibaba Group Holding (NYSE:BABA) Stay Below Fair Value For Long? - simplywall.st",
+          "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOUkZKWW51Wkp3Nl9TU2pGWERyZnVnUmx4UTZOcml1aVZzX0dWcy1ZaFEzN1RtZFdMeG5nbnczQ3NycWk4MWNqa3FKMms3UUJTNUpIQzBnYlU4MnNPYnh6TGRvdDlEVHVtYUp1RHg0aWE4NzBvWGtINEItVGVQNERsZzNzVWhkMzFobXFuQk1uMEJBY05TSE1tYXNUbFN5QS00VEtHX0RuUmVLODRnSUVkbkVMSGNyRS1yUHY2bUdzSWtIcHdIZlRYTC0zMDVHYUVmT1HSAdcBQVVfeXFMTkZqN3N3YjFmdXN1TThoSk0yUTM5eVZfNzdZOXRmejB1MkJUYVpwNkZIYURUVjRuZXNSOGFsWnprUzhGWVdVQmNCZlE1dWwxNzVlalRCbmsyeE0weUpreDlWWUktTG9JTDI0TUtZdWZqbTlsYlVtdGJTbjFfWVlnTEhZdHFwbXJ3TkZmS3h6NjI5ZXVNeWdGaHJBWXlMb2tKdzRSVlAycXVpSG5yWC1LRG5yZmNOUzdwVjFOLThlLXdMQlM1NkZVS2xTdWhuV2VNMU1GQXVSXzA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 23:53:19 GMT"
+        },
+        {
+          "title": "Alibaba Group (NYSE:BABA) Trading Up 3.2% - Here's What Happened - MarketBeat",
+          "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQQUd3UHpKV2p0R29KNEwzR3hWWU5HTWY5VzdvVHJrcDRNazdsaUg0aHZDTUo0Uko4Ums1VkRTTzl0LXZEcjY1MVFuSnVvenJBeGQ0U1l0R3RIVXI1bC1OV3d5VXJCdTVidldZTzlsWUp1YnRsaHA5SElRekc2X1Y5dDFZWmNNdEx3RmdQWkxveC1zZkJBWldTRFRvb2JqVTgzOFBIa3JuOFBzRHF2ajlZ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 21:43:11 GMT"
+        },
+        {
+          "title": "Alibaba Group Holding Stock Advances 2.3% in Hong Kong - moomoo.com",
+          "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOZlhCcThOcVZyNUo0VHZCanV5a3c2Mk1FbzdtS1hHUzhEUC01X3d0Mk9iYkVFTlBtRkRNRV9xNG5peVR0cXVwRHE0VXltUDBrbTNMWUx2VXZMa2NXdjRmYzhBMnZmbHZfMVpKMXljTnVkNmdRcXV3RFVRbkV0ZEdtMjVodHBUVFdwNEpYX2NhSHFmbF9IQ2dTVThiNA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 11:52:44 GMT"
+        },
+        {
+          "title": "BABA Class Action Reminder - Robbins LLP Reminds Investors - GlobeNewswire",
+          "link": "https://news.google.com/rss/articles/CBMizwJBVV95cUxNUW5pM25SR05HaDdZdDFIZWI3c1pQc1prallEWlJ2eXFZTWl6bEV3eUtybU5TZVBYSmZfZnlibEVnQWhpX1dMQVFsZE9yTHRXeGRLQ0xSSFQ0YkktaEdnbkJHVm9pamwzNzR2dDNwNEpLVmYwcHViTV93Z3ExdGpZaWlMbTdGNjFVZGZXc3p2bWt2TVc0bHl2YVFtMTZqNnNxRjB3cWxrNkV2bE4yUGRpTnZja2daYTJscXQ5c0NtVm9SQmE1dDFmdEJ4NWxpR01YMHZlQ3VJaDBiX285RWZ5ZzU4U2lyQWRST2tvZ25DblRxcjQtOEJsMGo1d3oxVUV6S011X2F4VWxta0ZBbHdCb3VLc1AtVE1XejZyOERaYmM4YUpGOVJKck1sNndhZmdpQ19ONWlBLXBhbllPeF9Ia25fRjQ5UHhtTGhtZE1XTQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 12:00:00 GMT"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 1.05,
+      "vwap_distance": 3.3,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "MEDIUM",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 128.2,
+        "stop_loss": 124.99,
+        "target_price": 133.33,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.6,
+      "code": "9988",
+      "timestamp": "2026-08-11 10:05:57"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "HIGH",
+      "entry": 26.4,
+      "stop": 25.74,
+      "target": 27.456,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "TRACKER FUND OF HONG KONG",
+      "market_bias": "BULLISH",
+      "trend_strength": "MODERATE",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 26.4,
+        "ema20": 26.11777777777778,
+        "ema50": 26.11777777777778,
+        "ema200": 26.11777777777778,
+        "rsi": 87.09677419354861,
+        "rsi_15m": 61.5384615384618,
+        "atr": 0.09571428571428495,
+        "vwap": 25.973396781247576,
+        "sma_5_5m": 26.052,
+        "sma_8_5m": 26.049999999999997,
+        "sma_13_5m": 26.043076923076924,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 26.358999999999998,
+        "sma_50_15m": 26.191200000000002,
+        "trend_15m": "BULLISH",
+        "resistance_15m": 26.54,
+        "support_15m": 26.38,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 93.10344827586223,
+          "d": 96.15384615384646,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 26.353333333333335,
+          "r1": 26.38666666666667,
+          "r2": 26.413333333333334,
+          "s1": 26.32666666666667,
+          "s2": 26.293333333333337
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -0.07570022710069313
+      },
+      "news": [
+        {
+          "title": "Hong Kong Stock Exchange Today: Hang Seng Rises 1.05% to 25,937.49 on Tech and Financial Strength - BBN Times",
+          "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQOXlJX2FiZmRBNmJKdFBXeFZzMVFrQjB6a013RS11dlZVdURRdmhxSVRQSXo2azM3djRFWWJiMEdXZ1p5QmpFTzNPNXNJdURjN2p4OTNYQ3VSb0wyYTl2ZGFWVWZKMWIwU1pKS2JsaWVXNG96dkJKTEFFcE5sUWxQT2ZSZFBBRzhubnB3Z2hBRmIzb2tVWTJFNUs2N3dodzNoR3k3UU51U2tuX3hUV2JfOUZJQ3pnclRKRGswaEdhQVVvNWk2V3RZUnc1c0NyT3Nf?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 22:46:11 GMT"
+        },
+        {
+          "title": "Hang Seng Indexes Company is seeking market feedback on its proposed revisions to the methodology for calculating the Hang Seng Tech Index. - moomoo.com",
+          "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQVJxdGhEZE10ekRSWlhqelJuZEluaW05NnNzNERwSTU0R2dnRDBycVV2aVRtZEhFdzlQNmJKUkprVm5McWNGOHZkNHpjOVlhWXE2ODM4ZzVIZzBpNS1RdVNYUmhIcGY3WXBpNV82TDhCcUthX29GSXpGdWpqajg2bXcyb0RVWE1Ud1V4YWRjOTlnOW81cUh2VjNjZDJLV0dEQUdJ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 11:40:19 GMT"
+        }
+      ],
+      "sentiment": 0.65,
+      "atr_pct": 0.36,
+      "vwap_distance": 1.62,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "HIGH",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 26.4,
+        "stop_loss": 25.74,
+        "target_price": 27.46,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.65,
+      "code": "2800",
+      "timestamp": "2026-08-11 10:06:32"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "MEDIUM",
+      "entry": 474.8,
+      "stop": 462.93,
+      "target": 493.79200000000003,
+      "rr": "1.5:1",
+      "reasons": [
+        "Price at lower Bollinger Band suggests potential oversold bounce",
+        "RSI at 49.4 is in neutral/bullish zone (35-70), not extended",
+        "Bullish news sentiment (0.72) provides fundamental support",
+        "ATR of 0.7% indicates low volatility - tight stops required",
+        "Price below both EMAs (479.49) indicates weak short-term trend"
+      ],
+      "warnings": [
+        "Trend signal is NEUTRAL - no clear directional bias",
+        "Price below both EMA20 and EMA50 - short-term weakness",
+        "MACD histogram at 0.0000 provides no momentum confirmation",
+        "ATR below 1.5% threshold - limited day trading volatility",
+        "Stochastic K at 73.2 approaching overbought territory",
+        "No multiple confirmations for strong BUY setup"
+      ],
+      "stock_name": "TENCENT",
+      "market_bias": "BEARISH",
+      "trend_strength": "STRONG_BEARISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 474.8,
+        "ema20": 479.4888888888888,
+        "ema50": 479.4888888888888,
+        "ema200": 479.4888888888888,
+        "rsi": 49.350649350649206,
+        "rsi_15m": 41.860465116279165,
+        "atr": 3.44285714285715,
+        "vwap": 481.0721188862476,
+        "sma_5_5m": 477.32000000000005,
+        "sma_8_5m": 477.34999999999997,
+        "sma_13_5m": 477.44615384615383,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 478.99000000000007,
+        "sma_50_15m": 478.66799999999995,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 483.8,
+        "support_15m": 475.4,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 73.17073170731668,
+          "d": 54.78240076518407,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 479.3333333333333,
+          "r1": 480.66666666666663,
+          "r2": 481.3333333333333,
+          "s1": 478.66666666666663,
+          "s2": 477.3333333333333
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BULL",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -1.3710012463647625
+      },
+      "news": [
+        {
+          "title": "Tencent AI Spending Key After Magnificent 7 Rout",
+          "link": "https://finance.yahoo.com/technology/ai/articles/tencent-ai-spending-key-magnificent-004806894.html",
+          "pubDate": "2026-08-10T00:48:06Z"
+        },
+        {
+          "title": "Tencent (SEHK:700) Stock May Be Undervalued Despite Fresh AI Spending Questions",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/tencent-sehk-700-stock-may-170839116.html",
+          "pubDate": "2026-08-03T17:08:39Z"
+        },
+        {
+          "title": "Tencent (SEHK:700) Launches Digital Jingdezhen To Bring Porcelain Heritage Into Gaming",
+          "link": "https://finance.yahoo.com/technology/ai/articles/tencent-sehk-700-launches-digital-160958283.html",
+          "pubDate": "2026-08-03T16:09:58Z"
+        },
+        {
+          "title": "Alibaba's Latest AI Move Is Getting Investors' Attention",
+          "link": "https://finance.yahoo.com/technology/ai/articles/alibabas-latest-ai-move-getting-155631013.html",
+          "pubDate": "2026-08-03T15:56:31Z"
+        },
+        {
+          "title": "Alibaba Stock Soars After Unveiling New Qwen AI Model",
+          "link": "https://finance.yahoo.com/technology/ai/articles/alibaba-stock-soars-unveiling-qwen-121120900.html",
+          "pubDate": "2026-08-03T12:11:20Z"
+        },
+        {
+          "title": "Jack Ma-Backed OceanBase Seeks Up to $443 Million for AI Push",
+          "link": "https://finance.yahoo.com/technology/ai/articles/jack-ma-backed-oceanbase-seeks-020218977.html",
+          "pubDate": "2026-07-29T02:02:18Z"
+        },
+        {
+          "title": "TSMC and Tencent break into the top 100 of the Fortune Global 500 list, as Asia rides the AI boom",
+          "link": "https://finance.yahoo.com/technology/articles/tsmc-tencent-break-top-100-210000080.html",
+          "pubDate": "2026-07-28T21:00:00Z"
+        },
+        {
+          "title": "China\u2019s Making Memory with its New Biggest Company",
+          "link": "https://www.thedailyupside.com/technology/semiconductors/chinas-making-memory-with-its-new-biggest-company/",
+          "pubDate": "2026-07-28T04:01:00Z"
+        },
+        {
+          "title": "DeepSeek\u2019s $71 Billion Boom Collides With an Awkward Nvidia Question",
+          "link": "https://www.benzinga.com/markets/tech/26/07/60711281/deepseek-71b-valuation-surge-nvidia-question?utm_source=yahooFinance&utm_campaign=partner_feed&utm_medium=referral",
+          "pubDate": "2026-07-27T20:20:30Z"
+        },
+        {
+          "title": "Inside China\u2019s Blockbuster $484 Billion Memory Chip Debut",
+          "link": "https://www.barrons.com/articles/cxmt-stock-ipo-micron-memory-chips-china-834b55db?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-07-27T18:38:00Z"
+        }
+      ],
+      "sentiment": 0.72,
+      "atr_pct": 0.73,
+      "vwap_distance": 1.32,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "MEDIUM",
+        "entry_price": 474.8,
+        "stop_loss": 471.35,
+        "target_price": 479.49,
+        "risk_reward": "1.5:1",
+        "reasons": [
+          "Price at lower Bollinger Band suggests potential oversold bounce",
+          "RSI at 49.4 is in neutral/bullish zone (35-70), not extended",
+          "Bullish news sentiment (0.72) provides fundamental support",
+          "ATR of 0.7% indicates low volatility - tight stops required",
+          "Price below both EMAs (479.49) indicates weak short-term trend"
+        ],
+        "warnings": [
+          "Trend signal is NEUTRAL - no clear directional bias",
+          "Price below both EMA20 and EMA50 - short-term weakness",
+          "MACD histogram at 0.0000 provides no momentum confirmation",
+          "ATR below 1.5% threshold - limited day trading volatility",
+          "Stochastic K at 73.2 approaching overbought territory",
+          "No multiple confirmations for strong BUY setup"
+        ]
+      },
+      "ai_sentiment": 0.72,
+      "code": "700",
+      "timestamp": "2026-08-11 10:07:08"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 95.5,
+      "stop": 93.1125,
+      "target": 99.32000000000001,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "MEITUAN-W",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 95.5,
+        "ema20": 92.41111111111111,
+        "ema50": 92.41111111111111,
+        "ema200": 92.41111111111111,
+        "rsi": 64.12213740458023,
+        "rsi_15m": 72.38095238095232,
+        "atr": 1.142857142857142,
+        "vwap": 92.21319324551054,
+        "sma_5_5m": 92.15,
+        "sma_8_5m": 92.21875,
+        "sma_13_5m": 92.25384615384615,
+        "momentum_5m": "BEARISH",
+        "sma_20_15m": 93.37499999999999,
+        "sma_50_15m": 92.57800000000002,
+        "trend_15m": "BULLISH",
+        "resistance_15m": 96.45,
+        "support_15m": 93.45,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 98.46153846153854,
+          "d": 90.25641025641022,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 93.39999999999999,
+          "r1": 93.64999999999998,
+          "r2": 93.84999999999998,
+          "s1": 93.19999999999999,
+          "s2": 92.95
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BULL",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": 1.7039403620873208
+      },
+      "news": [
+        {
+          "title": "Uber Gives In-Line Outlook, Says Brazil Rivals Hurt Trips Growth",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/uber-gives-line-outlook-says-105658166.html",
+          "pubDate": "2026-08-05T10:56:58Z"
+        },
+        {
+          "title": "China\u2019s Moonshot in Talks on Pre-IPO Funds at $50 Billion Value",
+          "link": "https://finance.yahoo.com/technology/ai/articles/china-moonshot-talks-pre-ipo-142358163.html",
+          "pubDate": "2026-07-21T14:23:58Z"
+        },
+        {
+          "title": "Chinese AI Sensation Moonshot\u2019s Gamble on Big Models Pays Off",
+          "link": "https://finance.yahoo.com/technology/ai/articles/chinese-ai-sensation-moonshot-gamble-131433262.html",
+          "pubDate": "2026-07-20T13:14:33Z"
+        },
+        {
+          "title": "Uber bids $15 billion for Delivery Hero to form global takeout giant",
+          "link": "https://finance.yahoo.com/video/uber-bids-15-billion-delivery-141845111.html",
+          "pubDate": "2026-07-16T14:18:45Z"
+        },
+        {
+          "title": "Hong Kong Stocks End Higher on Strength in Chinese Tech",
+          "link": "https://www.barrons.com/livecoverage/stock-market-news-today-071626/card/hong-kong-stocks-end-higher-on-strength-in-chinese-tech-4LoVV5QijDwJSM07qvmb?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-07-16T09:45:59Z"
+        },
+        {
+          "title": "Is Meituan (SEHK:3690) Pricey On Board Changes And A Rebound In Its Share Price?",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/meituan-sehk-3690-pricey-board-043242859.html",
+          "pubDate": "2026-07-10T04:32:42Z"
+        },
+        {
+          "title": "Meituan (SEHK:3690) Stock Stays Cheap Following Its 73% Five Year Fall",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/meituan-sehk-3690-stock-stays-001907221.html",
+          "pubDate": "2026-07-10T00:19:07Z"
+        },
+        {
+          "title": "Alibaba Jumps 12% as AI Optimism and Margin Progress Lift Shares",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/alibaba-jumps-12-ai-optimism-154841153.html",
+          "pubDate": "2026-07-08T15:48:41Z"
+        },
+        {
+          "title": "Even Realities raises $150M, hits $1B valuation with smart glasses",
+          "link": "https://qz.com/even-realities-smart-glasses-funding-valuation-apple-meta-070626",
+          "pubDate": "2026-07-06T13:25:18Z"
+        },
+        {
+          "title": "Smart glasses maker Even Realities hits $1B valuation with $150M funding led by Meituan, Tencent",
+          "link": "https://finance.yahoo.com/technology/articles/smart-glasses-maker-even-realities-090000351.html",
+          "pubDate": "2026-07-06T09:00:00Z"
+        }
+      ],
+      "sentiment": 0.7,
+      "atr_pct": 1.2,
+      "vwap_distance": 3.44,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "LOW",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 95.5,
+        "stop_loss": 93.11,
+        "target_price": 99.32,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.7,
+      "code": "3690",
+      "timestamp": "2026-08-11 10:07:46"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "LOW",
+      "entry": 74.0,
+      "stop": 72.14999999999999,
+      "target": 76.96000000000001,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "AIA",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 74.0,
+        "ema20": 73.18333333333332,
+        "ema50": 73.18333333333332,
+        "ema200": 73.18333333333332,
+        "rsi": 80.90909090909096,
+        "rsi_15m": 27.90697674418638,
+        "atr": 0.778571428571429,
+        "vwap": 71.95128068838197,
+        "sma_5_5m": 73.50999999999999,
+        "sma_8_5m": 73.58749999999999,
+        "sma_13_5m": 73.57307692307691,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 74.4425,
+        "sma_50_15m": 73.835,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 74.55,
+        "support_15m": 73.05,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 79.31034482758612,
+          "d": 81.15942028985495,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 74.5,
+          "r1": 74.65,
+          "r2": 74.75,
+          "s1": 74.4,
+          "s2": 74.25
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -0.6711409395973155
+      },
+      "news": [
+        {
+          "title": "Prudential, HSBC Shares Tumble on China Insurance Tax Report",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/prudential-hsbc-shares-tumble-china-112223256.html",
+          "pubDate": "2026-08-05T11:22:23Z"
+        },
+        {
+          "title": "Hong Kong Crackdown Sends Prudential Down More Than 8%",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/hong-kong-crackdown-sends-prudential-171807345.html",
+          "pubDate": "2026-06-04T17:18:07Z"
+        },
+        {
+          "title": "HSBC, StanChart Shares Slide as New Rules Could Restrict Chinese Funds in Hong Kong Accounts",
+          "link": "https://www.wsj.com/world/china/hsbc-stanchart-shares-slide-as-new-rules-could-restrict-chinese-funds-in-hong-kong-accounts-5d068a1a?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-06-04T13:23:00Z"
+        },
+        {
+          "title": "Zacks Industry Outlook Highlights AIA, Reinsurance Group of America, Primerica and Voya",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/zacks-industry-outlook-highlights-aia-085700959.html",
+          "pubDate": "2026-06-02T08:57:00Z"
+        },
+        {
+          "title": "5 Life Insurance Stocks to Watch Amid Inflation, Low Interest Rate",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/5-life-insurance-stocks-watch-170400770.html",
+          "pubDate": "2026-06-01T17:04:00Z"
+        },
+        {
+          "title": "Is It Too Late To Consider AIA Group (SEHK:1299) After Its 82% One Year Rally?",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/too-consider-aia-group-sehk-042100864.html",
+          "pubDate": "2026-04-11T04:21:00Z"
+        },
+        {
+          "title": "Is AIA (AAGIY) Outperforming Other Finance Stocks This Year?",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/aia-aagiy-outperforming-other-finance-134003763.html",
+          "pubDate": "2026-03-25T13:40:03Z"
+        },
+        {
+          "title": "AIA Group Ltd (AAGIY) Full Year 2025 Earnings Call Highlights: Record Growth and Strategic ...",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/aia-group-ltd-aagiy-full-070027207.html",
+          "pubDate": "2026-03-19T07:00:27Z"
+        },
+        {
+          "title": "RGA Offers Upside on Strong Growth Prospects - Buy or Hold the Stock?",
+          "link": "https://finance.yahoo.com/news/rga-offers-upside-strong-growth-171900060.html",
+          "pubDate": "2026-03-17T17:19:00Z"
+        },
+        {
+          "title": "Assessing AIA Group (SEHK:1299) Valuation After Mixed Short Term Returns And Stronger Long Term Momentum",
+          "link": "https://finance.yahoo.com/news/assessing-aia-group-sehk-1299-171324212.html",
+          "pubDate": "2026-03-12T17:13:24Z"
+        }
+      ],
+      "sentiment": 0.15,
+      "atr_pct": 1.05,
+      "vwap_distance": 2.77,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "LOW",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 74.0,
+        "stop_loss": 72.15,
+        "target_price": 76.96,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.15,
+      "code": "1299",
+      "timestamp": "2026-08-11 10:08:24"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "MEDIUM",
+      "entry": 88.72,
+      "stop": 86.502,
+      "target": 92.2688,
+      "rr": "N/A",
+      "reasons": [
+        "RSI at 72.9 indicates overbought conditions - elevated risk of reversal",
+        "Stochastic K=92.1, D=95.9 confirms overbought momentum",
+        "ATR of 0.4% is well below 1.5% threshold - insufficient volatility for day trading opportunities",
+        "MACD histogram neutral at 0.0000 provides no directional confirmation",
+        "EMAs flat at 87.80 indicate no established trend",
+        "Trend signal is NEUTRAL - no clear directional bias"
+      ],
+      "warnings": [
+        "Overbought conditions with no trend confirmation - high reversal risk",
+        "Low volatility (0.4% ATR) limits profit potential and tight stop-loss placement",
+        "No recent news or catalysts to drive directional movement",
+        "Risk of whipsaw in neutral, overbought market conditions"
+      ],
+      "stock_name": "Hang Seng H-Share Index ETF",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 88.72,
+        "ema20": 87.80222222222223,
+        "ema50": 87.80222222222223,
+        "ema200": 87.80222222222223,
+        "rsi": 72.93233082706743,
+        "rsi_15m": 64.70588235294068,
+        "atr": 0.3757142857142891,
+        "vwap": 87.42683957045233,
+        "sma_5_5m": 87.504,
+        "sma_8_5m": 87.4975,
+        "sma_13_5m": 87.47846153846152,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 88.48600000000002,
+        "sma_50_15m": 87.96920000000001,
+        "trend_15m": "BULLISH",
+        "resistance_15m": 89.32,
+        "support_15m": 88.6,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 92.07920792079223,
+          "d": 95.92592592592594,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 88.45333333333333,
+          "r1": 88.54666666666667,
+          "r2": 88.63333333333334,
+          "s1": 88.36666666666666,
+          "s2": 88.27333333333333
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": 0.022547914317921105
+      },
+      "news": [],
+      "sentiment": 0.0,
+      "atr_pct": 0.42,
+      "vwap_distance": 1.46,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "MEDIUM",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": "N/A",
+        "reasons": [
+          "RSI at 72.9 indicates overbought conditions - elevated risk of reversal",
+          "Stochastic K=92.1, D=95.9 confirms overbought momentum",
+          "ATR of 0.4% is well below 1.5% threshold - insufficient volatility for day trading opportunities",
+          "MACD histogram neutral at 0.0000 provides no directional confirmation",
+          "EMAs flat at 87.80 indicate no established trend",
+          "Trend signal is NEUTRAL - no clear directional bias"
+        ],
+        "warnings": [
+          "Overbought conditions with no trend confirmation - high reversal risk",
+          "Low volatility (0.4% ATR) limits profit potential and tight stop-loss placement",
+          "No recent news or catalysts to drive directional movement",
+          "Risk of whipsaw in neutral, overbought market conditions"
+        ]
+      },
+      "ai_sentiment": 0.0,
+      "code": "2828",
+      "timestamp": "2026-08-11 10:08:46"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "HIGH",
+      "entry": 162.2,
+      "stop": 158.14499999999998,
+      "target": 168.688,
+      "rr": null,
+      "reasons": [
+        "RSI at 86.2 is deeply overbought (>70 threshold)",
+        "Stochastic K=93.6, D=91.5 - both overbought zone",
+        "Bollinger Bands at 0% position (upper band) - overbought",
+        "Price at pivot resistance R1 (162.63) - limited upside",
+        "ATR at 0.5% is below 1.5% threshold - insufficient volatility for day trading",
+        "Trend signal: NEUTRAL - no confirmed direction",
+        "MACD histogram at 0.0000 - no momentum confirmation",
+        "EMA20 equals EMA50 (not above) - trend strength rule NOT met"
+      ],
+      "warnings": [
+        "Multiple overbought indicators suggest high probability of pullback/reversal",
+        "Low ATR indicates narrow trading range, reducing day trading opportunities",
+        "Current price at upper Bollinger Band + pivot resistance creates rejection zone",
+        "Not recommended to SHORT due to positive news sentiment and VWAP distance; not recommended to BUY due to extreme overbought conditions"
+      ],
+      "stock_name": "HSBC HOLDINGS",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 162.2,
+        "ema20": 160.5777777777778,
+        "ema50": 160.5777777777778,
+        "ema200": 160.5777777777778,
+        "rsi": 86.20689655172468,
+        "rsi_15m": 41.66666666666667,
+        "atr": 0.8071428571428518,
+        "vwap": 159.04531794761033,
+        "sma_5_5m": 160.72,
+        "sma_8_5m": 160.65,
+        "sma_13_5m": 160.53846153846155,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 162.44000000000005,
+        "sma_50_15m": 161.36199999999997,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 162.9,
+        "support_15m": 162.0,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 93.61702127659552,
+          "d": 91.48936170212755,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 162.46666666666667,
+          "r1": 162.63333333333333,
+          "r2": 162.96666666666667,
+          "s1": 162.13333333333333,
+          "s2": 161.96666666666667
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BULL",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -0.18461538461539162
+      },
+      "news": [
+        {
+          "title": "What's Going On With HSBC Stock Monday? - Benzinga",
+          "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNMmZnQmYxWXVsV2ljZmg5UWFvMTJ2bi1JTWRKR29FTkZNUHlQdXZIbS1iYW9FVUp4b2FkclQwT19tMWI5VlpSa0tValdUN0ZEa1FQN2tHcDRiWEh4VHFBc1c2VWdWWTN4NW9HN3NXcUl6aWdZYnFQd09BemEwY2xNTVRDT2ZveVB3Rkc1Y0p0c3JpeWZUY0hDVklmMA?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 16:57:51 GMT"
+        },
+        {
+          "title": "HSBC (HSBC) buys back 340,000 shares in Hong Kong as part of 2026 programme - Stock Titan",
+          "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNSzFWMXp3OEVMUGJlVFhHR1B2b2NUWm1QM1JfVUFmdlM3ZmJtTUdJMU5NN3VidTdvVkcyQmRGQmtOb2FieGEtX1NzVE9Qb3lqN05wVl90blBsT21rMGstVlV6RXh0MlJyenRPSF85VUdVdFNBVC1CUWViSEV4dDFSWFlnby1fb21MSHYyT3hmdU9EZ3JkNlA5czJick9IWFR3NmdiRDVVbEVIQ09FQmMtRExtWQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 15:50:03 GMT"
+        },
+        {
+          "title": "HSBC Holdings (LSE:HSBA) Reshapes Its Capital Plan, But Is The Stock Fully Valued? - simplywall.st",
+          "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNTU5JSnBOR3hrUW0zbUlLR2V0VmFqYzN4ZW55Q3k0WXRuRkxrRWhDVkNCVnBmLWExMXdnQWZyNFJKeXVXTGVHLUEyaTFqYnpHdWx1R21PWVliSFdwRXBBUXVGem1jdjRUQ0NXckhPVW5NdDBsMG5pVWphQThhbVRaakF1ajJkejJRZ0xLMHFrYjg1bThxbUUtcUxFUUNVV1VwcW9qc1JMbEhmMmRjXzFQeTRWU3BxSUItLWdaQWVuUVNIRXBleTAtWHlCS1RMd9IB0wFBVV95cUxQbVIyRW1va1NXajZSaE5LZ2dCYXZMZGI4aDVBUUkybDZ4MU1XV1pnN2NDcGRwZVh4M05Mby1FcXRXZjhrZlVwZUNNVExMSTBFc1hVOHdkN05mUGg1M2Yyanl4ZHhLTU9kVXZPSGpUdjJ3eEtOUXhKVlppRTlDNzhRdEEwRlNyUGV1LTNkMFphS0l3aFJXZUEza19QYkdaU1IzNjNjZ0hSNFZRZ044NDhjbnh2TDIwZThYZUpmTDhxUGpzZHh4NVlSOTByX040T3J3Zjc0?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 18:57:39 GMT"
+        }
+      ],
+      "sentiment": 0.65,
+      "atr_pct": 0.5,
+      "vwap_distance": 1.94,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "HIGH",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 86.2 is deeply overbought (>70 threshold)",
+          "Stochastic K=93.6, D=91.5 - both overbought zone",
+          "Bollinger Bands at 0% position (upper band) - overbought",
+          "Price at pivot resistance R1 (162.63) - limited upside",
+          "ATR at 0.5% is below 1.5% threshold - insufficient volatility for day trading",
+          "Trend signal: NEUTRAL - no confirmed direction",
+          "MACD histogram at 0.0000 - no momentum confirmation",
+          "EMA20 equals EMA50 (not above) - trend strength rule NOT met"
+        ],
+        "warnings": [
+          "Multiple overbought indicators suggest high probability of pullback/reversal",
+          "Low ATR indicates narrow trading range, reducing day trading opportunities",
+          "Current price at upper Bollinger Band + pivot resistance creates rejection zone",
+          "Not recommended to SHORT due to positive news sentiment and VWAP distance; not recommended to BUY due to extreme overbought conditions"
+        ]
+      },
+      "ai_sentiment": 0.65,
+      "code": "5",
+      "timestamp": "2026-08-11 10:09:21"
+    },
+    {
+      "recommendation": "HOLD",
+      "confidence": "HIGH",
+      "entry": 27.18,
+      "stop": 26.5005,
+      "target": 28.2672,
+      "rr": "1.6:1",
+      "reasons": [
+        "AI analysis (text parse)"
+      ],
+      "warnings": [],
+      "stock_name": "XIAOMI-W",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 27.18,
+        "ema20": 27.03888888888889,
+        "ema50": 27.03888888888889,
+        "ema200": 27.03888888888889,
+        "rsi": 66.9172932330827,
+        "rsi_15m": 48.95833333333336,
+        "atr": 0.3514285714285713,
+        "vwap": 26.858713973880583,
+        "sma_5_5m": 26.708,
+        "sma_8_5m": 26.7025,
+        "sma_13_5m": 26.69538461538462,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 27.429000000000002,
+        "sma_50_15m": 27.061199999999996,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 27.7,
+        "support_15m": 27.1,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 88.6363636363637,
+          "d": 98.05194805194806,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 27.586666666666662,
+          "r1": 27.733333333333324,
+          "r2": 27.926666666666662,
+          "s1": 27.393333333333324,
+          "s2": 27.246666666666663
+        },
+        "patterns": {
+          "pattern": "NONE",
+          "signal": "NEUTRAL",
+          "volume_spike": false
+        },
+        "change_pct": -1.593048515568433
+      },
+      "news": [
+        {
+          "title": "New players are shaking up the memory industry, but even Apple can\u2019t strong-arm the RAM crisis for your wallet",
+          "link": "https://www.digitaltrends.com/computing/new-players-are-shaking-up-the-memory-industry-but-even-apple-cant-strong-arm-the-ram-crisis-for-your-wallet/",
+          "pubDate": "2026-08-09T19:29:15Z"
+        },
+        {
+          "title": "Apple\u2019s Capex Strategy Worked But Other Pressures Are Mounting Now",
+          "link": "https://247wallst.com/investing/2026/08/07/apples-capex-strategy-worked-but-other-pressures-are-mounting-now/",
+          "pubDate": "2026-08-07T04:36:23Z"
+        },
+        {
+          "title": "Apple's Search for Cheaper Memory Just Hit a Wall",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/apples-search-cheaper-memory-just-183310958.html",
+          "pubDate": "2026-08-05T18:33:10Z"
+        },
+        {
+          "title": "Tesla Rival BYD Ramping Up Sales On Overseas Demand, Flash Charging",
+          "link": "https://www.investors.com/news/tesla-rival-byd-sales-overseas-demand-flash-charging/?src=A00220&yptr=yahoo",
+          "pubDate": "2026-08-03T13:58:39Z"
+        },
+        {
+          "title": "Apple Intelligence Just Got the Green Light in China. What That Means for AAPL Stock.",
+          "link": "https://www.barchart.com/story/news/3354890/apple-intelligence-just-got-the-green-light-in-china-what-that-means-for-aapl-stock",
+          "pubDate": "2026-07-19T14:00:02Z"
+        },
+        {
+          "title": "AI race splits in two as China wages open-weight insurgency",
+          "link": "https://www.axios.com/2026/07/18/china-ai-open-source-kimi-anthropic-openai#utm_source=yahoo_finance&utm_medium=partner&utm_campaign=subs-partner-yahoo-finance-AI",
+          "pubDate": "2026-07-18T12:46:11Z"
+        },
+        {
+          "title": "China's EV Demand Nears 20 Million as Gasoline Car Capacity Lags",
+          "link": "https://finance.yahoo.com/energy/articles/chinas-ev-demand-nears-20-192301118.html",
+          "pubDate": "2026-07-16T19:23:01Z"
+        },
+        {
+          "title": "Apple\u2019s China Approval For Apple Intelligence Might Change The Case For Investing In Apple (AAPL)",
+          "link": "https://finance.yahoo.com/technology/ai/articles/apple-china-approval-apple-intelligence-182805786.html",
+          "pubDate": "2026-07-16T18:28:05Z"
+        },
+        {
+          "title": "How Apple Is Boosting Baidu and Other Chinese Tech Stocks",
+          "link": "https://www.barrons.com/articles/apple-ai-tech-stocks-china-alibaba-baidu-54e17625?siteid=yhoof2&yptr=yahoo",
+          "pubDate": "2026-07-16T15:23:00Z"
+        },
+        {
+          "title": "Xiaomi (SEHK:1810) Stock Looks Fairly Valued With Strong Earnings But Limited Cash Flow Upside",
+          "link": "https://finance.yahoo.com/markets/stocks/articles/xiaomi-sehk-1810-stock-looks-101128455.html",
+          "pubDate": "2026-07-16T10:11:28Z"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 1.29,
+      "vwap_distance": 1.18,
+      "ai_recommendation": {
+        "recommendation": "HOLD",
+        "confidence": "HIGH",
+        "reasons": [
+          "AI analysis (text parse)"
+        ],
+        "warnings": [],
+        "entry_price": 27.18,
+        "stop_loss": 26.5,
+        "target_price": 28.27,
+        "risk_reward": "1.6:1"
+      },
+      "ai_sentiment": 0.6,
+      "code": "1810",
+      "timestamp": "2026-08-11 10:09:58"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "MEDIUM",
+      "entry": 47.68,
+      "stop": 46.488,
+      "target": 49.5872,
+      "rr": null,
+      "reasons": [
+        "RSI at 77.1 indicates overbought conditions - elevated risk of pullback",
+        "Price 10.7% above VWAP suggests extended move from fair value",
+        "Neutral trend signal - no clear directional bias",
+        "MACD histogram at 0.0000 shows no momentum confirmation",
+        "EMA20 and EMA50 equal at 44.23 - no trend confirmation",
+        "Tight pivot range limits upside potential (R1 only $0.94 away)"
+      ],
+      "warnings": [
+        "Overbought RSI increases probability of correction",
+        "High VWAP distance increases mean reversion risk",
+        "No bullish momentum confirmation from MACD",
+        "Limited upside before hitting resistance at R1",
+        "Risk-reward unfavorable if entering long at current levels"
+      ],
+      "stock_name": "WUXI BIO",
+      "market_bias": "BULLISH",
+      "trend_strength": "STRONG_BULLISH",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 47.68,
+        "ema20": 44.22666666666667,
+        "ema50": 44.22666666666667,
+        "ema200": 44.22666666666667,
+        "rsi": 77.05314009661836,
+        "rsi_15m": 64.73988439306349,
+        "atr": 0.9757142857142865,
+        "vwap": 42.58483554966842,
+        "sma_5_5m": 44.36,
+        "sma_8_5m": 44.2875,
+        "sma_13_5m": 44.17230769230768,
+        "momentum_5m": "BULLISH",
+        "sma_20_15m": 46.303,
+        "sma_50_15m": 45.23919999999999,
+        "trend_15m": "BULLISH",
+        "resistance_15m": 47.7,
+        "support_15m": 45.96,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 65.72164948453603,
+          "d": 65.46391752577317,
+          "zone": "NEUTRAL"
+        },
+        "pivot": {
+          "pivot": 46.14000000000001,
+          "r1": 46.62000000000002,
+          "r2": 46.88000000000001,
+          "s1": 45.88000000000002,
+          "s2": 45.400000000000006
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BEAR",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": 3.382480485689511
+      },
+      "news": [],
+      "sentiment": 0.0,
+      "atr_pct": 2.05,
+      "vwap_distance": 10.69,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "MEDIUM",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": null,
+        "reasons": [
+          "RSI at 77.1 indicates overbought conditions - elevated risk of pullback",
+          "Price 10.7% above VWAP suggests extended move from fair value",
+          "Neutral trend signal - no clear directional bias",
+          "MACD histogram at 0.0000 shows no momentum confirmation",
+          "EMA20 and EMA50 equal at 44.23 - no trend confirmation",
+          "Tight pivot range limits upside potential (R1 only $0.94 away)"
+        ],
+        "warnings": [
+          "Overbought RSI increases probability of correction",
+          "High VWAP distance increases mean reversion risk",
+          "No bullish momentum confirmation from MACD",
+          "Limited upside before hitting resistance at R1",
+          "Risk-reward unfavorable if entering long at current levels"
+        ]
+      },
+      "ai_sentiment": 0.0,
+      "code": "2269",
+      "timestamp": "2026-08-11 10:10:24"
+    },
+    {
+      "recommendation": "AVOID",
+      "confidence": "MEDIUM",
+      "entry": 411.2,
+      "stop": 400.91999999999996,
+      "target": 427.648,
+      "rr": "UNFAVORABLE",
+      "reasons": [
+        "RSI at 84.8 is deeply overbought (>70 threshold)",
+        "Stochastic K=100.0 and D=89.3 at extreme overbought levels",
+        "Bollinger Bands at 0% position (price at upper band)",
+        "All trend indicators showing overbought conditions",
+        "Low ATR of 0.5% indicates insufficient volatility for day trading",
+        "VWAP distance only 0.7% (below 1% entry timing threshold)",
+        "EMAs at parity (410.82) indicating neutral/no confirmed trend",
+        "MACD histogram at 0.0 provides no directional confirmation",
+        "Risk-reward ratio unfavorable for long positions"
+      ],
+      "warnings": [
+        "High probability of mean reversion/pullback from current levels",
+        "Do NOT buy into overbought conditions without confirmation",
+        "Wait for RSI to cool below 70 or Stochastic to retreat from extremes",
+        "Alternative: Consider SHORT setup if price breaks below S1 (414.73) with stop above pivot"
+      ],
+      "stock_name": "HKEX",
+      "market_bias": "BULLISH",
+      "trend_strength": "MODERATE",
+      "pattern_type": "NONE",
+      "key_support": 0,
+      "key_resistance": 0,
+      "analysis": {
+        "price": 411.2,
+        "ema20": 410.8222222222223,
+        "ema50": 410.8222222222223,
+        "ema200": 410.8222222222223,
+        "rsi": 84.84848484848483,
+        "rsi_15m": 39.53488372093026,
+        "atr": 2.085714285714289,
+        "vwap": 408.2495596520978,
+        "sma_5_5m": 408.91999999999996,
+        "sma_8_5m": 408.9750000000001,
+        "sma_13_5m": 408.9692307692308,
+        "momentum_5m": "NEUTRAL",
+        "sma_20_15m": 414.48,
+        "sma_50_15m": 411.92799999999994,
+        "trend_15m": "NEUTRAL",
+        "resistance_15m": 418.0,
+        "support_15m": 412.0,
+        "macd": {
+          "macd": 0,
+          "signal": 0,
+          "histogram": 0,
+          "trend": "NEUTRAL"
+        },
+        "bollinger": {
+          "upper": 0,
+          "middle": 0,
+          "lower": 0,
+          "bandwidth": 0,
+          "position": 0
+        },
+        "stochastic": {
+          "k": 100.0,
+          "d": 89.25170068027215,
+          "zone": "OVERBOUGHT"
+        },
+        "pivot": {
+          "pivot": 415.2666666666667,
+          "r1": 416.13333333333344,
+          "r2": 416.66666666666674,
+          "s1": 414.7333333333334,
+          "s2": 413.8666666666667
+        },
+        "patterns": {
+          "pattern": "VOLUME_SPIKE_BULL",
+          "signal": "NEUTRAL",
+          "volume_spike": true
+        },
+        "change_pct": -1.3435700575815792
+      },
+      "news": [
+        {
+          "title": "Hong Kong Exchanges And Clearing (SEHK:388), What Is Behind The Fresh Attention? - simplywall.st",
+          "link": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxOSWdOMzZYMDhSTjRSX0hxWEZ4TkRvSWJQLXBSaWhIU1FMV1ZZdDVNeDV3M2tWZk83RUtvb1hUU29scFhYVTBrWnRKZDVvTzhlaElOUWxNdkdMSzQxNkVsWjZjLUtIRVctX20tbVE2c3g4S0dvbnNxUmd6S0ZwcFV1cGJ5N0FYemxlWC1MWUxCSEo3QkdhVnNIYjZGZWM5bi1KNVZGR0FFRlpaei1JbEh5b0Z1bnd1eTZYYkR6SU9WNV9QdnJvSm9IcmwyclhMNFE4em1CTnNsSWVkbHpjRDI5ZDBveGVSR3BNb3o2cXFHX2MtOWswTGozX2NsQdIBgAJBVV95cUxOOHM5ZmhYaXl2UVR0V1dfSFhMMDV4eW1NYnRCMTNuaGNXX0dvZ2ZuYmxLODYzbEdXNVJuMWRjdjJwcjY1cDlZNkJ2S3dRdHBTeWRlRFdzTkhxUTJlUkplc09qZ1JGRWZwRS1EblQ0Z1lFdEwycUJwa3RBZ0xzVThMN1hBYXMyWHo1dUlWV3B5R2hZZlh2djZRLWhhVV9CR2FmTnlFR2xtSkpPanhTeVVIM0FPeXRHTktITHUxU3A3cnVBamdvamgyRlgyV2YwUENuSWQ2ZDJmaldRY1Z0Mnc1ZVlwVXA3QVp5WnpFVlFZbUlibGw0cWJ0dFp5SGhNX0Uz?oc=5&hl=en-US&gl=US&ceid=US:en",
+          "pubDate": "Mon, 10 Aug 2026 16:44:31 GMT"
+        }
+      ],
+      "sentiment": 0.6,
+      "atr_pct": 0.51,
+      "vwap_distance": 0.72,
+      "ai_recommendation": {
+        "recommendation": "AVOID",
+        "confidence": "MEDIUM",
+        "entry_price": null,
+        "stop_loss": null,
+        "target_price": null,
+        "risk_reward": "UNFAVORABLE",
+        "reasons": [
+          "RSI at 84.8 is deeply overbought (>70 threshold)",
+          "Stochastic K=100.0 and D=89.3 at extreme overbought levels",
+          "Bollinger Bands at 0% position (price at upper band)",
+          "All trend indicators showing overbought conditions",
+          "Low ATR of 0.5% indicates insufficient volatility for day trading",
+          "VWAP distance only 0.7% (below 1% entry timing threshold)",
+          "EMAs at parity (410.82) indicating neutral/no confirmed trend",
+          "MACD histogram at 0.0 provides no directional confirmation",
+          "Risk-reward ratio unfavorable for long positions"
+        ],
+        "warnings": [
+          "High probability of mean reversion/pullback from current levels",
+          "Do NOT buy into overbought conditions without confirmation",
+          "Wait for RSI to cool below 70 or Stochastic to retreat from extremes",
+          "Alternative: Consider SHORT setup if price breaks below S1 (414.73) with stop above pivot"
+        ]
+      },
+      "ai_sentiment": 0.6,
+      "code": "388",
+      "timestamp": "2026-08-11 10:10:51"
+    }
+  ]
+}

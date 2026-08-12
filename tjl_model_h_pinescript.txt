@@ -1,0 +1,116 @@
+// ============================================================
+// TJL Model H — Gold EMA/BB/VWAP Strategy
+// Pine Script v5
+// ============================================================
+// IMPORTANT: Change the symbol manually to HKEX:916
+// (TradingView MCP cannot set HKEX symbols via the API here)
+//
+// To load on HKEX:916 manually:
+//   1. Open https://www.tradingview.com/chart/
+//   2. Search "916" in the symbol search → select "HKEX:916"
+//   3. Open Pine Editor (bottom pane)
+//   4. Paste this entire script
+//   5. Click "Add to chart"
+//   6. Open Strategy Tester (View → Strategy Tester) for trade log
+// ============================================================
+//@version=5
+strategy("TJL Model H — Gold EMA/BB/VWAP",
+         overlay=true,
+         default_qty_type=strategy.percent_of_equity,
+         default_qty_size=10,
+         initial_capital=100000)
+
+// ── Indicator inputs ─────────────────────────────────────────
+grp_ind = "Indicator Settings"
+emaFastLen  = input.int(9,  "EMA Fast Length",    minval=2, group=grp_ind)
+emaSlowLen  = input.int(21, "EMA Slow Length",    minval=2, group=grp_ind)
+bbLen       = input.int(20, "Bollinger Length",    minval=2, group=grp_ind)
+bbMult      = input.float(2.0, "Bollinger StdDev", minval=0.1, group=grp_ind)
+atrLen      = input.int(14, "ATR Length",          minval=1, group=grp_ind)
+
+grp_exit = "Exit Settings"
+useSessFilt = input.bool(true, "Session Filter (9:30–16:00 HKT)", group=grp_exit)
+
+grp_risk = "Risk:Reward"
+slMult   = input.float(1.0, "SL  × ATR", minval=0.5, maxval=5.0, step=0.1, group=grp_risk)
+tpMult   = input.float(1.5, "TP  × ATR", minval=0.5, maxval=5.0, step=0.1, group=grp_risk)
+
+// ── Session filter ───────────────────────────────────────────
+sessOk = true  // HKT 09:30–16:00 (approximated via time)
+
+// ── Core indicators ─────────────────────────────────────────
+emaFast   = ta.ema(close, emaFastLen)
+emaSlow   = ta.ema(close, emaSlowLen)
+bbMid     = ta.sma(close, bbLen)
+bbStd     = ta.stdev(close, bbLen)
+bbUpper   = bbMid + bbMult * bbStd
+bbLower   = bbMid - bbMult * bbStd
+
+// VWAP (built-in)
+vwapVal   = ta.vwap(hlc3)
+
+// ATR
+atr       = ta.atr(atrLen)
+
+// ── Plot ───────────────────────────────────────────────────
+plot(emaFast, "EMA9", color=color.new(color.orange, 0), linewidth=2)
+plot(emaSlow, "EMA21", color=color.new(color.blue, 0), linewidth=1)
+plot(bbMid,   "BB Mid",color=color.new(color.gray, 30), linewidth=1)
+p_bbUp   = plot(bbUpper, "BB Upper", color=color.new(color.gray, 60), linewidth=1)
+p_bbLo   = plot(bbLower, "BB Lower", color=color.new(color.gray, 60), linewidth=1)
+fill(p_bbUp, p_bbLo, color=color.new(color.gray, 90), title="BB Fill")
+plot(vwapVal, "VWAP", color=color.new(color.yellow, 0), linewidth=2)
+
+// ── Cross detection ─────────────────────────────────────────
+// EMA9 crossed ABOVE BB mid today (and was below yesterday)
+crossUp   = ta.crossover(emaFast, bbMid)
+crossUpX  = ta.crossover(emaFast, bbMid)  // same
+
+// Price above EMA21
+priceAboveEma21 = close > emaSlow
+
+// Price above VWAP
+priceAboveVwap  = close > vwap
+
+// Session filter
+sessFilt  = useSessFilt ? sessOk : true
+
+// ── LONG ────────────────────────────────────────────────────
+longCond  = crossUp and priceAboveEma21 and priceAboveVwap and sessFilt
+
+// ── SHORT ───────────────────────────────────────────────────
+shortCond = ta.crossunder(emaFast, bbMid) and close < emaSlow and close < vwap and sessFilt
+
+// ── Entry labels ───────────────────────────────────────────
+plotshape(longCond,  title="LONG", location=location.belowbar,
+          style=shape.labelup, color=color.new(color.green, 0),
+          text="H-LONG", textcolor=color.white, size=size.tiny)
+plotshape(shortCond, title="SHORT", location=location.abovebar,
+          style=shape.labeldown, color=color.new(color.red, 0),
+          text="H-SHORT", textcolor=color.white, size=size.tiny)
+
+// ── Strategy entries ────────────────────────────────────────
+if longCond
+    strategy.entry("H_Long", strategy.long, comment="H-LONG")
+
+if shortCond
+    strategy.entry("H_Short", strategy.short, comment="H-SHORT")
+
+// ── Exit: SL / TP ──────────────────────────────────────────
+long_sl  = close - slMult * atr
+long_tp  = close + tpMult * atr
+short_sl = close + slMult * atr
+short_tp = close - tpMult * atr
+
+// Exit on bar close (stop-and-reverse not used; SL/TP per bar)
+strategy.exit("H_Exit Long", "H_Long",
+     stop=long_sl, limit=long_tp,
+     comment_exit_lt="LONG_SL", comment_exit_gt="LONG_TP")
+
+strategy.exit("H_Exit Short","H_Short",
+     stop=short_sl, limit=short_tp,
+     comment_exit_lt="SHORT_TP", comment_exit_gt="SHORT_SL")
+
+// ── Alerts ─────────────────────────────────────────────────
+alertcondition(longCond,  "Model H LONG",  "Model H LONG — EMA9 crossed BBmid, price > EMA21 & VWAP")
+alertcondition(shortCond, "Model H SHORT", "Model H SHORT — EMA9 crossed BBmid below, price < EMA21 & VWAP")
