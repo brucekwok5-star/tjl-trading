@@ -946,6 +946,63 @@ def check_tjl_model_k(price, highs, lows, closes, volumes, today_high, today_low
     }
 
 
+def check_tjl_model_m(price, highs, lows, closes, volumes, today_high, today_low):
+    """
+    Model M — EMA Ribbon Compression (Swing).
+    Backtest: 33% WR, PF 1.73, +0.87% expectancy. Rare but clean signals.
+    LONG: EMA9 > EMA21 > EMA50 AND spread(EMA9, EMA50) < 1% AND price breaks above EMA9.
+    SHORT: EMA9 < EMA21 < EMA50 AND spread < 1% AND price breaks below EMA9.
+    Exit: SL = EMA50, TP = 3 ATR.
+    """
+    if len(closes) < 55 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+
+    s = pd.Series(closes)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e21 = float(s.ewm(span=21, adjust=False).mean().iloc[-1])
+    e50 = float(s.ewm(span=50, adjust=False).mean().iloc[-1])
+    prev_close = float(closes[-2])
+
+    if any(np.isnan(x) or x <= 0 for x in [e9, e21, e50]):
+        return None
+
+    spread_pct = abs(e9 - e50) / e50 * 100
+    compressed = spread_pct < 1.0
+    bull_stack = e9 > e21 > e50
+    bear_stack = e9 < e21 < e50
+
+    # Breakout from compression
+    long_breakout  = (prev_close <= e9) and (price > e9)
+    short_breakout = (prev_close >= e9) and (price < e9)
+
+    long_fire  = compressed and bull_stack and long_breakout
+    short_fire = compressed and bear_stack and short_breakout
+
+    if not (long_fire or short_fire):
+        return None
+
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = e50
+    tp = price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr
+
+    return {
+        'price':      round(price, 2),
+        'e9':         round(e9, 3),
+        'e21':        round(e21, 3),
+        'e50':        round(e50, 3),
+        'atr':        round(atr, 3),
+        'sl':         round(sl, 2),
+        'tp':         round(tp, 2),
+        'rr_ratio':   3.0,
+        'direction':  direction,
+        'long_fire':  long_fire,
+        'short_fire': short_fire,
+    }
+
+
 def check_tjs(price, highs, lows, closes, today_low):
     """Short entry: bearish stack + pullback to EMA9 + below PML."""
     if len(closes) < 60:
@@ -1281,6 +1338,19 @@ def run_scan(notify=False):
             elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'K' for s in short_signals):
                 result_k['signal_model'] = 'K'
                 short_signals.append(result_k)
+
+        # ── Model M (EMA Ribbon Compression) ────────────────────
+        result_m = check_tjl_model_m(price, highs, lows, closes, volumes, today_high, today_low)
+        if result_m:
+            result_m['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'M' for s in long_signals):
+                result_m['signal_model'] = 'M'
+                long_signals.append(result_m)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'M' for s in short_signals):
+                result_m['signal_model'] = 'M'
+                short_signals.append(result_m)
 
         # ── Short side (TJS — unchanged) ────────────────────
         if regime in ('bearish', 'neutral'):
