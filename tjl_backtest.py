@@ -36,6 +36,13 @@ parser.add_argument('--30min',   dest='ktype', action='store_const',
                     const=ft.KLType.K_30M,   help='30-minute bars')
 parser.add_argument('--60min',   dest='ktype', action='store_const',
                     const=ft.KLType.K_60M,   help='60-minute bars')
+parser.add_argument('--model',   dest='model', type=str, default=None,
+                    help='Restrict backtest to ONE model letter (D-Q). '
+                         'Use to backtest exactly the model that fired a live signal '
+                         'on a specific ticker — no cross-stock cherry-picking.')
+parser.add_argument('--ticker',  dest='ticker', type=str, default=None,
+                    help='Restrict backtest to ONE ticker code (5-digit, e.g. 01109). '
+                         'Pairs with --model for one-stock-one-model backtest.')
 parser.add_argument('days',      nargs='?', type=int, default=20,
                     help='Number of trading days to backtest (default: 20)')
 parser.add_argument('--hold',    dest='max_hold', type=int, default=5,
@@ -83,17 +90,42 @@ KL_LABEL = {
     ft.KLType.K_1M:   '1-min',
 }.get(KL_TYPE, str(KL_TYPE))
 
-# ── Test stocks (8 liquid HSI names) ─────────────────────────────────────────
+# ── Test stocks (HSI constituents used in today's live scan) ─────────────────
 BACKTEST_STOCKS = [
+    ("01109", "HK.01109"),  # 华润置地
+    ("02899", "HK.02899"),  # 紫金矿业
     ("00005", "HK.00005"),  # HSBC
-    ("00700", "HK.00700"),  # Tencent
-    ("09988", "HK.09988"),  # Alibaba
-    ("03690", "HK.03690"),  # Meituan
-    ("01810", "HK.01810"),  # Xiaomi
-    ("00941", "HK.00941"),  # China Mobile
-    ("02318", "HK.02318"),  # Ping An
-    ("01299", "HK.01299"),  # AIA
+    ("09618", "HK.09618"),  # JD.com
+    ("00823", "HK.00823"),  # 领展房产
+    ("00288", "HK.00288"),  # 万洲
+    ("00941", "HK.00941"),  # China Mobile (baseline)
+    ("00700", "HK.00700"),  # Tencent (baseline)
 ]
+
+# ── One-stock-one-model filter ────────────────────────────────────────────────
+# Build the runtime set of models to actually run. If --model is given, restrict
+# to that single letter — prevents cross-stock cherry-picking.
+VALID_MODELS = list("DEFGHIJKLMNOPQ")
+if hasattr(args, 'model') and args.model:
+    if args.model.upper() not in VALID_MODELS:
+        sys.stderr.write(f"ERROR: --model must be one of {VALID_MODELS}, got '{args.model}'\n")
+        sys.exit(1)
+    ACTIVE_MODELS = [args.model.upper()]
+else:
+    ACTIVE_MODELS = VALID_MODELS[:]
+
+# Build the runtime list of stocks. If --ticker is given, restrict to that one.
+ACTIVE_STOCKS = BACKTEST_STOCKS[:]
+if hasattr(args, 'ticker') and args.ticker:
+    ticker_code = args.ticker.zfill(5)
+    matching = [(n, c) for n, c in BACKTEST_STOCKS if n == ticker_code]
+    if not matching:
+        sys.stderr.write(
+            f"ERROR: --ticker {ticker_code} not in BACKTEST_STOCKS. "
+            f"Known: {[n for n, _ in BACKTEST_STOCKS]}\n"
+        )
+        sys.exit(1)
+    ACTIVE_STOCKS = matching
 
 # ── Indicator helpers ─────────────────────────────────────────────────────────
 
@@ -728,16 +760,23 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
     # We trade on bars [start_bar .. n-2] (skip today = n-1)
     start_bar = max(60, n - trade_days - 1)
 
+    # Map model letter → signal function (all 14 always imported)
+    ALL_MODEL_FNS = {
+        'D': model_d_signal, 'E': model_e_signal,
+        'F': model_f_signal, 'G': model_g_signal,
+        'H': model_h_signal, 'I': model_i_signal,
+        'J': model_j_signal, 'K': model_k_signal,
+        'L': model_l_signal, 'M': model_m_signal,
+        'N': model_n_signal, 'O': model_o_signal,
+        'P': model_p_signal, 'Q': model_q_signal,
+    }
+    # Restrict to ACTIVE_MODELS (set in module init from --model flag).
+    # This is what enforces "one stock, one model" — no cherry-picking.
+    MODEL_FNS = [(letter, ALL_MODEL_FNS[letter]) for letter in ACTIVE_MODELS
+                 if letter in ALL_MODEL_FNS]
+
     for bar_idx in range(start_bar, n - 1):
-        for model_name, signal_fn in [
-            ('D', model_d_signal), ('E', model_e_signal),
-            ('F', model_f_signal), ('G', model_g_signal),
-            ('H', model_h_signal), ('I', model_i_signal),
-            ('J', model_j_signal), ('K', model_k_signal),
-            ('L', model_l_signal), ('M', model_m_signal),
-            ('N', model_n_signal), ('O', model_o_signal),
-            ('P', model_p_signal), ('Q', model_q_signal),
-        ]:
+        for model_name, signal_fn in MODEL_FNS:
             # New models L/M/N/O/P/Q need opens too
             if model_name in ('L', 'M', 'N', 'O', 'P', 'Q'):
                 sig = signal_fn(highs, lows, closes, volumes, opens, bar_idx)
@@ -823,12 +862,17 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
 
 def run_backtest():
     print("=" * 70)
-    print(f"TJL BACKTEST — Models D–K  |  {date.today()}  |  {KL_LABEL} bars")
+    scope = f"{len(ACTIVE_STOCKS)} ticker(s)"
+    if hasattr(args, 'ticker') and args.ticker:
+        scope = f"1 ticker: {args.ticker.zfill(5)}"
+    model_scope = f"model {ACTIVE_MODELS[0]}" if len(ACTIVE_MODELS) == 1 else f"all {len(ACTIVE_MODELS)} models"
+    print(f"TJL BACKTEST — {date.today()}  |  {KL_LABEL} bars")
     print(f"                 {TRADE_DAYS} trading days, max {MAX_HOLD}-bar hold, lookback {LOOKBACK}")
+    print(f"                 Scope: {scope} × {model_scope}")
     print("=" * 70)
 
     all_trades = []
-    for name, code in BACKTEST_STOCKS:
+    for name, code in ACTIVE_STOCKS:
         print(f"\n  Fetching {code} ({KL_LABEL})...", end=" ", flush=True)
         trades = backtest_stock(code, name)
         print(f"→ {len(trades)} signal(s)")
