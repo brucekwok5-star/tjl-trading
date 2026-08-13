@@ -1161,6 +1161,80 @@ def check_tjl_model_t(price, highs, lows, closes, volumes, today_high, today_low
     }
 
 
+def check_tjl_model_u(price, highs, lows, closes, volumes, today_high, today_low, today_open):
+    """
+    Model U: Dual Thrust Opening Range Breakout.
+    From: je-suis-tm/quant-trading — Dual Thrust.
+    Range = max(N_high - N_low, |N_close - N_open|)  [N=2 lookback]
+    Upper = today_open + 0.5 * range
+    Lower = today_open - 0.5 * range
+    LONG: price breaks above upper.  SHORT: price breaks below lower.
+    SL: 1 ATR.  TP: 2 ATR.  R:R = 2:1.
+    Warmup: 10 bars.
+    """
+    N = 2; K = 0.5
+    if len(closes) < 10:
+        return None
+    h = np.array(highs)
+    l = np.array(lows)
+    c = np.array(closes)
+    o = np.array(today_open) if hasattr(today_open, '__iter__') else np.array([today_open] * len(closes))
+
+    if len(h) < N + 1:
+        return None
+
+    n_highs  = h[-(N):]
+    n_lows   = l[-(N):]
+    n_closes = c[-(N):]
+    n_opens  = o[-(N):]
+
+    range1 = float(np.max(n_highs) - np.min(n_lows))
+    range2 = abs(float(n_closes[0]) - float(n_opens[-1]))   # |oldest_close - newest_open|
+    dt_range = max(range1, range2)
+    if dt_range <= 0:
+        return None
+
+    open_price = float(o[-1])
+    upper = open_price + K * dt_range
+    lower = open_price - K * dt_range
+
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+
+    if price > upper:
+        direction = 'LONG'
+        return {
+            'price': round(price, 2),
+            'atr': round(atr, 3),
+            'sl': round(price - 1.0 * atr, 2),
+            'tp': round(price + 2.0 * atr, 2),
+            'rr_ratio': 2.0,
+            'direction': direction,
+            'range': round(dt_range, 3),
+            'upper': round(upper, 2),
+            'lower': round(lower, 2),
+            'long_fire': True,
+            'short_fire': False,
+        }
+    elif price < lower:
+        direction = 'SHORT'
+        return {
+            'price': round(price, 2),
+            'atr': round(atr, 3),
+            'sl': round(price + 1.0 * atr, 2),
+            'tp': round(price - 2.0 * atr, 2),
+            'rr_ratio': 2.0,
+            'direction': direction,
+            'range': round(dt_range, 3),
+            'upper': round(upper, 2),
+            'lower': round(lower, 2),
+            'long_fire': False,
+            'short_fire': True,
+        }
+    return None
+
+
 def check_tjs(price, highs, lows, closes, today_low):
     """Short entry: bearish stack + pullback to EMA9 + below PML."""
     if len(closes) < 60:
@@ -1554,6 +1628,19 @@ def run_scan(notify=False):
             elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'T' for s in short_signals):
                 result_t['signal_model'] = 'T'
                 short_signals.append(result_t)
+
+        # ── Model U: Dual Thrust Opening Range Breakout ───────────────
+        result_u = check_tjl_model_u(price, highs, lows, closes, volumes, today_high, today_low, today_open)
+        if result_u:
+            result_u['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'U' for s in long_signals):
+                result_u['signal_model'] = 'U'
+                long_signals.append(result_u)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'U' for s in short_signals):
+                result_u['signal_model'] = 'U'
+                short_signals.append(result_u)
 
         # ── Short side (TJS — unchanged) ────────────────────
         if regime in ('bearish', 'neutral'):

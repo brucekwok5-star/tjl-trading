@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TJL Backtest — Models D through K (8 models).
+TJL Backtest — Models D through U (18 models).
 Intraday and daily support via ft.KLType.
 
 Usage:
@@ -105,7 +105,7 @@ BACKTEST_STOCKS = [
 # ── One-stock-one-model filter ────────────────────────────────────────────────
 # Build the runtime set of models to actually run. If --model is given, restrict
 # to that single letter — prevents cross-stock cherry-picking.
-VALID_MODELS = list("DEFGHIJKLMNOPQRST")
+VALID_MODELS = list("DEFGHIJKLMNOPQRSTU")
 if hasattr(args, 'model') and args.model:
     if args.model.upper() not in VALID_MODELS:
         sys.stderr.write(f"ERROR: --model must be one of {VALID_MODELS}, got '{args.model}'\n")
@@ -951,6 +951,96 @@ def model_t_signal(highs, lows, closes, volumes, opens, bar_idx):
             'rsi': round(rsi, 1)}
 
 
+def model_u_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """
+    Model U: Dual Thrust Opening Range Breakout.
+    From: je-suis-tm/quant-trading — Dual Thrust backtest.py
+    Idea: Daily OHLC-based range breakout.  Use previous N days' open, close, high, low
+    to build upper/lower bands around today's open.  Break above → LONG, below → SHORT.
+    For HK equities the signal fires at/after HKT 09:30 open; exits same day at close
+    (no overnight exposure).  Compatible with any intraday bar frequency.
+
+    Signal fires when:
+      - Price > open + k * range  (LONG)
+      - Price < open - k * range  (SHORT)
+
+    Range = max(N_high - N_low, |N_close - N_open|)   [per QuantConnect Dual Thrust spec]
+    k = 0.5 (equal probability for long and short by default)
+
+    Warmup: N=2 → need 2 bars of lookback, but use 10 for stability.
+    Params: N=2 (lookback days), k=0.5.
+    """
+    N = 2        # lookback days for range
+    K = 0.5      # symmetry parameter (0.5 = equal long/short trigger prob)
+    if bar_idx < 10:
+        return None
+
+    # Use daily bars — look at last N completed days
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    c = np.array(closes[:bar_idx+1])
+    o = np.array(opens[:bar_idx+1])
+
+    price = c[-1]
+
+    # N-day rolling range
+    if len(h) < N + 1:
+        return None
+
+    n_highs  = h[-(N):]
+    n_lows   = l[-(N):]
+    n_closes = c[-(N):]
+    n_opens  = o[-(N):]
+
+    range1 = float(np.max(n_highs) - np.min(n_lows))
+    range2 = abs(float(n_closes[0]) - float(n_opens[-1]))   # |oldest_close - newest_open| (je-sais-tm spec)
+    dt_range = max(range1, range2)
+
+    if dt_range <= 0:
+        return None
+
+    today_open = o[-1]   # current bar's open (day-open for daily; period-open for intraday)
+
+    upper = today_open + K * dt_range
+    lower = today_open - K * dt_range
+
+    if price > upper:
+        direction = 'LONG'
+        # ATR-based exits
+        atr_vals = []
+        for i in range(max(1, bar_idx-13), bar_idx+1):
+            tr = max(h[i]-l[i], abs(h[i]-c[i-1]), abs(c[i-1]-l[i])) if i > 0 else h[i]-l[i]
+            atr_vals.append(tr)
+        atr = np.mean(atr_vals) if atr_vals else price * 0.01
+        sl  = price - 1.0 * atr
+        tp  = price + 2.0 * atr   # 2R target (R = atr)
+        return {
+            'direction': direction, 'price': price,
+            'sl': round(sl, 2), 'tp': round(tp, 2),
+            'atr': round(atr, 3),
+            'range': round(dt_range, 3), 'upper': round(upper, 2), 'lower': round(lower, 2),
+        }
+    elif price < lower:
+        direction = 'SHORT'
+        atr_vals = []
+        for i in range(max(1, bar_idx-13), bar_idx+1):
+            tr = max(h[i]-l[i], abs(h[i]-c[i-1]), abs(c[i-1]-l[i])) if i > 0 else h[i]-l[i]
+            atr_vals.append(tr)
+        atr = np.mean(atr_vals) if atr_vals else price * 0.01
+        sl  = price + 1.0 * atr
+        tp  = price - 2.0 * atr
+        return {
+            'direction': direction, 'price': price,
+            'sl': round(sl, 2), 'tp': round(tp, 2),
+            'atr': round(atr, 3),
+            'range': round(dt_range, 3), 'upper': round(upper, 2), 'lower': round(lower, 2),
+        }
+    return None
+
+
+
+
+
 # ── Backtest engine ────────────────────────────────────────────────────────────
 
 def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_hold=None):
@@ -984,15 +1074,16 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
         'L': model_l_signal, 'M': model_m_signal,
         'N': model_n_signal, 'O': model_o_signal,
         'P': model_p_signal, 'Q': model_q_signal,
-        'R': model_r_signal, 'S': model_s_signal, 'T': model_t_signal,
+        'R': model_r_signal, 'S': model_s_signal,
+        'T': model_t_signal, 'U': model_u_signal,
     }
-    # Models L–T pass (highs, lows, closes, volumes, opens, bar_idx)
+    # Models L–U pass (highs, lows, closes, volumes, opens, bar_idx)
     # Models D–K pass (highs, lows, closes, volumes, bar_idx)
     MODEL_FNS = [(letter, ALL_MODEL_FNS[letter]) for letter in ACTIVE_MODELS
                  if letter in ALL_MODEL_FNS]
     for bar_idx in range(start_bar, n - 1):
         for model_name, signal_fn in MODEL_FNS:
-            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'):
+            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'):
                 sig = signal_fn(highs, lows, closes, volumes, opens, bar_idx)
             else:
                 sig = signal_fn(highs, lows, closes, volumes, bar_idx)
@@ -1118,8 +1209,9 @@ def run_backtest():
         'R': 'Keltner Channel + RSI Breakout',
         'S': 'Ichimoku Cloud Breakout',
         'T': 'Mean Reversion z-score',
+        'U': 'Dual Thrust Opening Range',
     }
-    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']:
+    for model in ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U']:
         model_trades = [t for t in all_trades if t['model'] == model]
         if not model_trades:
             continue
