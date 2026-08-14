@@ -1056,8 +1056,8 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
     ctx = ft.OpenQuoteContext(host='127.0.0.1', port=11111)
     time.sleep(0.3)
     highs, lows, closes, volumes, opens = get_bars(ctx, code, ktype=ktype, count=lookback)
-    ctx.close()
     if highs is None or len(closes) < 60:
+        ctx.close()
         return []
 
     trades = []
