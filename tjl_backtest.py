@@ -105,7 +105,7 @@ BACKTEST_STOCKS = [
 # ── One-stock-one-model filter ────────────────────────────────────────────────
 # Build the runtime set of models to actually run. If --model is given, restrict
 # to that single letter — prevents cross-stock cherry-picking.
-VALID_MODELS = list("DEFGHIJKLMNOPQRSTU")
+VALID_MODELS = list("DEFGHIJKLMNOPQRSTUVWX")
 if hasattr(args, 'model') and args.model:
     if args.model.upper() not in VALID_MODELS:
         sys.stderr.write(f"ERROR: --model must be one of {VALID_MODELS}, got '{args.model}'\n")
@@ -950,6 +950,156 @@ def model_t_signal(highs, lows, closes, volumes, opens, bar_idx):
             'atr': atr, 'z_score': round(z_score, 2), 'sma20': round(sma20, 2),
             'rsi': round(rsi, 1)}
 
+def model_v_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model V: Dual Thrust - Regime Adaptive.
+    Same as Model U but k1/k2 dynamic based on EMA10 vs EMA30.
+    Bullish (EMA10>EMA30) -> k1=0.4, k2=0.7.
+    Bearish (EMA10<EMA30) -> k1=0.7, k2=0.4.
+    SL=1.5ATR, TP=3.0ATR. Warmup: 35 bars.
+    """
+    if bar_idx < 35:
+        return None
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    c = np.array(closes[:bar_idx+1])
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    N = 2
+    if len(h) < N + 1:
+        return None
+    n_highs  = h[-(N):]
+    n_lows   = l[-(N):]
+    n_closes = c[-(N):]
+    range1 = float(np.max(n_highs) - np.min(n_lows))
+    range2 = abs(float(n_closes[0]) - float(closes[-(N+1)]))
+    dt_range = max(range1, range2)
+    if dt_range <= 0:
+        return None
+    open_price = float(closes[-(N+1)])
+    s = pd.Series(c)
+    ema10 = float(s.ewm(span=10, adjust=False).mean().iloc[-1])
+    ema30 = float(s.ewm(span=30, adjust=False).mean().iloc[-1])
+    if np.isnan(ema10) or np.isnan(ema30):
+        return None
+    bullish = ema10 > ema30
+    k1 = 0.4 if bullish else 0.7
+    k2 = 0.7 if bullish else 0.4
+    upper = open_price + k1 * dt_range
+    lower = open_price - k2 * dt_range
+    if price > upper:
+        return {'direction': 'LONG', 'price': price,
+                'sl': price - 1.5*atr, 'tp': price + 3.0*atr,
+                'atr': atr, 'rr': 2.0, 'regime': 'BULL' if bullish else 'BEAR'}
+    elif price < lower:
+        return {'direction': 'SHORT', 'price': price,
+                'sl': price + 1.5*atr, 'tp': price - 3.0*atr,
+                'atr': atr, 'rr': 2.0, 'regime': 'BULL' if bullish else 'BEAR'}
+    return None
+
+
+def model_w_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model W: RSI Divergence + EMA Trend.
+    Bullish div: price lower low, RSI higher low -> LONG.
+    Bearish div: price higher high, RSI lower high -> SHORT.
+    Confirm: EMA9>EMA20 (LONG), EMA9<EMA20 (SHORT).
+    SL=1.5ATR, TP=3.0ATR. Warmup: 60 bars.
+    """
+    if bar_idx < 60:
+        return None
+    c = np.array(closes[:bar_idx+1])
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    s = pd.Series(c)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e20 = float(s.ewm(span=20, adjust=False).mean().iloc[-1])
+    if np.isnan(e9) or np.isnan(e20):
+        return None
+    rsi_now = calc_rsi(c)
+    if rsi_now is None:
+        return None
+    lookback = 20
+    if bar_idx < lookback + 14:
+        return None
+    pw = c[-lookback:]
+    ph = np.max(pw[:-1])
+    pl = np.min(pw[:-1])
+    rsi_vals = []
+    for i in range(-lookback, 0):
+        rs = calc_rsi(c[:i+14]) if i+14 > 0 else None
+        if rs is not None:
+            rsi_vals.append(rs)
+    if len(rsi_vals) < 3:
+        return None
+    rsi_at_sh = float(np.max(rsi_vals[:-1])) if len(rsi_vals) > 1 else float(rsi_vals[-1])
+    rsi_at_sl = float(np.min(rsi_vals[:-1])) if len(rsi_vals) > 1 else float(rsi_vals[-1])
+    bullish_div = (price < pl * 1.02) and (rsi_now > rsi_at_sl)
+    bearish_div = (price > ph * 0.98) and (rsi_now < rsi_at_sh)
+    long_fire  = bullish_div and (e9 > e20)
+    short_fire = bearish_div and (e9 < e20)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.5*atr if direction=='LONG' else price + 1.5*atr,
+            'tp': price + 3.0*atr if direction=='LONG' else price - 3.0*atr,
+            'atr': atr, 'rr': 2.0, 'rsi': rsi_now, 'e9': e9, 'e20': e20}
+
+
+def model_x_signal(highs, lows, closes, volumes, opens, bar_idx):
+    """Model X: ICT SMC - Order Block + FVG.
+    Bullish OB: 3 bearish bars, then bullish bar piercing above.
+    FVG: middle candle bullish, gap above to next candle.
+    LONG: price retesting OB high or filling bullish FVG.
+    SHORT: mirror.  SL=1.0ATR, TP=2.0ATR. Warmup: 30 bars.
+    """
+    if bar_idx < 30:
+        return None
+    c = np.array(closes[:bar_idx+1])
+    h = np.array(highs[:bar_idx+1])
+    l = np.array(lows[:bar_idx+1])
+    price = c[-1]
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    n = len(c)
+    if n < 5:
+        return None
+    fvg_bull = (c[-3] > c[-4]) and (h[-3] < l[-1])
+    fvg_bear = (c[-3] < c[-4]) and (l[-3] > h[-1])
+    bull_ob = (c[-5] < closes[-(5)+1] if n >= 6 else False) and                (c[-4] < closes[-(4)+1] if n >= 5 else False) and                (c[-3] < closes[-(3)+1] if n >= 4 else False) and (c[-2] > c[-3])
+    bear_ob = (c[-5] > closes[-(5)+1] if n >= 6 else False) and                (c[-4] > closes[-(4)+1] if n >= 5 else False) and                (c[-3] > closes[-(3)+1] if n >= 4 else False) and (c[-2] < c[-3])
+    ob_bull_high = h[-3] if bull_ob else None
+    ob_bear_low  = l[-3] if bear_ob else None
+    rsi_now = calc_rsi(c)
+    if rsi_now is None:
+        return None
+    long_fire = short_fire = False
+    if ob_bull_high:
+        long_fire = abs(price - ob_bull_high) / ob_bull_high < 0.01 and 40 < rsi_now < 70
+    if fvg_bull:
+        gap_mid = (l[-1] + h[-3]) / 2
+        long_fire = long_fire or (abs(price - gap_mid) / gap_mid < 0.005 and rsi_now > 45)
+    if ob_bear_low:
+        short_fire = abs(price - ob_bear_low) / ob_bear_low < 0.01 and 30 < rsi_now < 60
+    if fvg_bear:
+        gap_mid = (h[-1] + l[-3]) / 2
+        short_fire = short_fire or (abs(price - gap_mid) / gap_mid < 0.005 and rsi_now < 55)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {'direction': direction, 'price': price,
+            'sl': price - 1.0*atr if direction=='LONG' else price + 1.0*atr,
+            'tp': price + 2.0*atr if direction=='LONG' else price - 2.0*atr,
+            'atr': atr, 'rr': 2.0,
+            'fvg': 'BULL' if fvg_bull else ('BEAR' if fvg_bear else None),
+            'rsi': rsi_now}
+
 
 def model_u_signal(highs, lows, closes, volumes, opens, bar_idx):
     """
@@ -1076,6 +1226,7 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
         'P': model_p_signal, 'Q': model_q_signal,
         'R': model_r_signal, 'S': model_s_signal,
         'T': model_t_signal, 'U': model_u_signal,
+        'V': model_v_signal, 'W': model_w_signal, 'X': model_x_signal,
     }
     # Models L–U pass (highs, lows, closes, volumes, opens, bar_idx)
     # Models D–K pass (highs, lows, closes, volumes, bar_idx)
@@ -1083,7 +1234,7 @@ def backtest_stock(code, name, ktype=None, lookback=None, trade_days=None, max_h
                  if letter in ALL_MODEL_FNS]
     for bar_idx in range(start_bar, n - 1):
         for model_name, signal_fn in MODEL_FNS:
-            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'):
+            if model_name in ('L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X'):
                 sig = signal_fn(highs, lows, closes, volumes, opens, bar_idx)
             else:
                 sig = signal_fn(highs, lows, closes, volumes, bar_idx)

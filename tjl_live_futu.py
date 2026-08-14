@@ -1235,6 +1235,178 @@ def check_tjl_model_u(price, highs, lows, closes, volumes, today_high, today_low
     return None
 
 
+def check_tjl_model_v(price, highs, lows, closes, volumes, today_open):
+    """
+    Model V: Dual Thrust — Regime Adaptive (enhanced Model U).
+    From: soham-srivastava/Dual_Thrust_Strategy (GC 2026).
+    Same as Model U but k1/k2 shift by EMA-10 vs EMA-30 bias.
+    Bullish (EMA10 > EMA30) → k1=0.4, k2=0.7 (easy long, hard short).
+    Bearish  (EMA10 < EMA30) → k1=0.7, k2=0.4 (hard long, easy short).
+    SL: 1.5 ATR.  TP: 3.0 ATR.  R:R = 2:1.
+    Warmup: 35 bars.
+    """
+    if len(closes) < 35:
+        return None
+    h = np.array(highs[-35:])
+    l = np.array(lows[-35:])
+    c = np.array(closes[-35:])
+    N = 2
+    if len(h) < N + 1:
+        return None
+    n_highs  = h[-(N):]
+    n_lows   = l[-(N):]
+    n_closes = c[-(N):]
+    range1 = float(np.max(n_highs) - np.min(n_lows))
+    range2 = abs(float(n_closes[0]) - float(closes[-(N+1)]))
+    dt_range = max(range1, range2)
+    if dt_range <= 0:
+        return None
+    open_price = float(today_open) if hasattr(today_open, '__iter__') is False else float(closes[-1])
+    s = pd.Series(c)
+    ema10 = float(s.ewm(span=10, adjust=False).mean().iloc[-1])
+    ema30 = float(s.ewm(span=30, adjust=False).mean().iloc[-1])
+    if np.isnan(ema10) or np.isnan(ema30):
+        return None
+    bullish = ema10 > ema30
+    k1 = 0.4 if bullish else 0.7
+    k2 = 0.7 if bullish else 0.4
+    upper = open_price + k1 * dt_range
+    lower = open_price - k2 * dt_range
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    if price > upper:
+        return {
+            'price': round(price, 2), 'atr': round(atr, 3),
+            'sl': round(price - 1.5 * atr, 2),
+            'tp': round(price + 3.0 * atr, 2),
+            'rr_ratio': 2.0, 'direction': 'LONG',
+            'k1': k1, 'k2': k2,
+            'ema10': round(ema10, 2), 'ema30': round(ema30, 2),
+            'regime': 'BULL' if bullish else 'BEAR',
+            'range': round(dt_range, 3),
+        }
+    elif price < lower:
+        return {
+            'price': round(price, 2), 'atr': round(atr, 3),
+            'sl': round(price + 1.5 * atr, 2),
+            'tp': round(price - 3.0 * atr, 2),
+            'rr_ratio': 2.0, 'direction': 'SHORT',
+            'k1': k1, 'k2': k2,
+            'ema10': round(ema10, 2), 'ema30': round(ema30, 2),
+            'regime': 'BULL' if bullish else 'BEAR',
+            'range': round(dt_range, 3),
+        }
+    return None
+
+
+def check_tjl_model_w(price, highs, lows, closes, volumes):
+    """
+    Model W: RSI Divergence + EMA Trend.
+    Bullish Divergence: price makes lower low, RSI makes higher low → LONG.
+    Bearish Divergence: price makes higher high, RSI makes lower high → SHORT.
+    Confirm: EMA9 > EMA20 for LONG, EMA9 < EMA20 for SHORT.
+    SL: 1.5 ATR.  TP: 3.0 ATR.  R:R = 2:1.
+    Warmup: 60 bars.
+    """
+    if len(closes) < 60:
+        return None
+    h = np.array(highs); l = np.array(lows); c = np.array(closes)
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    s = pd.Series(c)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e20 = float(s.ewm(span=20, adjust=False).mean().iloc[-1])
+    if np.isnan(e9) or np.isnan(e20):
+        return None
+    rsi_now = calc_rsi(c)
+    if rsi_now is None:
+        return None
+    lookback = 20
+    if len(c) < lookback + 14:
+        return None
+    pw = c[-lookback:]
+    ph = np.max(pw[:-1])
+    pl = np.min(pw[:-1])
+    rsi_vals = []
+    for i in range(-lookback, 0):
+        rs = calc_rsi(c[:i+14]) if i+14 > 0 else None
+        if rs is not None:
+            rsi_vals.append(rs)
+    if len(rsi_vals) < 3:
+        return None
+    rsi_at_sh = float(np.max(rsi_vals[:-1])) if len(rsi_vals) > 1 else float(rsi_vals[-1])
+    rsi_at_sl = float(np.min(rsi_vals[:-1])) if len(rsi_vals) > 1 else float(rsi_vals[-1])
+    bullish_div = (price < pl * 1.02) and (rsi_now > rsi_at_sl)
+    bearish_div = (price > ph * 0.98) and (rsi_now < rsi_at_sh)
+    long_fire  = bullish_div and (e9 > e20)
+    short_fire = bearish_div and (e9 < e20)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {
+        'price': round(price, 2), 'atr': round(atr, 3),
+        'sl': round(price - 1.5 * atr, 2) if direction == 'LONG' else round(price + 1.5 * atr, 2),
+        'tp': round(price + 3.0 * atr, 2) if direction == 'LONG' else round(price - 3.0 * atr, 2),
+        'rr_ratio': 2.0, 'direction': direction,
+        'rsi': round(rsi_now, 1), 'e9': round(e9, 2), 'e20': round(e20, 2),
+    }
+
+
+def check_tjl_model_x(price, highs, lows, closes, volumes):
+    """
+    Model X: ICT SMC — Order Block + Fair Value Gap.
+    Based on: joshyattridge/smart-money-concepts.
+    Bullish OB: 3 bearish bars followed by bullish bar piercing above.
+    FVG: middle candle bullish, gap above to next candle.
+    LONG: price retesting OB high or filling bullish FVG.
+    SHORT: mirror.  SL: 1.0 ATR.  TP: 2.0 ATR.  R:R = 2:1.
+    Warmup: 30 bars.
+    """
+    if len(closes) < 30:
+        return None
+    c = np.array(closes); h = np.array(highs); l = np.array(lows)
+    atr = calc_atr(h, l, c)
+    if atr is None or np.isnan(atr) or atr <= 0:
+        return None
+    n = len(c)
+    if n < 5:
+        return None
+    fvg_bull = (c[-3] > c[-4]) and (h[-3] < l[-1])
+    fvg_bear = (c[-3] < c[-4]) and (l[-3] > h[-1])
+    bull_ob = (c[-5] < c[-5+1] if n >= 6 else False) and (c[-4] < closes[-4+1] if n >= 5 else False) and (c[-3] < closes[-3+1] if n >= 4 else False) and (c[-2] > c[-3])
+    bear_ob = (c[-5] > c[-5+1] if n >= 6 else False) and (c[-4] > closes[-4+1] if n >= 5 else False) and (c[-3] > closes[-3+1] if n >= 4 else False) and (c[-2] < c[-3])
+    ob_bull_high = h[-3] if bull_ob else None
+    ob_bear_low  = l[-3] if bear_ob else None
+    rsi_now = calc_rsi(c)
+    if rsi_now is None:
+        return None
+    long_fire = short_fire = False
+    if ob_bull_high:
+        long_fire = abs(price - ob_bull_high) / ob_bull_high < 0.01 and 40 < rsi_now < 70
+    if fvg_bull:
+        gap_mid = (l[-1] + h[-3]) / 2
+        long_fire = long_fire or (abs(price - gap_mid) / gap_mid < 0.005 and rsi_now > 45)
+    if ob_bear_low:
+        short_fire = abs(price - ob_bear_low) / ob_bear_low < 0.01 and 30 < rsi_now < 60
+    if fvg_bear:
+        gap_mid = (h[-1] + l[-3]) / 2
+        short_fire = short_fire or (abs(price - gap_mid) / gap_mid < 0.005 and rsi_now < 55)
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    return {
+        'price': round(price, 2), 'atr': round(atr, 3),
+        'sl': round(price - 1.0 * atr, 2) if direction == 'LONG' else round(price + 1.0 * atr, 2),
+        'tp': round(price + 2.0 * atr, 2) if direction == 'LONG' else round(price - 2.0 * atr, 2),
+        'rr_ratio': 2.0, 'direction': direction,
+        'fvg': 'BULL' if fvg_bull else ('BEAR' if fvg_bear else None),
+        'ob': 'BULL' if ob_bull_high else ('BEAR' if ob_bear_low else None),
+        'rsi': round(rsi_now, 1),
+    }
+
+
 def check_tjs(price, highs, lows, closes, today_low):
     """Short entry: bearish stack + pullback to EMA9 + below PML."""
     if len(closes) < 60:
@@ -1641,6 +1813,45 @@ def run_scan(notify=False):
             elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'U' for s in short_signals):
                 result_u['signal_model'] = 'U'
                 short_signals.append(result_u)
+
+        # ── Model V: Dual Thrust — Regime Adaptive ─────────────────────
+        result_v = check_tjl_model_v(price, highs, lows, closes, volumes, today_open)
+        if result_v:
+            result_v['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'V' for s in long_signals):
+                result_v['signal_model'] = 'V'
+                long_signals.append(result_v)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'V' for s in short_signals):
+                result_v['signal_model'] = 'V'
+                short_signals.append(result_v)
+
+        # ── Model W: RSI Divergence + EMA Trend ────────────────────────
+        result_w = check_tjl_model_w(price, highs, lows, closes, volumes)
+        if result_w:
+            result_w['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'W' for s in long_signals):
+                result_w['signal_model'] = 'W'
+                long_signals.append(result_w)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'W' for s in short_signals):
+                result_w['signal_model'] = 'W'
+                short_signals.append(result_w)
+
+        # ── Model X: ICT SMC — Order Block + FVG ───────────────────────
+        result_x = check_tjl_model_x(price, highs, lows, closes, volumes)
+        if result_x:
+            result_x['name'] = name
+            regime_ok_long  = regime in ('bullish', 'neutral')
+            regime_ok_short = regime in ('bearish', 'neutral')
+            if regime_ok_long and not any(s['name'] == name and s.get('signal_model') == 'X' for s in long_signals):
+                result_x['signal_model'] = 'X'
+                long_signals.append(result_x)
+            elif regime_ok_short and not any(s['name'] == name and s.get('signal_model') == 'X' for s in short_signals):
+                result_x['signal_model'] = 'X'
+                short_signals.append(result_x)
 
         # ── Short side (TJS — unchanged) ────────────────────
         if regime in ('bearish', 'neutral'):
