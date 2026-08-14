@@ -1867,7 +1867,8 @@ def run_scan(notify=False):
                     if not result['below_pml_ok']:  reasons.append("!belowPML")
                     debug_info.append(f"{code}: {' '.join(reasons)}")
 
-    ctx.close()
+    ctx.stop = lambda: None  # bypass Futu websocket hang
+    ctx.close = lambda: None  # bypassFutum websocket hang
 
     # Step 5: Print results
     def log_table(signals, direction, key_col, sl_col, tp_col):
