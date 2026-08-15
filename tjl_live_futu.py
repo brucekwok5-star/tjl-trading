@@ -21,6 +21,14 @@ Environment:
   DISCORD_WEBHOOK_HK_TJL — Discord webhook URL. If set, posts results.
 """
 from tjl_model_tracker import ModelTracker
+from tjl_models import (
+    check_model_a, check_model_b, check_model_c, check_model_d,
+    check_model_e, check_model_f, check_model_g, check_model_h,
+    check_model_i, check_model_j, check_model_k, check_model_m,
+    check_model_keltner, check_model_ichimoku, check_model_zscore,
+    check_model_dual_thrust, check_model_regime_dt,
+    check_model_ob, check_model_rsi_div,
+)
 import sys
 import futu as ft
 from futu.quote.open_quote_context import OpenQuoteContext, KLType, SubType
