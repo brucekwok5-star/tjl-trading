@@ -888,3 +888,88 @@ def check_model_rsi_div(ticker: str, price: float,
             'ema20': round(e20_cur, 2),
         })
     return None
+
+# ── Aliases for tjl_live_futu.py naming convention ──────────────────────────────
+# R: Keltner + RSI  — args: (price, highs, lows, closes, vols, today_high, today_low, direction)
+def check_tjl_model_r(price, highs, lows, closes, volumes, today_high, today_low, direction='LONG'):
+    return check_model_keltner(None, price, highs, lows, closes, volumes, direction)
+
+# S: Ichimoku Cloud — args: (price, highs, lows, closes, vols, today_high, today_low, direction)
+def check_tjl_model_s(price, highs, lows, closes, volumes, today_high, today_low, direction='LONG'):
+    return check_model_ichimoku(None, price, highs, lows, closes, volumes, direction)
+
+# T: z-score Mean Reversion — args: (price, highs, lows, closes, vols, today_high, today_low, direction)
+def check_tjl_model_t(price, highs, lows, closes, volumes, today_high, today_low, direction='LONG'):
+    return check_model_zscore(None, price, highs, lows, closes, volumes, direction)
+
+# U: Dual Thrust — args: (price, highs, lows, closes, vols, today_high, today_low, today_open, direction)
+def check_tjl_model_u(price, highs, lows, closes, volumes, today_high, today_low, today_open, direction='LONG'):
+    return check_model_dual_thrust(None, price, highs, lows, closes, volumes, today_high, today_low, today_open)
+
+# V: Regime Adaptive DT — args: (price, highs, lows, closes, vols, today_open, direction)
+def check_tjl_model_v(price, highs, lows, closes, volumes, today_open, direction='LONG'):
+    return check_model_regime_dt('', price, highs, lows, closes, volumes, today_open)
+
+# W: SMC Order Block — args: (price, highs, lows, closes, vols, direction)
+def check_tjl_model_w(price, highs, lows, closes, volumes, direction='LONG'):
+    return check_model_ob("", price, highs, lows, closes, volumes)
+
+# X: RSI Divergence — args: (price, highs, lows, closes, vols, direction)
+def check_tjl_model_x(price, highs, lows, closes, volumes, direction='LONG'):
+    return check_model_rsi_div("", price, highs, lows, closes, volumes)
+
+# ── Aliases: check_model_X = check_tjl_model_X (standard naming) ───────────────
+check_model_r = check_tjl_model_r
+check_model_s = check_tjl_model_s
+check_model_t = check_tjl_model_t
+check_model_u = check_tjl_model_u
+check_model_v = check_tjl_model_v
+check_model_w = check_tjl_model_w
+check_model_x = check_tjl_model_x
+
+# ── Model L: no such model in tjl_models (stub) ─────────────────────────────────
+def check_model_l(*args, **kwargs):
+    return None
+
+def check_tjl_model_l(*args, **kwargs):
+    return None
+
+# ── Model M: EMA Ribbon Compression — from tjl_live_futu (copied) ───────────────
+def check_tjl_model_m(price, highs, lows, closes, volumes, today_high, today_low):
+    """EMA Ribbon Compression (Swing). No direction param — fires LONG or SHORT."""
+    import pandas as pd
+    if len(closes) < 55 or len(volumes) < 21:
+        return None
+    atr = calc_atr(highs, lows, closes)
+    if atr is None or np.isnan(atr):
+        return None
+    s = pd.Series(closes)
+    e9  = float(s.ewm(span=9,  adjust=False).mean().iloc[-1])
+    e21 = float(s.ewm(span=21, adjust=False).mean().iloc[-1])
+    e50 = float(s.ewm(span=50, adjust=False).mean().iloc[-1])
+    prev_close = float(closes[-2])
+    if any(np.isnan(x) or x <= 0 for x in [e9, e21, e50]):
+        return None
+    spread_pct = abs(e9 - e50) / e50 * 100
+    compressed = spread_pct < 1.0
+    bull_stack = e9 > e21 > e50
+    bear_stack = e9 < e21 < e50
+    long_breakout  = (prev_close <= e9) and (price > e9)
+    short_breakout = (prev_close >= e9) and (price < e9)
+    long_fire  = compressed and bull_stack and long_breakout
+    short_fire = compressed and bear_stack and short_breakout
+    if not (long_fire or short_fire):
+        return None
+    direction = 'LONG' if long_fire else 'SHORT'
+    sl = e50
+    tp = price + 3.0 * atr if direction == 'LONG' else price - 3.0 * atr
+    return {
+        'price': round(price, 2), 'e9': round(e9, 3), 'e21': round(e21, 3),
+        'e50': round(e50, 3), 'atr': round(atr, 3),
+        'sl': round(sl, 2), 'tp': round(tp, 2),
+        'rr_ratio': 1.5, 'direction': direction, 'model': 'M',
+        'spread_pct': round(spread_pct, 3),
+    }
+
+# ── Aliases for standard naming ─────────────────────────────────────────────────
+check_model_m = check_tjl_model_m
