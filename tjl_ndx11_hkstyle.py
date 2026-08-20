@@ -54,7 +54,7 @@ MODEL_WR = {
     'F': {'wr': 56, 'avg': +0.40, 'trades': 295, 'verdict': 'BEARISH-only'},  # 56% WR in BEARISH
     'G': {'wr': 21, 'avg': -0.46, 'trades': 81,  'verdict': 'kill'},
     'H': {'wr': 50, 'avg': +0.04, 'trades':   4,  'verdict': 'profitable'},  # 42-50% WR
-    'I': {'wr': 48, 'avg': +0.41, 'trades': 225,  'verdict': 'profitable'},  # 48-57% WR US/HK
+    'I': {'wr': 31, 'avg': +0.41, 'trades': 225,  'verdict': 'profitable'},  # 31% WR backtested (vs 48% prior estimate)
     'J': {'wr': 54, 'avg': +0.76, 'trades': 323,  'verdict': 'profitable'},  # 54% WR HK
     'K': {'wr': 45, 'avg': +0.69, 'trades':  10,  'verdict': 'profitable'},
 }
@@ -592,11 +592,16 @@ def check_i(ticker, d, direction='LONG'):
     # SHORT: price was below wma63, now rallied to within 3% of it
     rally_short = (abs(price - wma63) / wma63 <= pullback_tol)
 
+    # STRICTER SHORT filters: prevent fading a near-WMA bounce in choppy markets
+    # Require: RSI < 45 (not just < 50) + price 1.5%+ away from WMA (not just touching)
+    # LONG: unchanged
     if direction == 'LONG':
         if above_wma and pullback_long and rsi > 50:
             return make_signal(ticker, price, 'LONG', 'I', atr, extra={'wma63': round(wma63, 2), 'rsi': round(rsi, 1)})
     else:
-        if below_wma and rally_short and rsi < 50:
+        # SHORT: RSI < 45 (more oversold) AND price further from WMA (1.5% min)
+        strong_short = rsi < 45 and (wma63 - price) / wma63 >= 0.015
+        if below_wma and rally_short and strong_short:
             return make_signal(ticker, price, 'SHORT', 'I', atr, extra={'wma63': round(wma63, 2), 'rsi': round(rsi, 1)})
     return None
 
