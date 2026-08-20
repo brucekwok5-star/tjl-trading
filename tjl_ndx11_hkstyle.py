@@ -457,6 +457,11 @@ def check_f(ticker, d, direction='LONG'):
     # RSI crossed below 50
     cross_down = (rsi_prev > 50 >= rsi_curr)
 
+    # Require price to be at least 0.5% away from EMA20 — confirms trend conviction
+    # Prevents RSI-crossing noise in choppy/neutral markets
+    ema20_dist = abs(price - e20) / e20
+    if ema20_dist < 0.005: return None  # too close to EMA20
+
     if direction == 'LONG':
         above_ema20 = (price > e20)
         if cross_up and above_ema20:
