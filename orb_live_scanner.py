@@ -13,6 +13,7 @@ import urllib.request
 import urllib.error
 import urllib.parse
 from datetime import datetime, date
+from typing import Optional
 
 DISCORD_WH  = "https://discord.com/api/webhooks/1531888048797782026/JEmDHBY2PkJjDqoQQFVyJBnXX2hK-lrYbjDPYlMGJls0p6J26oRVMhBCjdU4bafguHtj"
 TICKERS     = ["QQQ", "SPY", "TSLA", "NVDA"]
@@ -29,7 +30,7 @@ def is_trading_day(d: date) -> bool:
         date(2026,12,25),
     }
 
-def fetch_15m(ticker: str, trade_date: pd.Timestamp) -> pd.DataFrame | None:
+def fetch_15m(ticker: str, trade_date: pd.Timestamp) -> Optional[pd.DataFrame]:
     """Fetch 15-min bars for the session day. Yahoo caps at ~60 days."""
     start = (trade_date - pd.Timedelta(days=7)).strftime("%Y-%m-%d")
     end   = (trade_date + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
@@ -87,7 +88,7 @@ def get_pct_risk(ticker: str) -> float:
     last = df["Close"].iloc[-1]
     return float(min(max(atr / last, 0.003), 0.010))
 
-def orb_signal(ticker: str, trade_date: pd.Timestamp) -> dict | None:
+def orb_signal(ticker: str, trade_date: pd.Timestamp) -> Optional[dict]:
     """Full ORB signal for one ticker on trade_date. Returns None if no signal."""
     if not is_trading_day(trade_date.date()):
         return None
