@@ -10,6 +10,7 @@ Key improvements:
 - Asymmetric position sizing
 - Partial exit at 38.2% with trailing stop
 - Daily loss limit (stop after 3 consecutive losses)
+- ATR-based position sizing (volatility-adjusted)
 - Signal logging for forward testing
 """
 import json, sys, urllib.request, os
@@ -41,6 +42,13 @@ TRAIL_DIST   = 0.5       # Trail at 0.5x remaining distance to TP
 # NEW: Daily loss limit
 MAX_CONSECUTIVE_LOSSES = 3  # Stop trading after this many losses
 DAILY_LOSS_FILE = os.path.expanduser("~/tjl_signals/daily_tracking.json")
+
+# NEW: ATR-based position sizing
+ATR_PERIOD = 14
+BASE_POSITION = 1.0  # Base position size
+ATR_LOW_THRESH = 1.0  # Low volatility - larger positions
+ATR_HIGH_THRESH = 3.0  # High volatility - smaller positions
+VOLATILITY_SCALING = True  # Enable ATR-based sizing
 
 # NEW: RSI/MACD momentum filters
 RSI_PERIOD  = 14
@@ -571,8 +579,19 @@ def analyze_today(symbol, market_regime, spy_gap):
     sl_dist = abs(tp - entry) / RR_RATIO
     sl = round(entry - sl_dist, 4) if direction == "LONG" else round(entry + sl_dist, 4)
 
-    # NEW: Position sizing info
-    position_size = LONG_SIZE_PCT if direction == "LONG" else 1.0
+    # NEW: ATR-based position sizing
+    base_size = LONG_SIZE_PCT if direction == "LONG" else 1.0
+    if VOLATILITY_SCALING and atr14:
+        # Scale position based on volatility
+        # High ATR = smaller position, Low ATR = larger position
+        if atr14 < ATR_LOW_THRESH:
+            position_size = base_size * 1.25  # Increase for low volatility
+        elif atr14 > ATR_HIGH_THRESH:
+            position_size = base_size * 0.75  # Decrease for high volatility
+        else:
+            position_size = base_size
+    else:
+        position_size = base_size
 
     result = {
         "symbol": symbol,
@@ -589,7 +608,13 @@ def analyze_today(symbol, market_regime, spy_gap):
         "tp": round(tp, 4),
         "sl": round(sl, 4),
         "rr_ratio": RR_RATIO,
-        "position_size": position_size,
+        "position_size": round(position_size, 2),
+        "position_sizing": {
+            "base": base_size,
+            "volatility_scaled": VOLATILITY_SCALING,
+            "atr14": round(atr14, 2),
+            "volatility_tier": "low" if atr14 < ATR_LOW_THRESH else ("high" if atr14 > ATR_HIGH_THRESH else "normal"),
+        },
         "market_regime": market_regime,
         "rsi": round(rsi, 1) if rsi else None,
         "macd_hist": round(hist, 4) if hist else None,
