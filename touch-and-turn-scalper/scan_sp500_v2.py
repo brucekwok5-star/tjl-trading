@@ -34,6 +34,8 @@ EMA_PERIOD   = 20
 VOLUME_MULT  = 1.2      # Volume must be > this x average
 GAP_LIMIT    = 0.02     # Skip if gap > 2%
 MAX_ENTRY_HOUR = 11     # No entries after 11:00 ET
+TIME_FILTER_ENABLED = True  # Only trade during first 60 mins
+MAX_ENTRY_MINUTES = 60     # Max minutes after market open
 LONG_SIZE_PCT = 0.5     # LONG = 50% of SHORT size
 PARTIAL_TP   = 0.382    # Close partial at 38.2% Fib level
 PARTIAL_PCT  = 0.5      # Close 50% at partial TP
@@ -41,9 +43,6 @@ TRAIL_START  = 0.5       # Start trailing after 50% of target reached
 TRAIL_DIST   = 0.5       # Trail at 0.5x remaining distance to TP
 
 # NEW: Breakeven stop-loss after partial TP hit
-BREAKEVEN_SL = True       # Move SL to entry after partial TP hit
-
-# NEW: Breakeven stop-loss
 BREAKEVEN_MOVE = True      # Move SL to entry after partial TP hit
 
 # NEW: Daily loss limit
@@ -64,6 +63,10 @@ RSI_OVERBOUGHT = 60     # SHORT only if RSI < overbought
 MACD_FAST   = 12
 MACD_SLOW   = 26
 MACD_SIGNAL = 9
+
+# NEW: Earnings filter - skip stocks with earnings soon
+EARNINGS_DAYS = 3  # Skip if earnings within this many days
+USE_EARNINGS_FILTER = True
 
 # Logging
 LOG_FILE = os.path.expanduser("~/tjl_signals/dtat_v2_signals.json")
@@ -365,6 +368,35 @@ def get_macd(ticker_sym):
     except:
         return None, None, None
 
+def check_earnings(ticker_sym, days_ahead=3):
+    """Check if stock has earnings within specified days. Returns days until earnings or None."""
+    try:
+        # Use yfinance to get earnings dates
+        ticker = yf.Ticker(ticker_sym)
+        earnings_dates = ticker.earnings_dates
+
+        if earnings_dates is None or earnings_dates.empty:
+            return None  # No earnings data available
+
+        # Get next earnings date
+        today = pd.Timestamp.now()
+        future = today + pd.Timedelta(days=days_ahead)
+
+        # Filter for future dates
+        future_earnings = earnings_dates[earnings_dates.index > today]
+
+        if future_earnings.empty:
+            return None  # No upcoming earnings
+
+        next_earnings = future_earnings.index[0]
+        days_until = (next_earnings - today).days
+
+        if days_until <= days_ahead:
+            return days_until
+        return None
+    except:
+        return None  # Skip on error
+
 # ── Daily Loss Tracking ───────────────────────────────────────────────────────────
 
 def load_daily_tracking():
@@ -576,6 +608,37 @@ def analyze_today(symbol, market_regime, spy_gap):
                 "atr14": round(atr14, 2),
                 "action": "SKIP_MACD",
                 "note": f"MACD hist {hist:.2f} > 0 (bullish)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+
+    # NEW: Earnings filter - skip stocks with earnings soon
+    if USE_EARNINGS_FILTER:
+        earnings_days = check_earnings(symbol, days_ahead=EARNINGS_DAYS)
+        if earnings_days is not None:
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_EARNINGS",
+                "note": f"Earnings in {earnings_days} day(s)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+
+    # NEW: Time filter - only trade during first X minutes
+    if TIME_FILTER_ENABLED:
+        current_time = datetime.now(ET)
+        market_open = current_time.replace(hour=9, minute=30, second=0, microsecond=0)
+        minutes_since_open = (current_time - market_open).total_seconds() / 60
+
+        if minutes_since_open > MAX_ENTRY_MINUTES:
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_TIME",
+                "note": f"Too late: {minutes_since_open:.0f} min > {MAX_ENTRY_MINUTES}"
             }
             log_signal(result, market_regime, spy_gap)
             return result
