@@ -5,6 +5,8 @@ Key improvements:
 - Market regime filter (SPY > EMA20 for LONG)
 - Volume confirmation filter
 - Gap filter
+- RSI momentum filter (14 period)
+- MACD histogram filter
 - Asymmetric position sizing
 - Signal logging for forward testing
 """
@@ -30,6 +32,14 @@ GAP_LIMIT    = 0.02     # Skip if gap > 2%
 MAX_ENTRY_HOUR = 11     # No entries after 11:00 ET
 LONG_SIZE_PCT = 0.5     # LONG = 50% of SHORT size
 PARTIAL_TP   = 0.5      # Close 50% at TP
+
+# NEW: RSI/MACD momentum filters
+RSI_PERIOD  = 14
+RSI_OVERSOLD = 40       # LONG only if RSI > oversold
+RSI_OVERBOUGHT = 60     # SHORT only if RSI < overbought
+MACD_FAST   = 12
+MACD_SLOW   = 26
+MACD_SIGNAL = 9
 
 # Logging
 LOG_FILE = os.path.expanduser("~/tjl_signals/dtat_v2_signals.json")
@@ -135,11 +145,19 @@ def log_signal(result, market_regime, spy_gap):
             "atr14": result.get("atr14"),
             "candle_range": result.get("candle_range"),
             "position_size": result.get("position_size"),
+            "rsi": result.get("rsi"),
+            "macd_hist": result.get("macd_hist"),
             "filters_passed": ["liquidity"],
         })
         if result.get("direction") == "LONG":
             signal["filters_passed"].append("regime_bull")
             signal["filters_passed"].append("volume")
+            signal["filters_passed"].append("rsi")
+            signal["filters_passed"].append("macd")
+        else:
+            signal["filters_passed"].append("volume")
+            signal["filters_passed"].append("rsi")
+            signal["filters_passed"].append("macd")
     else:
         # Skipped signals - log the reason
         signal["skip_reason"] = result.get("note") or result.get("action")
@@ -149,6 +167,10 @@ def log_signal(result, market_regime, spy_gap):
             signal["filtered_by"] = "volume"
         elif "gap" in str(result.get("note", "")).lower():
             signal["filtered_by"] = "gap"
+        elif "rsi" in str(result.get("note", "")).lower():
+            signal["filtered_by"] = "rsi"
+        elif "macd" in str(result.get("note", "")).lower():
+            signal["filtered_by"] = "macd"
         else:
             signal["filtered_by"] = "liquidity"
 
@@ -274,6 +296,51 @@ def get_today_volume_ratio(ticker_sym):
     except:
         return None
 
+def get_rsi(ticker_sym, period=14):
+    """Calculate RSI(14) from 30-day daily data."""
+    try:
+        df = yf.download(ticker_sym, period="30d", interval="1d", progress=False)
+        if df.empty or len(df) < period + 1:
+            return None
+        df.columns = df.columns.get_level_values(0)
+        close = df['Close']
+
+        delta = close.diff()
+        gain = delta.where(delta > 0, 0)
+        loss = (-delta).where(delta < 0, 0)
+
+        avg_gain = gain.rolling(window=period).mean()
+        avg_loss = loss.rolling(window=period).mean()
+
+        rs = avg_gain / avg_loss
+        rsi = 100 - (100 / (1 + rs))
+        return float(rsi.iloc[-1])
+    except:
+        return None
+
+def get_macd(ticker_sym):
+    """Calculate MACD (12,26,9). Returns (MACD line, signal line, histogram)."""
+    try:
+        df = yf.download(ticker_sym, period="60d", interval="1d", progress=False)
+        if df.empty or len(df) < 60:
+            return None, None, None
+        df.columns = df.columns.get_level_values(0)
+        close = df['Close']
+
+        ema12 = close.ewm(span=12, adjust=False).mean()
+        ema26 = close.ewm(span=26, adjust=False).mean()
+        macd_line = ema12 - ema26
+        signal_line = macd_line.ewm(span=9, adjust=False).mean()
+        histogram = macd_line - signal_line
+
+        return (
+            float(macd_line.iloc[-1]),
+            float(signal_line.iloc[-1]),
+            float(histogram.iloc[-1])
+        )
+    except:
+        return None, None, None
+
 def analyze_today(symbol, market_regime, spy_gap):
     """Analyze a single symbol with improved filters."""
     df_daily = fetch_30d_daily(symbol)
@@ -391,6 +458,54 @@ def analyze_today(symbol, market_regime, spy_gap):
             log_signal(result, market_regime, spy_gap)
             return result
 
+    # NEW: RSI filter - LONG needs RSI > oversold, SHORT needs RSI < overbought
+    rsi = get_rsi(symbol, RSI_PERIOD)
+    if rsi is not None:
+        if direction == "LONG" and rsi < RSI_OVERSOLD:
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_RSI",
+                "note": f"RSI {rsi:.1f} < {RSI_OVERSOLD} (oversold)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+        if direction == "SHORT" and rsi > RSI_OVERBOUGHT:
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_RSI",
+                "note": f"RSI {rsi:.1f} > {RSI_OVERBOUGHT} (overbought)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+
+    # NEW: MACD filter - histogram should align with direction
+    macd, signal, hist = get_macd(symbol)
+    if macd is not None and signal is not None:
+        if direction == "LONG" and hist < 0:  # Bearish MACD
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_MACD",
+                "note": f"MACD hist {hist:.2f} < 0 (bearish)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+        if direction == "SHORT" and hist > 0:  # Bullish MACD
+            result = {
+                "symbol": symbol,
+                "date": str(dt_date.today()),
+                "atr14": round(atr14, 2),
+                "action": "SKIP_MACD",
+                "note": f"MACD hist {hist:.2f} > 0 (bullish)"
+            }
+            log_signal(result, market_regime, spy_gap)
+            return result
+
     # Entry and risk
     entry = low_ if direction == "LONG" else high_
     tp    = round(low_ + (high_ - low_) * TP_LEVEL, 4)
@@ -417,6 +532,8 @@ def analyze_today(symbol, market_regime, spy_gap):
         "rr_ratio": RR_RATIO,
         "position_size": position_size,
         "market_regime": market_regime,
+        "rsi": round(rsi, 1) if rsi else None,
+        "macd_hist": round(hist, 4) if hist else None,
     }
     log_signal(result, market_regime, spy_gap)
     return result
