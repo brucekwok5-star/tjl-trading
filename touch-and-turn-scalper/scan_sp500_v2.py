@@ -8,6 +8,7 @@ Key improvements:
 - RSI momentum filter (14 period)
 - MACD histogram filter
 - Asymmetric position sizing
+- Partial exit at 38.2% with trailing stop
 - Signal logging for forward testing
 """
 import json, sys, urllib.request, os
@@ -31,7 +32,10 @@ VOLUME_MULT  = 1.2      # Volume must be > this x average
 GAP_LIMIT    = 0.02     # Skip if gap > 2%
 MAX_ENTRY_HOUR = 11     # No entries after 11:00 ET
 LONG_SIZE_PCT = 0.5     # LONG = 50% of SHORT size
-PARTIAL_TP   = 0.5      # Close 50% at TP
+PARTIAL_TP   = 0.382    # Close partial at 38.2% Fib level
+PARTIAL_PCT  = 0.5      # Close 50% at partial TP
+TRAIL_START  = 0.5       # Start trailing after 50% of target reached
+TRAIL_DIST   = 0.5       # Trail at 0.5x remaining distance to TP
 
 # NEW: RSI/MACD momentum filters
 RSI_PERIOD  = 14
@@ -534,6 +538,13 @@ def analyze_today(symbol, market_regime, spy_gap):
         "market_regime": market_regime,
         "rsi": round(rsi, 1) if rsi else None,
         "macd_hist": round(hist, 4) if hist else None,
+        # Partial exit strategy
+        "partial_exit": {
+            "partial_tp_pct": PARTIAL_PCT,
+            "partial_tp_price": round(entry + (tp - entry) * PARTIAL_TP / TP_LEVEL, 4) if direction == "LONG" else round(entry - (entry - tp) * PARTIAL_TP / TP_LEVEL, 4),
+            "trail_start": TRAIL_START,
+            "trail_dist": TRAIL_DIST,
+        },
     }
     log_signal(result, market_regime, spy_gap)
     return result
