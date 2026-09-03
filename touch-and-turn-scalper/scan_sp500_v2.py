@@ -11,6 +11,7 @@ Key improvements:
 - Partial exit at 38.2% with trailing stop
 - Daily loss limit (stop after 3 consecutive losses)
 - ATR-based position sizing (volatility-adjusted)
+- Breakeven stop-loss (move SL to entry after partial TP)
 - Signal logging for forward testing
 """
 import json, sys, urllib.request, os
@@ -38,6 +39,12 @@ PARTIAL_TP   = 0.382    # Close partial at 38.2% Fib level
 PARTIAL_PCT  = 0.5      # Close 50% at partial TP
 TRAIL_START  = 0.5       # Start trailing after 50% of target reached
 TRAIL_DIST   = 0.5       # Trail at 0.5x remaining distance to TP
+
+# NEW: Breakeven stop-loss after partial TP hit
+BREAKEVEN_SL = True       # Move SL to entry after partial TP hit
+
+# NEW: Breakeven stop-loss
+BREAKEVEN_MOVE = True      # Move SL to entry after partial TP hit
 
 # NEW: Daily loss limit
 MAX_CONSECUTIVE_LOSSES = 3  # Stop trading after this many losses
@@ -624,6 +631,8 @@ def analyze_today(symbol, market_regime, spy_gap):
             "partial_tp_price": round(entry + (tp - entry) * PARTIAL_TP / TP_LEVEL, 4) if direction == "LONG" else round(entry - (entry - tp) * PARTIAL_TP / TP_LEVEL, 4),
             "trail_start": TRAIL_START,
             "trail_dist": TRAIL_DIST,
+            "breakeven_move": BREAKEVEN_MOVE,
+            "sl_after_partial": round(entry, 4),  # SL moves to entry after partial TP
         },
     }
     log_signal(result, market_regime, spy_gap)
