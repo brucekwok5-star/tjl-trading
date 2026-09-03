@@ -6,9 +6,9 @@ Key improvements:
 - Volume confirmation filter
 - Gap filter
 - Asymmetric position sizing
-- Partial exit logic
+- Signal logging for forward testing
 """
-import json, sys, urllib.request
+import json, sys, urllib.request, os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date as dt_date, datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -30,6 +30,10 @@ GAP_LIMIT    = 0.02     # Skip if gap > 2%
 MAX_ENTRY_HOUR = 11     # No entries after 11:00 ET
 LONG_SIZE_PCT = 0.5     # LONG = 50% of SHORT size
 PARTIAL_TP   = 0.5      # Close 50% at TP
+
+# Logging
+LOG_FILE = os.path.expanduser("~/tjl_signals/dtat_v2_signals.json")
+LOG_SKIPS = True  # Log skipped signals too
 
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1305198403200229447/8hN1qH0mE8nA3pR7vL5kX2yZ9wC4jF6bD8sQ1tU7mG3iH0aV2cX5zN9jM4bR6dT8wZ"
 
@@ -85,6 +89,72 @@ SP500_TICKERS = [
     "WKB","WM","WMB","WMT","WNR","WPP","WSO","WTW","WY","WYNN","XEL",
     "XOM","XPO","XRAY","XYL","YUM","ZBH","ZBRA","ZION","ZTS",
 ]
+
+# ── Signal Logging ───────────────────────────────────────────────────────────
+
+def load_signals():
+    """Load existing signals from JSON file."""
+    if os.path.exists(LOG_FILE):
+        try:
+            with open(LOG_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            return {"signals": [], "metadata": {}}
+    return {"signals": [], "metadata": {}}
+
+def save_signal(signal):
+    """Save a signal to the JSON log file."""
+    data = load_signals()
+    data["signals"].append(signal)
+
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+
+    with open(LOG_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def log_signal(result, market_regime, spy_gap):
+    """Log a signal with filter metadata."""
+    today = str(dt_date.today())
+
+    signal = {
+        "date": today,
+        "timestamp": datetime.now(ET).isoformat(),
+        "symbol": result.get("symbol"),
+        "action": result.get("action"),
+        "market_regime": market_regime,
+        "spy_gap_pct": round(spy_gap * 100, 2),
+    }
+
+    if result.get("action") == "SETUP_FOUND":
+        signal.update({
+            "direction": result.get("direction"),
+            "entry": result.get("entry"),
+            "tp": result.get("tp"),
+            "sl": result.get("sl"),
+            "atr14": result.get("atr14"),
+            "candle_range": result.get("candle_range"),
+            "position_size": result.get("position_size"),
+            "filters_passed": ["liquidity"],
+        })
+        if result.get("direction") == "LONG":
+            signal["filters_passed"].append("regime_bull")
+            signal["filters_passed"].append("volume")
+    else:
+        # Skipped signals - log the reason
+        signal["skip_reason"] = result.get("note") or result.get("action")
+        if "regime" in str(result.get("note", "")).lower():
+            signal["filtered_by"] = "regime"
+        elif "volume" in str(result.get("note", "")).lower():
+            signal["filtered_by"] = "volume"
+        elif "gap" in str(result.get("note", "")).lower():
+            signal["filtered_by"] = "gap"
+        else:
+            signal["filtered_by"] = "liquidity"
+
+    # Save to file
+    if LOG_SKIPS or signal.get("action") == "SETUP_FOUND":
+        save_signal(signal)
 
 # ── Market Regime ────────────────────────────────────────────────────────────────
 
@@ -208,7 +278,9 @@ def analyze_today(symbol, market_regime, spy_gap):
     """Analyze a single symbol with improved filters."""
     df_daily = fetch_30d_daily(symbol)
     if df_daily is None or len(df_daily) < 15:
-        return {"symbol": symbol, "error": "no daily data"}
+        result = {"symbol": symbol, "error": "no daily data"}
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     # ATR(14)
     try:
@@ -223,19 +295,23 @@ def analyze_today(symbol, market_regime, spy_gap):
         ], axis=1).max(axis=1)
         atr14 = float(tr.rolling(14).mean().iloc[-1])
     except Exception:
-        return {"symbol": symbol, "error": "ATR calc failed"}
+        result = {"symbol": symbol, "error": "ATR calc failed"}
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     # Today's 5-min data
     df_5m = fetch_today_5m(symbol)
     candle = get_first_candle_15m(df_5m)
     if candle is None:
-        return {
+        result = {
             "symbol": symbol,
             "date": str(dt_date.today()),
             "atr14": round(atr14, 2),
             "action": "NO_DATA",
             "note": "No 5-min data for today yet"
         }
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     open_, high_, low_, close_ = candle
     threshold    = atr14 * OR_PCT
@@ -243,7 +319,7 @@ def analyze_today(symbol, market_regime, spy_gap):
     is_liq       = candle_range >= threshold
 
     if not is_liq:
-        return {
+        result = {
             "symbol": symbol,
             "date": str(dt_date.today()),
             "atr14": round(atr14, 2),
@@ -256,54 +332,64 @@ def analyze_today(symbol, market_regime, spy_gap):
             "direction": None,
             "entry": None, "tp": None, "sl": None,
         }
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     # NEW: Gap filter
     if abs(spy_gap) > GAP_LIMIT:
-        return {
+        result = {
             "symbol": symbol,
             "date": str(dt_date.today()),
             "atr14": round(atr14, 2),
             "action": "SKIP_GAP",
             "note": f"Gap {spy_gap*100:.1f}% > {GAP_LIMIT*100:.0f}% limit"
         }
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     # Original direction logic: red = LONG, green = SHORT
     direction = "LONG" if close_ < open_ else "SHORT"
 
     # NEW: Market regime filter for LONG
     if direction == "LONG" and market_regime == "BEAR":
-        return {
+        result = {
             "symbol": symbol,
             "date": str(dt_date.today()),
             "atr14": round(atr14, 2),
             "action": "SKIP_REGIME",
             "note": "LONG skipped in bear market"
         }
+        log_signal(result, market_regime, spy_gap)
+        return result
 
     # NEW: Market regime filter for SHORT (less restrictive)
     if direction == "SHORT" and market_regime == "BULL":
         # In bull market, be more selective with shorts
         # Only take if very strong liquidity candle
         if candle_range < threshold * 1.5:
-            return {
+            result = {
                 "symbol": symbol,
                 "date": str(dt_date.today()),
                 "atr14": round(atr14, 2),
                 "action": "SKIP_REGIME",
                 "note": "SHORT weak in bull market"
             }
+            log_signal(result, market_regime, spy_gap)
+            return result
 
     # NEW: Volume filter for LONG
     if direction == "LONG":
         vol_ratio = get_today_volume_ratio(symbol)
         if vol_ratio is not None and vol_ratio < VOLUME_MULT:
-            return {
+            result = {
                 "symbol": symbol,
                 "date": str(dt_date.today()),
                 "atr14": round(atr14, 2),
                 "action": "SKIP_VOLUME",
                 "note": f"Vol {vol_ratio:.1f}x < {VOLUME_MULT}x"
             }
+            log_signal(result, market_regime, spy_gap)
+            return result
 
     # Entry and risk
     entry = low_ if direction == "LONG" else high_
@@ -314,7 +400,7 @@ def analyze_today(symbol, market_regime, spy_gap):
     # NEW: Position sizing info
     position_size = LONG_SIZE_PCT if direction == "LONG" else 1.0
 
-    return {
+    result = {
         "symbol": symbol,
         "date": str(dt_date.today()),
         "atr14": round(atr14, 2),
@@ -332,6 +418,8 @@ def analyze_today(symbol, market_regime, spy_gap):
         "position_size": position_size,
         "market_regime": market_regime,
     }
+    log_signal(result, market_regime, spy_gap)
+    return result
 
 # ── Discord ───────────────────────────────────────────────────────────────────
 
@@ -386,7 +474,7 @@ def build_discord(setups, skips, errors, market_regime, spy_gap):
             {"name": "Gap Limit",         "value": f"≤ {GAP_LIMIT*100:.0f}%", "inline": True},
             {"name": "LONG Size",         "value": f"{LONG_SIZE_PCT*100:.0f}% of SHORT", "inline": True},
         ],
-        "footer": {"text": "D-TAT v2 | Improved filters | Verify before trading"},
+        "footer": {"text": "D-TAT v2 | Logged to ~/tjl_signals/dtat_v2_signals.json"},
     })
 
     if longs:
@@ -466,6 +554,25 @@ def main():
     print(f"Regime: {market_regime} | Gap: {spy_gap*100:+.1f}%")
     print(f"Total: {total}  |  ✅ Setups: {len(setups)}  |  ⏭️ Skipped: {len(skips)}  |  ❌ Errors: {len(errors)}")
 
+    # Print filter stats
+    filter_stats = {"regime": 0, "volume": 0, "gap": 0, "liquidity": 0}
+    for s in skips:
+        note = s.get("note", "")
+        if "regime" in note.lower():
+            filter_stats["regime"] += 1
+        elif "volume" in note.lower():
+            filter_stats["volume"] += 1
+        elif "gap" in note.lower():
+            filter_stats["gap"] += 1
+        else:
+            filter_stats["liquidity"] += 1
+
+    print(f"\nFilter Stats:")
+    print(f"  Regime filtered: {filter_stats['regime']}")
+    print(f"  Volume filtered: {filter_stats['volume']}")
+    print(f"  Gap filtered: {filter_stats['gap']}")
+    print(f"  Below liquidity: {filter_stats['liquidity']}")
+
     if setups:
         longs  = sorted([s for s in setups if s["direction"]=="LONG"],  key=lambda x: -x["candle_range"])
         shorts = sorted([s for s in setups if s["direction"]=="SHORT"], key=lambda x: -x["candle_range"])
@@ -483,6 +590,8 @@ def main():
             print("-"*68)
             for s in shorts:
                 print(f"{s['symbol']:<8} {s['entry']:>10.4f} {s['tp']:>10.4f} {s['sl']:>10.4f} {s['atr14']:>7.2f} {s['candle_range']:>7.2f} {s['threshold']:>7.2f}")
+
+    print(f"\nSignals logged to: {LOG_FILE}")
 
     # Discord
     if setups or skips:
