@@ -9,6 +9,7 @@ Key improvements:
 - MACD histogram filter
 - Asymmetric position sizing
 - Partial exit at 38.2% with trailing stop
+- Daily loss limit (stop after 3 consecutive losses)
 - Signal logging for forward testing
 """
 import json, sys, urllib.request, os
@@ -36,6 +37,10 @@ PARTIAL_TP   = 0.382    # Close partial at 38.2% Fib level
 PARTIAL_PCT  = 0.5      # Close 50% at partial TP
 TRAIL_START  = 0.5       # Start trailing after 50% of target reached
 TRAIL_DIST   = 0.5       # Trail at 0.5x remaining distance to TP
+
+# NEW: Daily loss limit
+MAX_CONSECUTIVE_LOSSES = 3  # Stop trading after this many losses
+DAILY_LOSS_FILE = os.path.expanduser("~/tjl_signals/daily_tracking.json")
 
 # NEW: RSI/MACD momentum filters
 RSI_PERIOD  = 14
@@ -345,6 +350,56 @@ def get_macd(ticker_sym):
     except:
         return None, None, None
 
+# ── Daily Loss Tracking ───────────────────────────────────────────────────────────
+
+def load_daily_tracking():
+    """Load daily trading stats."""
+    if os.path.exists(DAILY_LOSS_FILE):
+        try:
+            with open(DAILY_LOSS_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            return {"date": None, "consecutive_losses": 0}
+    return {"date": None, "consecutive_losses": 0}
+
+def save_daily_tracking(data):
+    """Save daily trading stats."""
+    os.makedirs(os.path.dirname(DAILY_LOSS_FILE), exist_ok=True)
+    with open(DAILY_LOSS_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def check_daily_loss_limit():
+    """Check if we've hit the daily loss limit. Returns (can_trade, reason)."""
+    today = str(dt_date.today())
+    data = load_daily_tracking()
+
+    # Reset if new day
+    if data.get("date") != today:
+        data = {"date": today, "consecutive_losses": 0}
+        save_daily_tracking(data)
+        return True, None
+
+    if data.get("consecutive_losses", 0) >= MAX_CONSECUTIVE_LOSSES:
+        return False, f"Daily loss limit reached ({MAX_CONSECUTIVE_LOSSES} losses)"
+
+    return True, None
+
+def record_trade_result(won: bool):
+    """Record trade outcome for daily tracking."""
+    today = str(dt_date.today())
+    data = load_daily_tracking()
+
+    # Reset if new day
+    if data.get("date") != today:
+        data = {"date": today, "consecutive_losses": 0}
+
+    if won:
+        data["consecutive_losses"] = 0
+    else:
+        data["consecutive_losses"] = data.get("consecutive_losses", 0) + 1
+
+    save_daily_tracking(data)
+
 def analyze_today(symbol, market_regime, spy_gap):
     """Analyze a single symbol with improved filters."""
     df_daily = fetch_30d_daily(symbol)
@@ -648,6 +703,13 @@ def main():
     today = dt_date.today()
     print(f"D-TAT v2 Live Scan — {today}  (ET: {datetime.now(ET).strftime('%H:%M')})")
 
+    # Check daily loss limit
+    can_trade, limit_reason = check_daily_loss_limit()
+    if not can_trade:
+        print(f"\n⚠️ DAILY LOSS LIMIT REACHED: {limit_reason}")
+        print("No new signals will be generated today.")
+        return
+
     # Get market regime
     print("Detecting market regime...")
     market_regime = get_market_regime()
@@ -683,7 +745,7 @@ def main():
     print(f"Total: {total}  |  ✅ Setups: {len(setups)}  |  ⏭️ Skipped: {len(skips)}  |  ❌ Errors: {len(errors)}")
 
     # Print filter stats
-    filter_stats = {"regime": 0, "volume": 0, "gap": 0, "liquidity": 0}
+    filter_stats = {"regime": 0, "volume": 0, "gap": 0, "liquidity": 0, "rsi": 0, "macd": 0}
     for s in skips:
         note = s.get("note", "")
         if "regime" in note.lower():
@@ -692,6 +754,10 @@ def main():
             filter_stats["volume"] += 1
         elif "gap" in note.lower():
             filter_stats["gap"] += 1
+        elif "rsi" in note.lower():
+            filter_stats["rsi"] += 1
+        elif "macd" in note.lower():
+            filter_stats["macd"] += 1
         else:
             filter_stats["liquidity"] += 1
 
@@ -699,7 +765,14 @@ def main():
     print(f"  Regime filtered: {filter_stats['regime']}")
     print(f"  Volume filtered: {filter_stats['volume']}")
     print(f"  Gap filtered: {filter_stats['gap']}")
+    print(f"  RSI filtered: {filter_stats['rsi']}")
+    print(f"  MACD filtered: {filter_stats['macd']}")
     print(f"  Below liquidity: {filter_stats['liquidity']}")
+
+    # Daily loss tracking info
+    tracking = load_daily_tracking()
+    print(f"\nDaily Stats:")
+    print(f"  Consecutive losses: {tracking.get('consecutive_losses', 0)}/{MAX_CONSECUTIVE_LOSSES}")
 
     if setups:
         longs  = sorted([s for s in setups if s["direction"]=="LONG"],  key=lambda x: -x["candle_range"])
